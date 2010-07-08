@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1508FC8F11E6684500E7DD9E /* ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */; };
+		1508FC9011E6684500E7DD9E /* ILString_UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = 1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */; };
+		1508FC9111E6684500E7DD9E /* ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */; };
 		157C386511DF8A0C0051D707 /* ILHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 157C386611DF8A0C0051D707 /* ILHash.h */; };
 		1582F98711DE85BA006BCD57 /* StreamDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1582F98511DE85BA006BCD57 /* StreamDecoder.h */; };
 		1582F98811DE85BA006BCD57 /* StreamDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */; };
@@ -82,6 +85,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILString_UTF8.h; sourceTree = "<group>"; };
+		1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILString_UTF8.cpp; sourceTree = "<group>"; };
 		157C386611DF8A0C0051D707 /* ILHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ILHash.h; sourceTree = "<group>"; };
 		1582F98511DE85BA006BCD57 /* StreamDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamDecoder.h; sourceTree = "<group>"; };
 		1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamDecoder.cpp; sourceTree = "<group>"; };
@@ -210,6 +215,8 @@
 				159D8DAA11C27A5100191F11 /* ILSource.cpp */,
 				159D8DAB11C27A5100191F11 /* ILSource.h */,
 				159D8DAC11C27A5100191F11 /* ILString.cpp */,
+				1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */,
+				1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */,
 				159D8DAD11C27A5100191F11 /* ILString.h */,
 				159D8DAE11C27A5100191F11 /* ILThreadTarget.cpp */,
 				159D8DAF11C27A5100191F11 /* ILThreadTarget.h */,
@@ -274,6 +281,7 @@
 				1582F9D211DE8ACC006BCD57 /* ConsumptionQueue.h in Headers */,
 				15BDBA9611E21B0A001AA895 /* ILTesting.h in Headers */,
 				15BDBAEB11E21CDF001AA895 /* MoverCoreTests.h in Headers */,
+				1508FC9011E6684500E7DD9E /* ILString_UTF8.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +368,7 @@
 				1582F9D311DE8ACC006BCD57 /* ConsumptionQueue.cpp in Sources */,
 				15BDBA9511E21B0A001AA895 /* ILTesting.cpp in Sources */,
 				15BDBA9811E21B17001AA895 /* main-MoverCore-Tests.cpp in Sources */,
+				1508FC9111E6684500E7DD9E /* ILString_UTF8.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +400,7 @@
 				15BDBAC411E21B62001AA895 /* main-MoverCore-Tests.cpp in Sources */,
 				15BDBAC511E21B62001AA895 /* StreamDecoder.cpp in Sources */,
 				15BDBAFB11E21E4A001AA895 /* MoverCoreTests.cpp in Sources */,
+				1508FC8F11E6684500E7DD9E /* ILString_UTF8.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

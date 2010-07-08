@@ -51,4 +51,19 @@ extern ILString* ILStr(const char* stringLiteral);
 
 extern void* ILStringClassIdentity;
 
+
+// Can represent any Unicode code point.
+typedef uint32_t ILWideRangeCodePoint;
+#define ILHighestWideRangeCodePoint UINT32_MAX
+
+// To save storage space, we use 16-bit (BMP) code points only. You can ask for wide-range CPs if needed, in which case all CP-using functions will automatically work with wide CPs.
+#if ILPlatformCoreSupportEntireUnicodeRange
+	typedef uint16_t ILCodePoint;
+	#define ILHighestCodePoint UINT16_MAX
+#else
+	typedef ILWideRangeCodePoint ILCodePoint;
+	#define ILHighestCodePoint ILHighestWideRangeCodePoint
+#endif
+
+
 #endif // #ifndef ILString_H

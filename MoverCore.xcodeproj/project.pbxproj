@@ -1,0 +1,532 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		157C386511DF8A0C0051D707 /* ILHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 157C386611DF8A0C0051D707 /* ILHash.h */; };
+		1582F98711DE85BA006BCD57 /* StreamDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1582F98511DE85BA006BCD57 /* StreamDecoder.h */; };
+		1582F98811DE85BA006BCD57 /* StreamDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */; };
+		1582F9BA11DE89D6006BCD57 /* Protocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 1582F9B911DE89D6006BCD57 /* Protocol.h */; };
+		1582F9D211DE8ACC006BCD57 /* ConsumptionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1582F9D011DE8ACC006BCD57 /* ConsumptionQueue.h */; };
+		1582F9D311DE8ACC006BCD57 /* ConsumptionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */; };
+		159D8DB411C27A5100191F11 /* ILApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D7C11C27A5100191F11 /* ILApp.cpp */; };
+		159D8DB511C27A5100191F11 /* ILApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D7D11C27A5100191F11 /* ILApp.h */; };
+		159D8DB611C27A5100191F11 /* ILData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D7E11C27A5100191F11 /* ILData.cpp */; };
+		159D8DB711C27A5100191F11 /* ILData.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D7F11C27A5100191F11 /* ILData.h */; };
+		159D8DBA11C27A5100191F11 /* ILHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8211C27A5100191F11 /* ILHash.cpp */; };
+		159D8DBE11C27A5100191F11 /* ILLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8611C27A5100191F11 /* ILLinkedList.cpp */; };
+		159D8DBF11C27A5100191F11 /* ILLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D8711C27A5100191F11 /* ILLinkedList.h */; };
+		159D8DC211C27A5100191F11 /* ILList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8A11C27A5100191F11 /* ILList.cpp */; };
+		159D8DC311C27A5100191F11 /* ILList.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D8B11C27A5100191F11 /* ILList.h */; };
+		159D8DC611C27A5100191F11 /* ILMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8E11C27A5100191F11 /* ILMap.cpp */; };
+		159D8DC711C27A5100191F11 /* ILMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D8F11C27A5100191F11 /* ILMap.h */; };
+		159D8DCA11C27A5100191F11 /* ILMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9211C27A5100191F11 /* ILMessage.cpp */; };
+		159D8DCB11C27A5100191F11 /* ILMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D9311C27A5100191F11 /* ILMessage.h */; };
+		159D8DCC11C27A5100191F11 /* ILMessageHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9411C27A5100191F11 /* ILMessageHub.cpp */; };
+		159D8DCD11C27A5100191F11 /* ILMessageHub.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D9511C27A5100191F11 /* ILMessageHub.h */; };
+		159D8DD011C27A5100191F11 /* ILNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9811C27A5100191F11 /* ILNumber.cpp */; };
+		159D8DD111C27A5100191F11 /* ILNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D9911C27A5100191F11 /* ILNumber.h */; };
+		159D8DD411C27A5100191F11 /* ILObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9C11C27A5100191F11 /* ILObject.cpp */; };
+		159D8DD511C27A5100191F11 /* ILObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8D9D11C27A5100191F11 /* ILObject.h */; };
+		159D8DD811C27A5100191F11 /* ILReleasePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA011C27A5100191F11 /* ILReleasePool.cpp */; };
+		159D8DD911C27A5100191F11 /* ILReleasePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DA111C27A5100191F11 /* ILReleasePool.h */; };
+		159D8DDA11C27A5100191F11 /* ILReleasePoolDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA211C27A5100191F11 /* ILReleasePoolDelegate.cpp */; };
+		159D8DDB11C27A5100191F11 /* ILReleasePoolDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DA311C27A5100191F11 /* ILReleasePoolDelegate.h */; };
+		159D8DDC11C27A5100191F11 /* ILRunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA411C27A5100191F11 /* ILRunLoop.cpp */; };
+		159D8DDD11C27A5100191F11 /* ILRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DA511C27A5100191F11 /* ILRunLoop.h */; };
+		159D8DDE11C27A5100191F11 /* ILSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA611C27A5100191F11 /* ILSet.cpp */; };
+		159D8DDF11C27A5100191F11 /* ILSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DA711C27A5100191F11 /* ILSet.h */; };
+		159D8DE211C27A5100191F11 /* ILSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DAA11C27A5100191F11 /* ILSource.cpp */; };
+		159D8DE311C27A5100191F11 /* ILSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DAB11C27A5100191F11 /* ILSource.h */; };
+		159D8DE411C27A5100191F11 /* ILString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DAC11C27A5100191F11 /* ILString.cpp */; };
+		159D8DE511C27A5100191F11 /* ILString.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DAD11C27A5100191F11 /* ILString.h */; };
+		159D8DE611C27A5100191F11 /* ILThreadTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DAE11C27A5100191F11 /* ILThreadTarget.cpp */; };
+		159D8DE711C27A5100191F11 /* ILThreadTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DAF11C27A5100191F11 /* ILThreadTarget.h */; };
+		159D8DE811C27A5100191F11 /* ILTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DB011C27A5100191F11 /* ILTime.cpp */; };
+		159D8DE911C27A5100191F11 /* ILTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DB111C27A5100191F11 /* ILTime.h */; };
+		159D8DEA11C27A5100191F11 /* ILTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DB211C27A5100191F11 /* ILTimer.cpp */; };
+		159D8DEB11C27A5100191F11 /* ILTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DB311C27A5100191F11 /* ILTimer.h */; };
+		159D8DEE11C27A7500191F11 /* PlatformCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DED11C27A7500191F11 /* PlatformCore.h */; };
+		15BDBA9511E21B0A001AA895 /* ILTesting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BDBA9311E21B0A001AA895 /* ILTesting.cpp */; };
+		15BDBA9611E21B0A001AA895 /* ILTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 15BDBA9411E21B0A001AA895 /* ILTesting.h */; };
+		15BDBA9811E21B17001AA895 /* main-MoverCore-Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BDBA9711E21B17001AA895 /* main-MoverCore-Tests.cpp */; };
+		15BDBAAF11E21B62001AA895 /* ConsumptionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */; };
+		15BDBAB011E21B62001AA895 /* ILApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D7C11C27A5100191F11 /* ILApp.cpp */; };
+		15BDBAB111E21B62001AA895 /* ILData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D7E11C27A5100191F11 /* ILData.cpp */; };
+		15BDBAB211E21B62001AA895 /* ILHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8211C27A5100191F11 /* ILHash.cpp */; };
+		15BDBAB311E21B62001AA895 /* ILLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8611C27A5100191F11 /* ILLinkedList.cpp */; };
+		15BDBAB411E21B62001AA895 /* ILList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8A11C27A5100191F11 /* ILList.cpp */; };
+		15BDBAB511E21B62001AA895 /* ILMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D8E11C27A5100191F11 /* ILMap.cpp */; };
+		15BDBAB611E21B62001AA895 /* ILMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9211C27A5100191F11 /* ILMessage.cpp */; };
+		15BDBAB711E21B62001AA895 /* ILMessageHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9411C27A5100191F11 /* ILMessageHub.cpp */; };
+		15BDBAB811E21B62001AA895 /* ILNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9811C27A5100191F11 /* ILNumber.cpp */; };
+		15BDBAB911E21B62001AA895 /* ILObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D9C11C27A5100191F11 /* ILObject.cpp */; };
+		15BDBABA11E21B62001AA895 /* ILReleasePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA011C27A5100191F11 /* ILReleasePool.cpp */; };
+		15BDBABB11E21B62001AA895 /* ILReleasePoolDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA211C27A5100191F11 /* ILReleasePoolDelegate.cpp */; };
+		15BDBABC11E21B62001AA895 /* ILRunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA411C27A5100191F11 /* ILRunLoop.cpp */; };
+		15BDBABD11E21B62001AA895 /* ILSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DA611C27A5100191F11 /* ILSet.cpp */; };
+		15BDBABE11E21B62001AA895 /* ILSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DAA11C27A5100191F11 /* ILSource.cpp */; };
+		15BDBABF11E21B62001AA895 /* ILString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DAC11C27A5100191F11 /* ILString.cpp */; };
+		15BDBAC011E21B62001AA895 /* ILTesting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BDBA9311E21B0A001AA895 /* ILTesting.cpp */; };
+		15BDBAC111E21B62001AA895 /* ILThreadTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DAE11C27A5100191F11 /* ILThreadTarget.cpp */; };
+		15BDBAC211E21B62001AA895 /* ILTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DB011C27A5100191F11 /* ILTime.cpp */; };
+		15BDBAC311E21B62001AA895 /* ILTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DB211C27A5100191F11 /* ILTimer.cpp */; };
+		15BDBAC411E21B62001AA895 /* main-MoverCore-Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BDBA9711E21B17001AA895 /* main-MoverCore-Tests.cpp */; };
+		15BDBAC511E21B62001AA895 /* StreamDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */; };
+		15BDBAEB11E21CDF001AA895 /* MoverCoreTests.h in Headers */ = {isa = PBXBuildFile; fileRef = 15BDBAE911E21CDF001AA895 /* MoverCoreTests.h */; };
+		15BDBAFB11E21E4A001AA895 /* MoverCoreTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BDBAEA11E21CDF001AA895 /* MoverCoreTests.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		157C386611DF8A0C0051D707 /* ILHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ILHash.h; sourceTree = "<group>"; };
+		1582F98511DE85BA006BCD57 /* StreamDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamDecoder.h; sourceTree = "<group>"; };
+		1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamDecoder.cpp; sourceTree = "<group>"; };
+		1582F9B911DE89D6006BCD57 /* Protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Protocol.h; sourceTree = "<group>"; };
+		1582F9D011DE8ACC006BCD57 /* ConsumptionQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsumptionQueue.h; sourceTree = "<group>"; };
+		1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsumptionQueue.cpp; sourceTree = "<group>"; };
+		159D8D7511C27A2E00191F11 /* libMoverCore.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libMoverCore.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		159D8D7C11C27A5100191F11 /* ILApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILApp.cpp; sourceTree = "<group>"; };
+		159D8D7D11C27A5100191F11 /* ILApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILApp.h; sourceTree = "<group>"; };
+		159D8D7E11C27A5100191F11 /* ILData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILData.cpp; sourceTree = "<group>"; };
+		159D8D7F11C27A5100191F11 /* ILData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILData.h; sourceTree = "<group>"; };
+		159D8D8211C27A5100191F11 /* ILHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILHash.cpp; sourceTree = "<group>"; };
+		159D8D8611C27A5100191F11 /* ILLinkedList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILLinkedList.cpp; sourceTree = "<group>"; };
+		159D8D8711C27A5100191F11 /* ILLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILLinkedList.h; sourceTree = "<group>"; };
+		159D8D8A11C27A5100191F11 /* ILList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILList.cpp; sourceTree = "<group>"; };
+		159D8D8B11C27A5100191F11 /* ILList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILList.h; sourceTree = "<group>"; };
+		159D8D8E11C27A5100191F11 /* ILMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILMap.cpp; sourceTree = "<group>"; };
+		159D8D8F11C27A5100191F11 /* ILMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILMap.h; sourceTree = "<group>"; };
+		159D8D9211C27A5100191F11 /* ILMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILMessage.cpp; sourceTree = "<group>"; };
+		159D8D9311C27A5100191F11 /* ILMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILMessage.h; sourceTree = "<group>"; };
+		159D8D9411C27A5100191F11 /* ILMessageHub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILMessageHub.cpp; sourceTree = "<group>"; };
+		159D8D9511C27A5100191F11 /* ILMessageHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILMessageHub.h; sourceTree = "<group>"; };
+		159D8D9811C27A5100191F11 /* ILNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILNumber.cpp; sourceTree = "<group>"; };
+		159D8D9911C27A5100191F11 /* ILNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILNumber.h; sourceTree = "<group>"; };
+		159D8D9C11C27A5100191F11 /* ILObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILObject.cpp; sourceTree = "<group>"; };
+		159D8D9D11C27A5100191F11 /* ILObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILObject.h; sourceTree = "<group>"; };
+		159D8DA011C27A5100191F11 /* ILReleasePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILReleasePool.cpp; sourceTree = "<group>"; };
+		159D8DA111C27A5100191F11 /* ILReleasePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILReleasePool.h; sourceTree = "<group>"; };
+		159D8DA211C27A5100191F11 /* ILReleasePoolDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILReleasePoolDelegate.cpp; sourceTree = "<group>"; };
+		159D8DA311C27A5100191F11 /* ILReleasePoolDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILReleasePoolDelegate.h; sourceTree = "<group>"; };
+		159D8DA411C27A5100191F11 /* ILRunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILRunLoop.cpp; sourceTree = "<group>"; };
+		159D8DA511C27A5100191F11 /* ILRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILRunLoop.h; sourceTree = "<group>"; };
+		159D8DA611C27A5100191F11 /* ILSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILSet.cpp; sourceTree = "<group>"; };
+		159D8DA711C27A5100191F11 /* ILSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILSet.h; sourceTree = "<group>"; };
+		159D8DAA11C27A5100191F11 /* ILSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILSource.cpp; sourceTree = "<group>"; };
+		159D8DAB11C27A5100191F11 /* ILSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILSource.h; sourceTree = "<group>"; };
+		159D8DAC11C27A5100191F11 /* ILString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILString.cpp; sourceTree = "<group>"; };
+		159D8DAD11C27A5100191F11 /* ILString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILString.h; sourceTree = "<group>"; };
+		159D8DAE11C27A5100191F11 /* ILThreadTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILThreadTarget.cpp; sourceTree = "<group>"; };
+		159D8DAF11C27A5100191F11 /* ILThreadTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILThreadTarget.h; sourceTree = "<group>"; };
+		159D8DB011C27A5100191F11 /* ILTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILTime.cpp; sourceTree = "<group>"; };
+		159D8DB111C27A5100191F11 /* ILTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILTime.h; sourceTree = "<group>"; };
+		159D8DB211C27A5100191F11 /* ILTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILTimer.cpp; sourceTree = "<group>"; };
+		159D8DB311C27A5100191F11 /* ILTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILTimer.h; sourceTree = "<group>"; };
+		159D8DED11C27A7500191F11 /* PlatformCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCore.h; sourceTree = "<group>"; };
+		15BDBA8A11E21AF7001AA895 /* MoverCore-Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "MoverCore-Tests"; sourceTree = BUILT_PRODUCTS_DIR; };
+		15BDBA9311E21B0A001AA895 /* ILTesting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILTesting.cpp; sourceTree = "<group>"; };
+		15BDBA9411E21B0A001AA895 /* ILTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILTesting.h; sourceTree = "<group>"; };
+		15BDBA9711E21B17001AA895 /* main-MoverCore-Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "main-MoverCore-Tests.cpp"; sourceTree = "<group>"; };
+		15BDBAE911E21CDF001AA895 /* MoverCoreTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoverCoreTests.h; sourceTree = "<group>"; };
+		15BDBAEA11E21CDF001AA895 /* MoverCoreTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoverCoreTests.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		159D8D7211C27A2E00191F11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		15BDBA8811E21AF7001AA895 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1582F97D11DE857E006BCD57 /* Mover Core */ = {
+			isa = PBXGroup;
+			children = (
+				1582F98511DE85BA006BCD57 /* StreamDecoder.h */,
+				1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */,
+				1582F9B911DE89D6006BCD57 /* Protocol.h */,
+				1582F9D011DE8ACC006BCD57 /* ConsumptionQueue.h */,
+				1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */,
+			);
+			name = "Mover Core";
+			sourceTree = "<group>";
+		};
+		159D8D6911C27A2E00191F11 = {
+			isa = PBXGroup;
+			children = (
+				15BDBA8E11E21AFE001AA895 /* Tests */,
+				1582F97D11DE857E006BCD57 /* Mover Core */,
+				159D8D7011C27A2E00191F11 /* Platform Core */,
+				159D8D7611C27A2E00191F11 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		159D8D7011C27A2E00191F11 /* Platform Core */ = {
+			isa = PBXGroup;
+			children = (
+				159D8DED11C27A7500191F11 /* PlatformCore.h */,
+				159D8D7C11C27A5100191F11 /* ILApp.cpp */,
+				159D8D7D11C27A5100191F11 /* ILApp.h */,
+				159D8D7E11C27A5100191F11 /* ILData.cpp */,
+				159D8D7F11C27A5100191F11 /* ILData.h */,
+				159D8D8211C27A5100191F11 /* ILHash.cpp */,
+				157C386611DF8A0C0051D707 /* ILHash.h */,
+				159D8D8611C27A5100191F11 /* ILLinkedList.cpp */,
+				159D8D8711C27A5100191F11 /* ILLinkedList.h */,
+				159D8D8A11C27A5100191F11 /* ILList.cpp */,
+				159D8D8B11C27A5100191F11 /* ILList.h */,
+				159D8D8E11C27A5100191F11 /* ILMap.cpp */,
+				159D8D8F11C27A5100191F11 /* ILMap.h */,
+				159D8D9211C27A5100191F11 /* ILMessage.cpp */,
+				159D8D9311C27A5100191F11 /* ILMessage.h */,
+				159D8D9411C27A5100191F11 /* ILMessageHub.cpp */,
+				159D8D9511C27A5100191F11 /* ILMessageHub.h */,
+				159D8D9811C27A5100191F11 /* ILNumber.cpp */,
+				159D8D9911C27A5100191F11 /* ILNumber.h */,
+				159D8D9C11C27A5100191F11 /* ILObject.cpp */,
+				159D8D9D11C27A5100191F11 /* ILObject.h */,
+				159D8DA011C27A5100191F11 /* ILReleasePool.cpp */,
+				159D8DA111C27A5100191F11 /* ILReleasePool.h */,
+				159D8DA211C27A5100191F11 /* ILReleasePoolDelegate.cpp */,
+				159D8DA311C27A5100191F11 /* ILReleasePoolDelegate.h */,
+				159D8DA411C27A5100191F11 /* ILRunLoop.cpp */,
+				159D8DA511C27A5100191F11 /* ILRunLoop.h */,
+				159D8DA611C27A5100191F11 /* ILSet.cpp */,
+				159D8DA711C27A5100191F11 /* ILSet.h */,
+				159D8DAA11C27A5100191F11 /* ILSource.cpp */,
+				159D8DAB11C27A5100191F11 /* ILSource.h */,
+				159D8DAC11C27A5100191F11 /* ILString.cpp */,
+				159D8DAD11C27A5100191F11 /* ILString.h */,
+				159D8DAE11C27A5100191F11 /* ILThreadTarget.cpp */,
+				159D8DAF11C27A5100191F11 /* ILThreadTarget.h */,
+				159D8DB011C27A5100191F11 /* ILTime.cpp */,
+				159D8DB111C27A5100191F11 /* ILTime.h */,
+				159D8DB211C27A5100191F11 /* ILTimer.cpp */,
+				159D8DB311C27A5100191F11 /* ILTimer.h */,
+			);
+			name = "Platform Core";
+			sourceTree = "<group>";
+		};
+		159D8D7611C27A2E00191F11 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				159D8D7511C27A2E00191F11 /* libMoverCore.dylib */,
+				15BDBA8A11E21AF7001AA895 /* MoverCore-Tests */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		15BDBA8E11E21AFE001AA895 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				15BDBA9411E21B0A001AA895 /* ILTesting.h */,
+				15BDBA9311E21B0A001AA895 /* ILTesting.cpp */,
+				15BDBA9711E21B17001AA895 /* main-MoverCore-Tests.cpp */,
+				15BDBAE911E21CDF001AA895 /* MoverCoreTests.h */,
+				15BDBAEA11E21CDF001AA895 /* MoverCoreTests.cpp */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		159D8D7311C27A2E00191F11 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				159D8DB511C27A5100191F11 /* ILApp.h in Headers */,
+				159D8DB711C27A5100191F11 /* ILData.h in Headers */,
+				157C386511DF8A0C0051D707 /* ILHash.h in Headers */,
+				159D8DBF11C27A5100191F11 /* ILLinkedList.h in Headers */,
+				159D8DC311C27A5100191F11 /* ILList.h in Headers */,
+				159D8DC711C27A5100191F11 /* ILMap.h in Headers */,
+				159D8DCB11C27A5100191F11 /* ILMessage.h in Headers */,
+				159D8DCD11C27A5100191F11 /* ILMessageHub.h in Headers */,
+				159D8DD111C27A5100191F11 /* ILNumber.h in Headers */,
+				159D8DD511C27A5100191F11 /* ILObject.h in Headers */,
+				159D8DD911C27A5100191F11 /* ILReleasePool.h in Headers */,
+				159D8DDB11C27A5100191F11 /* ILReleasePoolDelegate.h in Headers */,
+				159D8DDD11C27A5100191F11 /* ILRunLoop.h in Headers */,
+				159D8DDF11C27A5100191F11 /* ILSet.h in Headers */,
+				159D8DE311C27A5100191F11 /* ILSource.h in Headers */,
+				159D8DE511C27A5100191F11 /* ILString.h in Headers */,
+				159D8DE711C27A5100191F11 /* ILThreadTarget.h in Headers */,
+				159D8DE911C27A5100191F11 /* ILTime.h in Headers */,
+				159D8DEB11C27A5100191F11 /* ILTimer.h in Headers */,
+				159D8DEE11C27A7500191F11 /* PlatformCore.h in Headers */,
+				1582F98711DE85BA006BCD57 /* StreamDecoder.h in Headers */,
+				1582F9BA11DE89D6006BCD57 /* Protocol.h in Headers */,
+				1582F9D211DE8ACC006BCD57 /* ConsumptionQueue.h in Headers */,
+				15BDBA9611E21B0A001AA895 /* ILTesting.h in Headers */,
+				15BDBAEB11E21CDF001AA895 /* MoverCoreTests.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		159D8D7411C27A2E00191F11 /* MoverCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 159D8D7911C27A2E00191F11 /* Build configuration list for PBXNativeTarget "MoverCore" */;
+			buildPhases = (
+				159D8D7111C27A2E00191F11 /* Sources */,
+				159D8D7211C27A2E00191F11 /* Frameworks */,
+				159D8D7311C27A2E00191F11 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MoverCore;
+			productName = MoverCore;
+			productReference = 159D8D7511C27A2E00191F11 /* libMoverCore.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		15BDBA8911E21AF7001AA895 /* MoverCore-Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 15BDBA8F11E21AFE001AA895 /* Build configuration list for PBXNativeTarget "MoverCore-Tests" */;
+			buildPhases = (
+				15BDBA8711E21AF7001AA895 /* Sources */,
+				15BDBA8811E21AF7001AA895 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MoverCore-Tests";
+			productName = "MoverCore-Tests";
+			productReference = 15BDBA8A11E21AF7001AA895 /* MoverCore-Tests */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		159D8D6B11C27A2E00191F11 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 159D8D6E11C27A2E00191F11 /* Build configuration list for PBXProject "MoverCore" */;
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 159D8D6911C27A2E00191F11;
+			productRefGroup = 159D8D7611C27A2E00191F11 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				159D8D7411C27A2E00191F11 /* MoverCore */,
+				15BDBA8911E21AF7001AA895 /* MoverCore-Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		159D8D7111C27A2E00191F11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				159D8DB411C27A5100191F11 /* ILApp.cpp in Sources */,
+				159D8DB611C27A5100191F11 /* ILData.cpp in Sources */,
+				159D8DBA11C27A5100191F11 /* ILHash.cpp in Sources */,
+				159D8DBE11C27A5100191F11 /* ILLinkedList.cpp in Sources */,
+				159D8DC211C27A5100191F11 /* ILList.cpp in Sources */,
+				159D8DC611C27A5100191F11 /* ILMap.cpp in Sources */,
+				159D8DCA11C27A5100191F11 /* ILMessage.cpp in Sources */,
+				159D8DCC11C27A5100191F11 /* ILMessageHub.cpp in Sources */,
+				159D8DD011C27A5100191F11 /* ILNumber.cpp in Sources */,
+				159D8DD411C27A5100191F11 /* ILObject.cpp in Sources */,
+				159D8DD811C27A5100191F11 /* ILReleasePool.cpp in Sources */,
+				159D8DDA11C27A5100191F11 /* ILReleasePoolDelegate.cpp in Sources */,
+				159D8DDC11C27A5100191F11 /* ILRunLoop.cpp in Sources */,
+				159D8DDE11C27A5100191F11 /* ILSet.cpp in Sources */,
+				159D8DE211C27A5100191F11 /* ILSource.cpp in Sources */,
+				159D8DE411C27A5100191F11 /* ILString.cpp in Sources */,
+				159D8DE611C27A5100191F11 /* ILThreadTarget.cpp in Sources */,
+				159D8DE811C27A5100191F11 /* ILTime.cpp in Sources */,
+				159D8DEA11C27A5100191F11 /* ILTimer.cpp in Sources */,
+				1582F98811DE85BA006BCD57 /* StreamDecoder.cpp in Sources */,
+				1582F9D311DE8ACC006BCD57 /* ConsumptionQueue.cpp in Sources */,
+				15BDBA9511E21B0A001AA895 /* ILTesting.cpp in Sources */,
+				15BDBA9811E21B17001AA895 /* main-MoverCore-Tests.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		15BDBA8711E21AF7001AA895 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				15BDBAAF11E21B62001AA895 /* ConsumptionQueue.cpp in Sources */,
+				15BDBAB011E21B62001AA895 /* ILApp.cpp in Sources */,
+				15BDBAB111E21B62001AA895 /* ILData.cpp in Sources */,
+				15BDBAB211E21B62001AA895 /* ILHash.cpp in Sources */,
+				15BDBAB311E21B62001AA895 /* ILLinkedList.cpp in Sources */,
+				15BDBAB411E21B62001AA895 /* ILList.cpp in Sources */,
+				15BDBAB511E21B62001AA895 /* ILMap.cpp in Sources */,
+				15BDBAB611E21B62001AA895 /* ILMessage.cpp in Sources */,
+				15BDBAB711E21B62001AA895 /* ILMessageHub.cpp in Sources */,
+				15BDBAB811E21B62001AA895 /* ILNumber.cpp in Sources */,
+				15BDBAB911E21B62001AA895 /* ILObject.cpp in Sources */,
+				15BDBABA11E21B62001AA895 /* ILReleasePool.cpp in Sources */,
+				15BDBABB11E21B62001AA895 /* ILReleasePoolDelegate.cpp in Sources */,
+				15BDBABC11E21B62001AA895 /* ILRunLoop.cpp in Sources */,
+				15BDBABD11E21B62001AA895 /* ILSet.cpp in Sources */,
+				15BDBABE11E21B62001AA895 /* ILSource.cpp in Sources */,
+				15BDBABF11E21B62001AA895 /* ILString.cpp in Sources */,
+				15BDBAC011E21B62001AA895 /* ILTesting.cpp in Sources */,
+				15BDBAC111E21B62001AA895 /* ILThreadTarget.cpp in Sources */,
+				15BDBAC211E21B62001AA895 /* ILTime.cpp in Sources */,
+				15BDBAC311E21B62001AA895 /* ILTimer.cpp in Sources */,
+				15BDBAC411E21B62001AA895 /* main-MoverCore-Tests.cpp in Sources */,
+				15BDBAC511E21B62001AA895 /* StreamDecoder.cpp in Sources */,
+				15BDBAFB11E21E4A001AA895 /* MoverCoreTests.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		159D8D7711C27A2E00191F11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		159D8D7811C27A2E00191F11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		159D8D7A11C27A2E00191F11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = MoverCore;
+			};
+			name = Debug;
+		};
+		159D8D7B11C27A2E00191F11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = MoverCore;
+			};
+			name = Release;
+		};
+		15BDBA8C11E21AF7001AA895 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "MoverCore-Tests";
+			};
+			name = Debug;
+		};
+		15BDBA8D11E21AF7001AA895 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "MoverCore-Tests";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		159D8D6E11C27A2E00191F11 /* Build configuration list for PBXProject "MoverCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				159D8D7711C27A2E00191F11 /* Debug */,
+				159D8D7811C27A2E00191F11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		159D8D7911C27A2E00191F11 /* Build configuration list for PBXNativeTarget "MoverCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				159D8D7A11C27A2E00191F11 /* Debug */,
+				159D8D7B11C27A2E00191F11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		15BDBA8F11E21AFE001AA895 /* Build configuration list for PBXNativeTarget "MoverCore-Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				15BDBA8C11E21AF7001AA895 /* Debug */,
+				15BDBA8D11E21AF7001AA895 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 159D8D6B11C27A2E00191F11 /* Project object */;
+}

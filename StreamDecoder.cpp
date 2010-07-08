@@ -172,6 +172,8 @@ namespace Mover {
 			return false;
 		
 		ILData* itemValueData = _queue->dataWithLength(index);
+		_queue->dequeueDataOfLength(index + 1);
+		
 		ILString* itemValue = ILString::stringWithData(itemValueData, kILStringEncodingUTF8);
 		
 		if (!itemValue) {

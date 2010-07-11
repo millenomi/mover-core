@@ -122,4 +122,38 @@ namespace Mover {
 		
 		ILTestFalse(ILStringCodePointsFromUTF8(encodedString, lengthOfEncodedString, &codePoints, &codePointsLength));
 	}
+	
+	void ILString_UTF8Tests::testOverlongSequence() {
+		// This is an overlong sequence encoding ASCII 13 (\r).
+		uint8_t overlongSequence[] = { 0xC0, 0x8D };
+		size_t lengthOfEncodedString = sizeof(overlongSequence) / sizeof(uint8_t);
+		
+		ILCodePoint* codePoints;
+		size_t codePointsLength;
+
+		ILTestFalse(ILStringCodePointsFromUTF8(overlongSequence, lengthOfEncodedString, &codePoints, &codePointsLength));
+	}
+	
+	void ILString_UTF8Tests::testErroneouslyContinuedSequence() {
+		// This is a sequence that starts with a two-byte seq marker, but has three continuation bytes.
+		uint8_t erroneouslyContinuedSequence[] = { 0xE2, 0x88, 0x9E, 0x9E };
+		size_t lengthOfEncodedString = sizeof(erroneouslyContinuedSequence) / sizeof(uint8_t);
+		
+		ILCodePoint* codePoints;
+		size_t codePointsLength;
+		
+		ILTestFalse(ILStringCodePointsFromUTF8(erroneouslyContinuedSequence, lengthOfEncodedString, &codePoints, &codePointsLength));		
+	}
+	
+#if ILPlatformCoreSupportEntireUnicodeRange
+	void ILString_UTF8Tests::testInvalidCodePointEncoding() {
+		ILCodePoint invalidCodePoint = 0x20FFFF;
+		
+		uint8_t* bytes;
+		size_t bytesLength;
+		
+		ILTestFalse(ILStringUTF8FromCodePoints(&invalidCodePoint, 1, &bytes, &bytesLength));
+	}
+#endif
+	
 }

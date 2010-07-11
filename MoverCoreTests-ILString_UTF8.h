@@ -18,12 +18,25 @@ namespace Mover {
 		ILTestCase(ILString_UTF8Tests) {
 			ILTestWith(testFromASCIIAndBack);
 			ILTestWith(testFromMixedCharsAndBack);
+			
 			ILTestWith(testTruncatedString);
+			ILTestWith(testOverlongSequence);
+			ILTestWith(testErroneouslyContinuedSequence);
+			
+#if ILPlatformCoreSupportEntireUnicodeRange
+			ILTestWith(testInvalidCodePointEncoding);
+#endif
 		}
 		
 		void testFromASCIIAndBack();
 		void testFromMixedCharsAndBack();
 		void testTruncatedString();
+		void testOverlongSequence();
+		void testErroneouslyContinuedSequence();
+		
+#if ILPlatformCoreSupportEntireUnicodeRange
+		void testInvalidCodePointEncoding();
+#endif
 	};
 }
 

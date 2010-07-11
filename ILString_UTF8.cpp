@@ -9,7 +9,7 @@
 
 #include "ILString_UTF8.h"
 
-extern bool ILStringUTF8FromCharacters(ILCodePoint* codePoints, size_t length,
+extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 									   uint8_t** UTF8Bytes, size_t* UTF8Length)
 {
 	// we do a naive estimate of required space thusly: given that most strings will have 1- or 2-byte-encoded code points, we simply do length * 2. If we're wrong (ick), we realloc() the whole thing * 2.5, * 3, * 3.5 and so on.
@@ -133,10 +133,14 @@ extern bool ILStringUTF8FromCharacters(ILCodePoint* codePoints, size_t length,
 	}
 	
 	*UTF8Bytes = buffer;
-	*UTF8Length = bufferLength;
+	*UTF8Length = usedBufferLength;
 	
 	return true;
 }
+
+// must be 10______ (__000000 == 0xC0; 10000000 == 0x80)
+#define ILStringIsBytePartButNotHeadOfCodePointSequence(x) \
+	( ( (x) & 0xC0 ) != 0x80 )
 
 extern bool ILStringCodePointsFromUTF8(uint8_t* bytes, size_t length,
 									   ILCodePoint** codePoints, size_t* codePointsLength) {
@@ -148,17 +152,22 @@ extern bool ILStringCodePointsFromUTF8(uint8_t* bytes, size_t length,
 	size_t offset = 0;
 	while (offset < length) {
 		
-		if (bytes[offset] & 0x80 == 0) { // is the first byte of the form 0...?
+		if ((bytes[offset] & 0x80) == 0) { // is the first byte of the form 0...?
 			
 			// Bytes under 127 are automatically valid code points.
 			
 			buffer[i] = (ILCodePoint) bytes[offset];
 			offset++;
 			
-		} else if (bytes[offset] & 0xC0 == 0xC0) { // is it 110...?
+		} else if ((bytes[offset] & 0xE0) == 0xC0) { // is it 110...?
 			
 			// check bounds
 			if (offset + 1 >= length)
+				goto end_with_error;
+			
+			// sanity check on following byte(s)
+			// must be 10______ (__000000 == 0xC0; 10000000 == 0x80)
+			if (ILStringIsBytePartButNotHeadOfCodePointSequence(bytes[offset + 1]))
 				goto end_with_error;
 			
 			// 110aaabb 10cccccc --> ...00aaa bbcccccc
@@ -166,7 +175,7 @@ extern bool ILStringCodePointsFromUTF8(uint8_t* bytes, size_t length,
 			//          00______ == 0x3F
 			buffer[i] = 
 				((0x1F & bytes[offset]) << 6) | /* the 'a's and 'b's */
-				(0x3F & bytes[offset]); /* the 'c's */
+				(0x3F & bytes[offset + 1]); /* the 'c's */
 			
 			// check for an (invalid!) overlong sequence or invalid code point decoded
 			if (buffer[i] < 0x80 || buffer[i] > 0x7FF)
@@ -174,13 +183,19 @@ extern bool ILStringCodePointsFromUTF8(uint8_t* bytes, size_t length,
 			
 			offset += 2;
 
-		} else if (bytes[offset] & 0xE0 == 0xE0) { // is it 1110...?
+		} else if ((bytes[offset] & 0xF0) == 0xE0) { // is it 1110...?
 
 			// check bounds
 			if (offset + 2 >= length)
 				goto end_with_error;
-			
-			
+
+			// sanity check on following byte(s)
+			if (ILStringIsBytePartButNotHeadOfCodePointSequence(bytes[offset + 1]))
+				goto end_with_error;			
+
+			if (ILStringIsBytePartButNotHeadOfCodePointSequence(bytes[offset + 2]))
+				goto end_with_error;			
+
 			// 1110aaaa 10bbbbcc 10dddddd --> aaaabbbb ccdddddd
 			// 0000____ = 0xF
 			//          00______ = 0x3F
@@ -201,10 +216,22 @@ extern bool ILStringCodePointsFromUTF8(uint8_t* bytes, size_t length,
 		
 		}
 #if ILPlatformCoreSupportEntireUnicodeRange
-		else if (bytes[offset] & 0xF0 == 0xF0) { // is it 11110...?
+		else if ((bytes[offset] & 0xF8) == 0xF0) { // is it 11110...?
 			
 			// check bounds
 			if (offset + 3 >= length)
+				goto end_with_error;
+
+			// sanity check on following byte(s)
+			// must be 10______ (__000000 == 0xC0; 10000000 == 0x80)
+			
+			if (ILStringIsBytePartButNotHeadOfCodePointSequence(bytes[offset + 1]))
+				goto end_with_error;
+
+			if (ILStringIsBytePartButNotHeadOfCodePointSequence(bytes[offset + 2]))
+				goto end_with_error;
+
+			if (ILStringIsBytePartButNotHeadOfCodePointSequence(bytes[offset + 3]))
 				goto end_with_error;
 			
 			// 11110aaa 10bbbbbb 10cccccc 10dddddd --> 000aaabb bbbbcccc ccdddddd

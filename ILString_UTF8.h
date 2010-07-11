@@ -15,7 +15,7 @@
 // For internal use only.
 // Returned storage is malloc()'d. Caller has responsibility to free() it after use.
 // Returns false on encoding error.
-extern bool ILStringUTF8FromCharacters(ILCodePoint* codePoints, size_t length,
+extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 									   uint8_t** UTF8Bytes, size_t* UTF8Length);
 
 // For internal use only.

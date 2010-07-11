@@ -10,6 +10,12 @@
 		1508FC8F11E6684500E7DD9E /* ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */; };
 		1508FC9011E6684500E7DD9E /* ILString_UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = 1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */; };
 		1508FC9111E6684500E7DD9E /* ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */; };
+		1566F8BD11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = 1566F8BB11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.h */; };
+		1566F8BE11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1566F8BC11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp */; };
+		1566F8BF11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1566F8BC11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp */; };
+		1566F8C211E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1566F8C011E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.h */; };
+		1566F8C311E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1566F8C111E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp */; };
+		1566F8C411E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1566F8C111E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp */; };
 		157C386511DF8A0C0051D707 /* ILHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 157C386611DF8A0C0051D707 /* ILHash.h */; };
 		1582F98711DE85BA006BCD57 /* StreamDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1582F98511DE85BA006BCD57 /* StreamDecoder.h */; };
 		1582F98811DE85BA006BCD57 /* StreamDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */; };
@@ -87,6 +93,10 @@
 /* Begin PBXFileReference section */
 		1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILString_UTF8.h; sourceTree = "<group>"; };
 		1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILString_UTF8.cpp; sourceTree = "<group>"; };
+		1566F8BB11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MoverCoreTests-ILString_UTF8.h"; sourceTree = "<group>"; };
+		1566F8BC11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "MoverCoreTests-ILString_UTF8.cpp"; sourceTree = "<group>"; };
+		1566F8C011E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MoverCoreTests-ConsumptionQueue.h"; sourceTree = "<group>"; };
+		1566F8C111E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "MoverCoreTests-ConsumptionQueue.cpp"; sourceTree = "<group>"; };
 		157C386611DF8A0C0051D707 /* ILHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ILHash.h; sourceTree = "<group>"; };
 		1582F98511DE85BA006BCD57 /* StreamDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamDecoder.h; sourceTree = "<group>"; };
 		1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamDecoder.cpp; sourceTree = "<group>"; };
@@ -244,6 +254,10 @@
 				15BDBA9311E21B0A001AA895 /* ILTesting.cpp */,
 				15BDBA9711E21B17001AA895 /* main-MoverCore-Tests.cpp */,
 				15BDBAE911E21CDF001AA895 /* MoverCoreTests.h */,
+				1566F8BB11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.h */,
+				1566F8BC11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp */,
+				1566F8C011E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.h */,
+				1566F8C111E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp */,
 				15BDBAEA11E21CDF001AA895 /* MoverCoreTests.cpp */,
 			);
 			name = Tests;
@@ -282,6 +296,8 @@
 				15BDBA9611E21B0A001AA895 /* ILTesting.h in Headers */,
 				15BDBAEB11E21CDF001AA895 /* MoverCoreTests.h in Headers */,
 				1508FC9011E6684500E7DD9E /* ILString_UTF8.h in Headers */,
+				1566F8BD11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.h in Headers */,
+				1566F8C211E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,6 +385,8 @@
 				15BDBA9511E21B0A001AA895 /* ILTesting.cpp in Sources */,
 				15BDBA9811E21B17001AA895 /* main-MoverCore-Tests.cpp in Sources */,
 				1508FC9111E6684500E7DD9E /* ILString_UTF8.cpp in Sources */,
+				1566F8BE11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp in Sources */,
+				1566F8C311E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +419,8 @@
 				15BDBAC511E21B62001AA895 /* StreamDecoder.cpp in Sources */,
 				15BDBAFB11E21E4A001AA895 /* MoverCoreTests.cpp in Sources */,
 				1508FC8F11E6684500E7DD9E /* ILString_UTF8.cpp in Sources */,
+				1566F8BF11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp in Sources */,
+				1566F8C411E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

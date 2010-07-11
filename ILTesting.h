@@ -67,9 +67,12 @@ namespace ILTesting {
 #define ILTestNULL(x) this->assertTrue(x == NULL, "is NULL: %s at %s:%d", #x, __FILE__, __LINE__)
 #define ILTestNotNULL(x) this->assertTrue(x != NULL, "is not NULL: %s at %s:%d", #x, __FILE__, __LINE__)
 	
-#define ILTestEqualValues(a, b) this->assertTrue(sizeof(a) == sizeof(b) && a == b, "%s == %s at %s:%d", #a, #b, __FILE__, __LINE__)
-#define ILTestNotEqualValues(a, b) this->assertTrue(sizeof(a) != sizeof(b) || a != b, "%s != %s at %s:%d", #a, #b, __FILE__, __LINE__)
-	
+#define ILTestIdenticalValues(a, b) this->assertTrue(sizeof(a) == sizeof(b) && a == b, "%s == %s at %s:%d", #a, #b, __FILE__, __LINE__)
+#define ILTestNotIdenticalValues(a, b) this->assertTrue(sizeof(a) != sizeof(b) || a != b, "%s != %s at %s:%d", #a, #b, __FILE__, __LINE__)
+
+#define ILTestEqualValues(a, b) this->assertTrue(a == b, "%s == %s at %s:%d", #a, #b, __FILE__, __LINE__)
+#define ILTestNotEqualValues(a, b) this->assertTrue(a != b, "%s != %s at %s:%d", #a, #b, __FILE__, __LINE__)
+
 #define ILTestEqualObjects(a, b) this->assertTrue((a)->equals(b), "%s equal()s %s at %s:%d", #a, #b, __FILE__, __LINE__)
 #define ILTestNotEqualObjects(a, b) this->assertTrue(!((a)->equals(b)), "%s not equal()s %s at %s:%d", #a, #b, __FILE__, __LINE__)
 }
@@ -79,7 +82,7 @@ namespace ILTesting {
 
 #define ILTestCase(className) \
 	public: \
-	className(Results* r = NULL) : ::ILTesting::TestCase(r, #className) {} \
+	className(::ILTesting::Results* r = NULL) : ::ILTesting::TestCase(r, #className) {} \
 	virtual void run()
 // Use ILTestCase(MyClass) { ILTestWith(testXyz); }
 

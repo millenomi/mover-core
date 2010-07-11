@@ -40,7 +40,7 @@ extern bool ILStringUTF8FromCharacters(ILCodePoint* codePoints, size_t length,
 		ILCodePoint p = codePoints[i];
 		
 		// we increase the current offset to the desired end, then use the new offset to realloc if needed, then write into it going backwards.
-		
+				
 		if (p <= 0x7F) { // one byte, starting with 0
 			
 			usedBufferLength++;
@@ -67,7 +67,11 @@ extern bool ILStringUTF8FromCharacters(ILCodePoint* codePoints, size_t length,
 				(p & 0x3F /* 00______ */)
 			/* == 10000000 | 00bbbbbb == 10bbbbbb */;
 			
-		} else if (p > 0x800 && p <= 0xFFFF) {
+		} else if (p > 0x800
+#if ILPlatformCoreSupportEntireUnicodeRange
+				   && p <= 0xFFFF
+#endif
+				   ) {
 			// CP: aaaabbbb bbcccccc
 			// UTF-8 -> 1110aaaa 10bbbbbb 10cccccc
 			
@@ -138,49 +142,99 @@ extern bool ILStringCodePointsFromUTF8(uint8_t* bytes, size_t length,
 									   ILCodePoint** codePoints, size_t* codePointsLength) {
 	
 	// reverse estimate: since the number of UTF-8 bytes is NEVER less than the number of code points it encodes, we can simply allocate the same number of bytes and never need to realloc().
-	uint8_t* buffer = (uint8_t*) malloc(length);
+	ILCodePoint* buffer = (ILCodePoint*) malloc(length * sizeof(ILCodePoint));
 	
 	size_t i = 0;
 	size_t offset = 0;
 	while (offset < length) {
 		
-		// is the first byte of the form 0...?
-		if (bytes[offset] & 0x80 == 0) {
+		if (bytes[offset] & 0x80 == 0) { // is the first byte of the form 0...?
+			
+			// Bytes under 127 are automatically valid code points.
+			
 			buffer[i] = (ILCodePoint) bytes[offset];
 			offset++;
+			
 		} else if (bytes[offset] & 0xC0 == 0xC0) { // is it 110...?
+			
 			// check bounds
-			if (offset + 1 >= length) {
-				free(buffer);
-				return false;
-			}
+			if (offset + 1 >= length)
+				goto end_with_error;
 			
 			// 110aaabb 10cccccc --> ...00aaa bbcccccc
-			// 000___00 == 0x1C
-			// 000000__ == 0x3
-			// 00______ == 0x3F
+			// 000_____ == 0x1F
+			//          00______ == 0x3F
 			buffer[i] = 
-				(0x1C & bytes[offset] << 6) | /* the 'a's */
-				(0x3  & bytes[offset] << 6) | /* the 'b's */ 
-				(0x3F & bytes[offset + 1]);   /* the 'c's */
-			#warning TODO check for an overlong sequence
+				((0x1F & bytes[offset]) << 6) | /* the 'a's and 'b's */
+				(0x3F & bytes[offset]); /* the 'c's */
+			
+			// check for an (invalid!) overlong sequence or invalid code point decoded
+			if (buffer[i] < 0x80 || buffer[i] > 0x7FF)
+				goto end_with_error;
+			
+			offset += 2;
 
-		} else if (false /* TODO bytes[offset] starts with 1110... */) {
-			#warning TODO decode three-byte sequences
-			#warning TODO check for an overlong sequence
+		} else if (bytes[offset] & 0xE0 == 0xE0) { // is it 1110...?
+
+			// check bounds
+			if (offset + 2 >= length)
+				goto end_with_error;
+			
+			
+			// 1110aaaa 10bbbbcc 10dddddd --> aaaabbbb ccdddddd
+			// 0000____ = 0xF
+			//          00______ = 0x3F
+			buffer[i] =
+				((0xF & bytes[offset]) << 12) | /* the 'a's */
+				((0x3F & bytes[offset + 1]) << 6) | /* the 'b's and 'c's */
+				(0x3F & bytes[offset + 2]); /* the 'd's */
+			
+			// check for an (invalid!) overlong sequence or invalid code point decoded
+			if (buffer[i] < 0x800
+#if ILPlatformCoreSupportEntireUnicodeRange
+				|| buffer[i] > 0xFFFF
+#endif
+				)
+				goto end_with_error;
+			
+			offset += 3;
+		
 		}
 #if ILPlatformCoreSupportEntireUnicodeRange
-		else if (false /* TODO bytes[offset] starts with 11110... */) {
-			#warning TODO decode four-byte sequences
-			#warning TODO check for an overlong sequence
+		else if (bytes[offset] & 0xF0 == 0xF0) { // is it 11110...?
+			
+			// check bounds
+			if (offset + 3 >= length)
+				goto end_with_error;
+			
+			// 11110aaa 10bbbbbb 10cccccc 10dddddd --> 000aaabb bbbbcccc ccdddddd
+			// 00000___ = 0x7
+			//          00______ = 0x3F
+			buffer[i] =
+				((0x7 & bytes[offset]) << 18) | /* the 'a's */
+				((0x3F & bytes[offset + 1]) << 12) | /* the 'b's */
+				((0x3F & bytes[offset + 2]) << 6) | /* the 'c's */
+				(0x3F & bytes[offset + 3]); /* the 'd's */
+			
+			// check for an (invalid!) overlong sequence or invalid code point decoded
+			if (buffer[i] < 0x10000 || buffer[i] > 0x10FFFF)
+				goto end_with_error;
+			
+			offset += 4;
+			
 		}
 #endif
-		else {
-			free(buffer);
-			return false;
-		}
+		else
+			goto end_with_error;
+		
+		i++;
 	}
 	
-#error TO BE CONTINUED
+	*codePoints = buffer;
+	*codePointsLength = i;
+	return true;
+	
+end_with_error:
+	free(buffer);
 	return false;
 }

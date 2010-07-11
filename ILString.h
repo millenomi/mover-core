@@ -57,12 +57,12 @@ typedef uint32_t ILWideRangeCodePoint;
 #define ILHighestWideRangeCodePoint UINT32_MAX
 
 // To save storage space, we use 16-bit (BMP) code points only. You can ask for wide-range CPs if needed, in which case all CP-using functions will automatically work with wide CPs.
-#if ILPlatformCoreSupportEntireUnicodeRange
+#if !ILPlatformCoreSupportEntireUnicodeRange
 	typedef uint16_t ILCodePoint;
 	#define ILHighestCodePoint UINT16_MAX
 #else
-	typedef ILWideRangeCodePoint ILCodePoint;
-	#define ILHighestCodePoint ILHighestWideRangeCodePoint
+	typedef uint32_t ILCodePoint;
+	#define ILHighestCodePoint UINT32_MAX
 #endif
 
 

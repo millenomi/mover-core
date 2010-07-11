@@ -9,6 +9,26 @@
 
 #include "ILString_UTF8.h"
 
+static bool ILStringUTF8FromCharacters_IncreaseBufferIfNeeded(uint8_t*& buffer, size_t& bufferLength, size_t& usedBufferLength, size_t& length, float& estimateMultiplier) {
+	
+	if (bufferLength <= usedBufferLength) {
+		estimateMultiplier += 0.5;
+		bufferLength = length * estimateMultiplier;
+		void* newBuf = realloc(buffer, bufferLength);
+		
+		if (!newBuf) {
+			free(buffer);
+			return false;
+		} else {
+			buffer = (uint8_t*) newBuf;
+			return true;
+		}
+		
+	} else	
+		return true;
+	
+}
+
 extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 									   uint8_t** UTF8Bytes, size_t* UTF8Length)
 {
@@ -21,18 +41,18 @@ extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 	uint8_t* buffer = (uint8_t*) malloc(bufferLength * sizeof(uint8_t));
 	
 	// The code that increases buffer size if we hit the ceiling.
-#define ILStringUTF8FromCharacters_IncreaseBufferIfNeeded() \
-	if (bufferLength <= usedBufferLength) { \
-		estimateMultiplier += 0.5; \
-		bufferLength = length * estimateMultiplier; \
-		void* newBuf = realloc(buffer, bufferLength); \
-		\
-		if (!newBuf) { \
-			free(buffer); \
-			return false; \
-		} else \
-			buffer = (uint8_t*) newBuf; \
-	}
+//#define ILStringUTF8FromCharacters_IncreaseBufferIfNeeded() \
+//	if (bufferLength <= usedBufferLength) { \
+//		estimateMultiplier += 0.5; \
+//		bufferLength = length * estimateMultiplier; \
+//		void* newBuf = realloc(buffer, bufferLength); \
+//		\
+//		if (!newBuf) { \
+//			free(buffer); \
+//			return false; \
+//		} else \
+//			buffer = (uint8_t*) newBuf; \
+//	}
 	
 	size_t usedBufferLength = 0;
 	size_t i; for (i = 0; i < length; i++) {
@@ -44,7 +64,8 @@ extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 		if (p <= 0x7F) { // one byte, starting with 0
 			
 			usedBufferLength++;
-			ILStringUTF8FromCharacters_IncreaseBufferIfNeeded();
+			if (!ILStringUTF8FromCharacters_IncreaseBufferIfNeeded(buffer, bufferLength, usedBufferLength, length, estimateMultiplier))
+				return false;
 			
 			buffer[usedBufferLength - 1] = (uint8_t) p;
 			
@@ -53,7 +74,7 @@ extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 			// UTF-8 -> 110aaabb 10bbbbbb
 
 			usedBufferLength += 2;
-			ILStringUTF8FromCharacters_IncreaseBufferIfNeeded();
+			ILStringUTF8FromCharacters_IncreaseBufferIfNeeded(buffer, bufferLength, usedBufferLength, length, estimateMultiplier);
 
 			// First byte.
 			buffer[usedBufferLength - 2] =
@@ -76,7 +97,8 @@ extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 			// UTF-8 -> 1110aaaa 10bbbbbb 10cccccc
 			
 			usedBufferLength += 3;
-			ILStringUTF8FromCharacters_IncreaseBufferIfNeeded();
+			if (!ILStringUTF8FromCharacters_IncreaseBufferIfNeeded(buffer, bufferLength, usedBufferLength, length, estimateMultiplier))
+				return false;
 
 			// First byte.
 			buffer[usedBufferLength - 3] = 
@@ -100,7 +122,8 @@ extern bool ILStringUTF8FromCodePoints(ILCodePoint* codePoints, size_t length,
 			// UTF-8 -> 11110aaa 10bbbbbb 10cccccc 10dddddd
 			
 			usedBufferLength += 4;
-			ILStringUTF8FromCharacters_IncreaseBufferIfNeeded();
+			if (!ILStringUTF8FromCharacters_IncreaseBufferIfNeeded(buffer, bufferLength, usedBufferLength, length, estimateMultiplier))
+				return false;
 
 			// First byte.
 			buffer[usedBufferLength - 4] =

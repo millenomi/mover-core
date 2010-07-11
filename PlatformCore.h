@@ -47,6 +47,11 @@ static inline void ILAbortWithLocationInformation(const char* whereInfo, const c
 
 #define ILAbort(reason) ILAbortWithLocationInformation(__func__, (reason));
 
+
+#define ILAssertAtCompileTime(x) \
+	switch (0) { case 0: case (x): ; }
+
+
 #endif // #ifdef __cplusplus
 
 #endif // #ifndef PlatformCore_H

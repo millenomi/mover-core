@@ -37,7 +37,7 @@ namespace Mover {
 	void ILStringParsingTests::testSubstrings() {
 		ILString* s = ILStr("Ciao ciao ciao!");
 		
-		ILString* rangeSubstring = s->substringWithRange(ILMakeRangeBetweenIndices(4, 9)),
+		ILString* rangeSubstring = s->substringWithRange(ILMakeRange(4, 6)),
 			* beforeIndexSubstring = s->substringBeforeIndex(4),
 			* fromIndexSubstring = s->substringFromIndex(10);
 		

@@ -250,7 +250,7 @@ ILList* ILString::componentsSeparatedByCharacter(ILCodePoint c) {
 	ILIndex lastStartingIndex = 0;
 	ILIndex i = this->indexOfCharacter(c);
 	while (i != ILNotFound) {
-		l->addObject(this->substringWithRange(ILMakeRangeBetweenIndices(lastStartingIndex, i - 1)));
+		l->addObject(this->substringWithRange(ILMakeRange(lastStartingIndex, i - lastStartingIndex)));
 		lastStartingIndex = i + 1;
 		if (lastStartingIndex >= this->length())
 			break;
@@ -284,8 +284,8 @@ ILString* ILString::stringWithFormat(ILString* format, ...) {
 	
 	va_start(l, format);
 	
-	char newString[ size ];
-	vsnprintf(newString, size, utf8Format, l);
+	char newString[ size + 1 ];
+	vsnprintf(newString, size + 1, utf8Format, l);
 	
 	va_end(l);
 	

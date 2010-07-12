@@ -61,8 +61,8 @@ namespace ILTesting {
 		
 		va_start(l, description);
 		
-		char newString[ size ];
-		vsnprintf(newString, size, description, l);
+		char newString[ size + 1 ];
+		vsnprintf(newString, size + 1, description, l);
 		
 		va_end(l);
 		

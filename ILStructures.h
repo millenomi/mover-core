@@ -4,17 +4,27 @@
 
 #include <sys/types.h>
 #include <stdint.h>
+#include <stdio.h>
+
+class ILString;
 
 typedef size_t ILIndex;
 typedef size_t ILSize;
 
-static const ILIndex ILNotFound = SIZE_MAX;
+#define ILIndexFormat "zu"
+#define ILSizeFormat  "zu"
 
+static const ILIndex ILNotFound = SIZE_MAX;
 
 typedef struct _ILRange {
 	ILIndex start;
 	ILSize length;
 } ILRange;
+
+
+extern ILString* ILDescribeRange(ILRange r);
+extern void ILLog(ILString* x);
+
 
 static inline ILRange ILMakeRange(ILIndex start, ILSize length) {
 	ILRange r;
@@ -22,10 +32,5 @@ static inline ILRange ILMakeRange(ILIndex start, ILSize length) {
 	r.length = length;
 	return r;
 }
-
-static inline ILRange ILMakeRangeBetweenIndices(ILIndex a, ILIndex b) {
-	return ILMakeRange( (a < b? a : b), (a > b? a - b : b - a) + 1 );
-}
-
 
 #endif // #ifndef ILStructures_H

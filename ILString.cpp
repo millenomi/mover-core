@@ -224,3 +224,18 @@ ILString* ILString::substringBeforeIndex(ILIndex i) {
 ILString* ILString::substringFromIndex(ILIndex i) {
 	return this->substringWithRange(ILMakeRange(i, this->length() - i));
 }
+
+ILIndex ILString::indexOfCharacter(ILCodePoint c, ILIndex startingIndex) {
+	if (startingIndex >= this->length())
+		return ILNotFound;
+	
+	ILCodePoint* cps = this->codePoints();
+	ILSize s = this->length() - startingIndex;
+	
+	ILIndex i; for (i = startingIndex; i < s; i++) {
+		if (cps[i] == c)
+			return i;
+	}
+	
+	return ILNotFound;
+}

@@ -38,9 +38,6 @@
 #define ILAs(class, value) \
     ( value? static_cast<class*>(value) : NULL )
 
-
-#define ILNotFound ((size_t) SIZE_MAX)
-
 static inline void ILAbortWithLocationInformation(const char* whereInfo, const char* reason) {
     fprintf(stderr, "<Aborting in %s>: %s", whereInfo, reason);
     abort();

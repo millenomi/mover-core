@@ -49,4 +49,13 @@ namespace Mover {
 		ILTestEqualObjects(ILStr("Ciao"), beforeIndexSubstring);
 		ILTestEqualObjects(ILStr("ciao!"), fromIndexSubstring);
 	}
+	
+	void ILStringParsingTests::testSearch() {
+		ILString* s = ILStr("Ciao ciao ciao!");
+		
+		ILTestEqualValues(4, s->indexOfCharacter(' '));
+		ILTestEqualValues(9, s->indexOfCharacter(' ', 5));
+		ILTestEqualValues(ILNotFound, s->indexOfCharacter(' ', 10));
+		ILTestEqualValues(ILNotFound, s->indexOfCharacter('x'));
+	}
 }

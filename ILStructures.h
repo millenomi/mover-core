@@ -2,9 +2,13 @@
 #ifndef ILStructures_H
 #define ILStructures_H 1
 
+#include <sys/types.h>
+#include <stdint.h>
 
 typedef size_t ILIndex;
 typedef size_t ILSize;
+
+static const ILIndex ILNotFound = SIZE_MAX;
 
 
 typedef struct _ILRange {

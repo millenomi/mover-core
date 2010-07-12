@@ -69,6 +69,9 @@ public:
 	ILString* substringBeforeIndex(ILIndex i);
 	ILString* substringFromIndex(ILIndex i);
 	
+	// search
+	ILIndex indexOfCharacter(ILCodePoint c, ILIndex startingIndex = 0);
+	
 	
 private:
 	ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);

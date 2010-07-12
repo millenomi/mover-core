@@ -20,12 +20,14 @@ namespace Mover {
 			ILTestWith(testByParsingIntegerAtIndex);
 			ILTestWith(testStringEquality);
 			ILTestWith(testSubstrings);
+			ILTestWith(testSearch);
 		}
 		
 		void testByParsingInteger();
 		void testByParsingIntegerAtIndex();
 		void testStringEquality();
 		void testSubstrings();
+		void testSearch();
 	};
 }
 

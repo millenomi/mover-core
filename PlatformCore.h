@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <math.h>
 
 #ifdef __cplusplus
 
@@ -51,6 +52,7 @@ static inline void ILAbortWithLocationInformation(const char* whereInfo, const c
 #define ILAssertAtCompileTime(x) \
 	switch (0) { case 0: case (x): ; }
 
+#include "ILStructures.h"
 
 #endif // #ifdef __cplusplus
 

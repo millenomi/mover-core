@@ -11,6 +11,7 @@
 #define ILString_H 1
 
 #include <unistd.h>
+#include "ILStructures.h"
 #include "ILObject.h"
 
 class ILData; class ILString;
@@ -56,12 +57,18 @@ public:
 	
 	long long integerValueAtIndex(size_t index);
 	
-//	virtual bool canCopy();
-//	virtual ILString* copy();
-//	
-//	virtual void* classIdentity();
-//	virtual bool equals(ILObject* o);
-//	virtual uint64_t hash();
+	virtual bool canCopy();
+	virtual ILString* copy();
+	
+	virtual void* classIdentity();
+	virtual bool equals(ILObject* o);
+	virtual uint64_t hash();
+	
+	// substrings
+	ILString* substringWithRange(ILRange r);
+	ILString* substringBeforeIndex(ILIndex i);
+	ILString* substringFromIndex(ILIndex i);
+	
 	
 private:
 	ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);

@@ -28,4 +28,25 @@ namespace Mover {
 		l = str->integerValueAtIndex(21);
 		ILTestEqualValues(l, -1542398076);
 	}
+	
+	void ILStringParsingTests::testStringEquality() {
+		ILTestEqualObjects(ILStr("ciao"), ILStr("ciao"));
+		ILTestNotEqualObjects(ILStr("ciao"), ILStr("miao"));
+	}
+	
+	void ILStringParsingTests::testSubstrings() {
+		ILString* s = ILStr("Ciao ciao ciao!");
+		
+		ILString* rangeSubstring = s->substringWithRange(ILMakeRangeBetweenIndices(4, 9)),
+			* beforeIndexSubstring = s->substringBeforeIndex(4),
+			* fromIndexSubstring = s->substringFromIndex(10);
+		
+		ILTestNotNULL(rangeSubstring);
+		ILTestNotNULL(beforeIndexSubstring);
+		ILTestNotNULL(fromIndexSubstring);
+		
+		ILTestEqualObjects(ILStr(" ciao "), rangeSubstring);
+		ILTestEqualObjects(ILStr("Ciao"), beforeIndexSubstring);
+		ILTestEqualObjects(ILStr("ciao!"), fromIndexSubstring);
+	}
 }

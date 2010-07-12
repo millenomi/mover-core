@@ -18,10 +18,14 @@ namespace Mover {
 		ILTestCase(ILStringParsingTests) {
 			ILTestWith(testByParsingInteger);
 			ILTestWith(testByParsingIntegerAtIndex);
+			ILTestWith(testStringEquality);
+			ILTestWith(testSubstrings);
 		}
 		
 		void testByParsingInteger();
 		void testByParsingIntegerAtIndex();
+		void testStringEquality();
+		void testSubstrings();
 	};
 }
 

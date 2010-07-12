@@ -84,8 +84,6 @@ ILString* ILString::stringWithData(ILData* data, ILStringEncoding encoding) {
 	}
 }
 
-#if 0
-
 bool ILString::canCopy() {
 	return true;
 }
@@ -122,8 +120,6 @@ uint64_t ILString::hash() {
 	
 	return hash;
 }
-
-#endif
 
 ILUniqueConstant(ILStringClassIdentity);
 
@@ -209,4 +205,22 @@ const char* ILString::nullTerminatedStringUsingEncoding(ILStringEncoding encodin
 
 const char* ILString::UTF8String() {
 	return this->nullTerminatedStringUsingEncoding(kILStringEncodingUTF8);
+}
+
+ILString* ILString::substringWithRange(ILRange r) {
+	if (r.start >= this->length() || r.start + r.length > this->length())
+		return NULL;
+	
+	ILCodePoint* cps = this->codePoints();
+	cps += r.start;
+	
+	return new ILString(cps, r.length);
+}
+
+ILString* ILString::substringBeforeIndex(ILIndex i) {
+	return this->substringWithRange(ILMakeRange(0, i));
+}
+
+ILString* ILString::substringFromIndex(ILIndex i) {
+	return this->substringWithRange(ILMakeRange(i, this->length() - i));
 }

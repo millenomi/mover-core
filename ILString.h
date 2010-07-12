@@ -14,7 +14,8 @@
 #include "ILStructures.h"
 #include "ILObject.h"
 
-class ILData; class ILString;
+class ILData;
+class ILList;
 
 typedef enum {
 	kILStringEncodingUTF8 = 0,
@@ -47,6 +48,8 @@ public:
 	static ILString* stringWithData(ILData* data, ILStringEncoding encoding);
 	static ILString* stringWithCString(uint8_t* aString, ILStringEncoding encoding);
 	
+	static ILString* stringWithFormat(ILString* format, ...);
+	
 	// Use this if you have Unicode code points and you want to make a string out of 'em.
 	ILString(ILCodePoint* codePoints, size_t length);
 	
@@ -71,7 +74,7 @@ public:
 	
 	// search
 	ILIndex indexOfCharacter(ILCodePoint c, ILIndex startingIndex = 0);
-	
+	ILList* componentsSeparatedByCharacter(ILCodePoint c);
 	
 private:
 	ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);

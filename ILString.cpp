@@ -10,8 +10,12 @@
 #include "ILString.h"
 
 #include "ILData.h"
+#include "ILList.h"
+
 #include "ILString_UTF8.h"
 #include <cstring>
+
+#include <cstdarg>
 
 // Used by ILString::integerAtIndex()
 static const uint8_t ILStringNoDigitFound = -1;
@@ -230,7 +234,7 @@ ILIndex ILString::indexOfCharacter(ILCodePoint c, ILIndex startingIndex) {
 		return ILNotFound;
 	
 	ILCodePoint* cps = this->codePoints();
-	ILSize s = this->length() - startingIndex;
+	ILSize s = this->length();
 	
 	ILIndex i; for (i = startingIndex; i < s; i++) {
 		if (cps[i] == c)
@@ -238,4 +242,52 @@ ILIndex ILString::indexOfCharacter(ILCodePoint c, ILIndex startingIndex) {
 	}
 	
 	return ILNotFound;
+}
+
+ILList* ILString::componentsSeparatedByCharacter(ILCodePoint c) {
+	ILList* l = new ILList();
+	
+	ILIndex lastStartingIndex = 0;
+	ILIndex i = this->indexOfCharacter(c);
+	while (i != ILNotFound) {
+		l->addObject(this->substringWithRange(ILMakeRangeBetweenIndices(lastStartingIndex, i - 1)));
+		lastStartingIndex = i + 1;
+		if (lastStartingIndex >= this->length())
+			break;
+		
+		i = this->indexOfCharacter(c, lastStartingIndex);
+	}
+	
+	if (lastStartingIndex < this->length())
+		l->addObject(this->substringFromIndex(lastStartingIndex));
+	
+	ILCodePoint* cp = this->codePoints();
+	if (cp[this->length() - 1] == c)
+		l->addObject(ILStr(""));
+	
+	return l;
+}
+
+ILString* ILString::stringWithFormat(ILString* format, ...) {
+	va_list l;
+	va_start(l, format);
+	
+	//		char* newString;
+	//		vasprintf(&newString, description, l);
+	
+	const char* utf8Format = format->UTF8String();
+	
+	char dummy;
+	int size = vsnprintf(&dummy, 1, utf8Format, l);
+	
+	va_end(l);
+	
+	va_start(l, format);
+	
+	char newString[ size ];
+	vsnprintf(newString, size, utf8Format, l);
+	
+	va_end(l);
+	
+	return ILString::stringWithCString((uint8_t*) newString, kILStringEncodingUTF8);
 }

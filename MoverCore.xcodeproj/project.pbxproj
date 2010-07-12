@@ -183,7 +183,6 @@
 				1582F9B911DE89D6006BCD57 /* Protocol.h */,
 				1582F9D011DE8ACC006BCD57 /* ConsumptionQueue.h */,
 				1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */,
-				15AD5E5511EB733000B7F94A /* New Group */,
 			);
 			name = "Mover Core";
 			sourceTree = "<group>";
@@ -256,27 +255,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		15AD5E5511EB733000B7F94A /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "New Group";
-			sourceTree = "<group>";
-		};
 		15BDBA8E11E21AFE001AA895 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				15AD5E6E11EB781600B7F94A /* MoverCoreTests-ILStringParsing.h */,
-				15AD5E6F11EB781600B7F94A /* MoverCoreTests-ILStringParsing.cpp */,
 				15BDBA9411E21B0A001AA895 /* ILTesting.h */,
 				15BDBA9311E21B0A001AA895 /* ILTesting.cpp */,
 				15BDBA9711E21B17001AA895 /* main-MoverCore-Tests.cpp */,
 				15BDBAE911E21CDF001AA895 /* MoverCoreTests.h */,
+				15BDBAEA11E21CDF001AA895 /* MoverCoreTests.cpp */,
 				1566F8BB11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.h */,
 				1566F8BC11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp */,
 				1566F8C011E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.h */,
 				1566F8C111E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp */,
-				15BDBAEA11E21CDF001AA895 /* MoverCoreTests.cpp */,
+				15AD5E6E11EB781600B7F94A /* MoverCoreTests-ILStringParsing.h */,
+				15AD5E6F11EB781600B7F94A /* MoverCoreTests-ILStringParsing.cpp */,
 			);
 			name = Tests;
 			sourceTree = "<group>";

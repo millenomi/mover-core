@@ -21,6 +21,7 @@ namespace Mover {
 			ILTestWith(testStringEquality);
 			ILTestWith(testSubstrings);
 			ILTestWith(testSearch);
+			ILTestWith(testComponentStrings);
 		}
 		
 		void testByParsingInteger();
@@ -28,6 +29,7 @@ namespace Mover {
 		void testStringEquality();
 		void testSubstrings();
 		void testSearch();
+		void testComponentStrings();
 	};
 }
 

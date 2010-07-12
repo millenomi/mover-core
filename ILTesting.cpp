@@ -51,16 +51,25 @@ namespace ILTesting {
 		va_list l;
 		va_start(l, description);
 		
-		char* newString;
-		vasprintf(&newString, description, l);
+		//		char* newString;
+		//		vasprintf(&newString, description, l);
+		
+		char dummy;
+		int size = vsnprintf(&dummy, 1, description, l);
+		
 		va_end(l);
-
+		
+		va_start(l, description);
+		
+		char newString[ size ];
+		vsnprintf(newString, size, description, l);
+		
+		va_end(l);
+		
 		if (c)
 			_r->passed(this, newString, file, line);
 		else
 			_r->failed(this, newString, file, line);
-		
-		free(newString);
 	}
 
 	void TestCase::began(const char* what) {

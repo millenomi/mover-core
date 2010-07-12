@@ -58,4 +58,32 @@ namespace Mover {
 		ILTestEqualValues(ILNotFound, s->indexOfCharacter(' ', 10));
 		ILTestEqualValues(ILNotFound, s->indexOfCharacter('x'));
 	}
+	
+	void ILStringParsingTests::testComponentStrings() {
+		ILString* s = ILStr("Ciao ciao ciao!");
+		ILList* l = s->componentsSeparatedByCharacter(' ');
+		
+		ILTestEqualValues(l->count(), 3);
+		if (l->count() == 3) {
+			ILTestEqualObjects(l->objectAtIndex(0), ILStr("Ciao"));
+			ILTestEqualObjects(l->objectAtIndex(1), ILStr("ciao"));
+			ILTestEqualObjects(l->objectAtIndex(2), ILStr("ciao!"));
+		}
+		
+		l = s->componentsSeparatedByCharacter('x');
+		ILTestEqualValues(l->count(), 1);
+		if (l->count() == 1)
+			ILTestEqualObjects(l->objectAtIndex(0), s);
+		
+		s = ILStr("  ");
+		l = s->componentsSeparatedByCharacter(' ');
+		
+		ILTestEqualValues(l->count(), 3);
+		if (l->count() == 3) {
+			ILTestEqualObjects(l->objectAtIndex(0), ILStr(""));
+			ILTestEqualObjects(l->objectAtIndex(1), ILStr(""));
+			ILTestEqualObjects(l->objectAtIndex(2), ILStr(""));
+		}
+		
+	}
 }

@@ -56,6 +56,7 @@
 		159D8DEA11C27A5100191F11 /* ILTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8DB211C27A5100191F11 /* ILTimer.cpp */; };
 		159D8DEB11C27A5100191F11 /* ILTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DB311C27A5100191F11 /* ILTimer.h */; };
 		159D8DEE11C27A7500191F11 /* PlatformCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 159D8DED11C27A7500191F11 /* PlatformCore.h */; };
+		15AD5E7011EB781600B7F94A /* MoverCoreTests-ILStringParsing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15AD5E6F11EB781600B7F94A /* MoverCoreTests-ILStringParsing.cpp */; };
 		15BDBAAF11E21B62001AA895 /* ConsumptionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */; };
 		15BDBAB011E21B62001AA895 /* ILApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D7C11C27A5100191F11 /* ILApp.cpp */; };
 		15BDBAB111E21B62001AA895 /* ILData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 159D8D7E11C27A5100191F11 /* ILData.cpp */; };
@@ -144,6 +145,8 @@
 		159D8DB211C27A5100191F11 /* ILTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILTimer.cpp; sourceTree = "<group>"; };
 		159D8DB311C27A5100191F11 /* ILTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILTimer.h; sourceTree = "<group>"; };
 		159D8DED11C27A7500191F11 /* PlatformCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCore.h; sourceTree = "<group>"; };
+		15AD5E6E11EB781600B7F94A /* MoverCoreTests-ILStringParsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MoverCoreTests-ILStringParsing.h"; sourceTree = "<group>"; };
+		15AD5E6F11EB781600B7F94A /* MoverCoreTests-ILStringParsing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "MoverCoreTests-ILStringParsing.cpp"; sourceTree = "<group>"; };
 		15BDBA8A11E21AF7001AA895 /* MoverCore-Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "MoverCore-Tests"; sourceTree = BUILT_PRODUCTS_DIR; };
 		15BDBA9311E21B0A001AA895 /* ILTesting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILTesting.cpp; sourceTree = "<group>"; };
 		15BDBA9411E21B0A001AA895 /* ILTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILTesting.h; sourceTree = "<group>"; };
@@ -260,6 +263,8 @@
 		15BDBA8E11E21AFE001AA895 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				15AD5E6E11EB781600B7F94A /* MoverCoreTests-ILStringParsing.h */,
+				15AD5E6F11EB781600B7F94A /* MoverCoreTests-ILStringParsing.cpp */,
 				15BDBA9411E21B0A001AA895 /* ILTesting.h */,
 				15BDBA9311E21B0A001AA895 /* ILTesting.cpp */,
 				15BDBA9711E21B17001AA895 /* main-MoverCore-Tests.cpp */,
@@ -442,6 +447,7 @@
 				1508FC8F11E6684500E7DD9E /* ILString_UTF8.cpp in Sources */,
 				1566F8BF11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp in Sources */,
 				1566F8C411E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp in Sources */,
+				15AD5E7011EB781600B7F94A /* MoverCoreTests-ILStringParsing.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -53,7 +53,9 @@ public:
 	
 	const char* nullTerminatedStringUsingEncoding(ILStringEncoding encoding); // guaranteed valid until release pool is drained.
     const char* UTF8String(); // shortcut for nullTerminatedStringUsingEncoding(kILStringEncodingUTF8).
-		
+	
+	long long integerValueAtIndex(size_t index);
+	
 //	virtual bool canCopy();
 //	virtual ILString* copy();
 //	

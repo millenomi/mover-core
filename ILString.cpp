@@ -13,13 +13,50 @@
 #include "ILString_UTF8.h"
 #include <cstring>
 
+// Used by ILString::integerAtIndex()
+static const uint8_t ILStringNoDigitFound = -1;
+
+static uint8_t ILStringValueForDigit(ILCodePoint digit) {
+	if (digit > (ILCodePoint)'9' || digit < (ILCodePoint)'0')
+		return ILStringNoDigitFound;
+	else
+		return digit - (ILCodePoint)'0';
+}
+
+long long ILString::integerValueAtIndex(size_t index) {
+	int8_t sign = 1;
+	long long value = 0;
+	
+	ILCodePoint* cps = this->codePoints();
+	size_t len = this->length();
+	
+	bool isFirst = true;
+	
+	size_t i; for (i = index; i < len; i++) {
+		if (isFirst) {
+			isFirst = false;
+			if (cps[i] == '-') {
+				sign = -1;
+				continue;
+			}
+		}
+				
+		uint8_t digit = ILStringValueForDigit(cps[i]);
+		if (digit == ILStringNoDigitFound)
+			break;
+		else
+			value = value * 10 + digit;
+	}
+	
+	return value * sign;
+}
 
 ILString* ILStr(const char* stringLiteral) {
 	return new ILString(stringLiteral);
 }
 
 ILString::ILString(const char* stringLiteral) {
-	_utf8data = new ILData((uint8_t*) stringLiteral, strlen(stringLiteral), false);
+	_utf8data = ILRetain(new ILData((uint8_t*) stringLiteral, strlen(stringLiteral), false));
 	_codePoints = NULL;
 }
 

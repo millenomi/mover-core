@@ -35,7 +35,7 @@
 
 
 #define ILAs(class, value) \
-    static_cast<class*>(value)
+    ( value? static_cast<class*>(value) : NULL )
 
 
 #define ILNotFound ((size_t) SIZE_MAX)

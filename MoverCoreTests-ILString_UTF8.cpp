@@ -144,6 +144,36 @@ namespace Mover {
 		
 		ILTestFalse(ILStringCodePointsFromUTF8(erroneouslyContinuedSequence, lengthOfEncodedString, &codePoints, &codePointsLength));		
 	}
+
+	void ILString_UTF8Tests::testIncreasingBufferSizeDuringEncoding() {
+		ILCodePoint codePoints[] = {
+			0x221E, 0x221E, 0x221E
+		}; // These code points take 9 bytes, more than twice their count (the starting size for the UTF-8 encoding buffer in ILStringUTF8FromCodePoints.
+		
+		uint8_t* bytes;
+		size_t length;
+		
+		bool done;
+		ILTestTrue((done = ILStringUTF8FromCodePoints(codePoints, 3, &bytes, &length)));
+		
+		if (done) {
+			ILTestEqualValues(length, 9);
+			
+			if (length == 9) {
+				ILTestEqualValues(bytes[0], 0xE2);
+				ILTestEqualValues(bytes[1], 0x88);
+				ILTestEqualValues(bytes[2], 0x9E);
+				ILTestEqualValues(bytes[3], 0xE2);
+				ILTestEqualValues(bytes[4], 0x88);
+				ILTestEqualValues(bytes[5], 0x9E);
+				ILTestEqualValues(bytes[6], 0xE2);
+				ILTestEqualValues(bytes[7], 0x88);
+				ILTestEqualValues(bytes[8], 0x9E);
+			}
+			
+			free(bytes);
+		}
+	}
 	
 #if ILPlatformCoreSupportEntireUnicodeRange
 	void ILString_UTF8Tests::testInvalidCodePointEncoding() {

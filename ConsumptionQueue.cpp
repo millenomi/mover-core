@@ -132,13 +132,14 @@ namespace Mover {
 		bool isFirst = true;
         
         ILListIterator* i = _queue->iterate();
-        ILData* part;
-        while ((part = ILAs(ILData, i->next()))) {
+        ILObject* partObject;
+        while ((partObject = i->next())) {
+			ILData* part = ILAs(ILData, partObject);
 			
-			if (isFirst && _topOffset != 0) {
+			if (isFirst && _topOffset != 0)
 				part = new ILData(part->bytes() + _topOffset, part->length() - _topOffset, false);
-				isFirst = false;
-			}
+			
+			isFirst = false;
 			
             if (length >= part->length()) {
                 ConsumptionQueueAppendSmartly(part, result, didCopy);
@@ -158,8 +159,10 @@ namespace Mover {
 		bool first = true;
 		
 		ILListIterator* i = _queue->iterate();
-        ILData* part;
-        while ((part = ILAs(ILData, i->next()))) {
+        ILObject* partObject;
+        while ((partObject = i->next())) {
+			ILData* part = ILAs(ILData, partObject);
+			
 			size_t len = part->length();
 			uint8_t* bytes = part->bytes();
 			

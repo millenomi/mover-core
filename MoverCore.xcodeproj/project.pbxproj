@@ -87,7 +87,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 159D8D6B11C27A2E00191F11 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 15BDBA8911E21AF7001AA895 /* MoverCore-Tests */;
+			remoteGlobalIDString = 15BDBA8911E21AF7001AA895;
 			remoteInfo = "MoverCore-Tests";
 		};
 /* End PBXContainerItemProxy section */
@@ -178,6 +178,7 @@
 				1582F9B911DE89D6006BCD57 /* Protocol.h */,
 				1582F9D011DE8ACC006BCD57 /* ConsumptionQueue.h */,
 				1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */,
+				15AD5E5511EB733000B7F94A /* New Group */,
 			);
 			name = "Mover Core";
 			sourceTree = "<group>";
@@ -247,6 +248,13 @@
 				15BDBA8A11E21AF7001AA895 /* MoverCore-Tests */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		15AD5E5511EB733000B7F94A /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group";
 			sourceTree = "<group>";
 		};
 		15BDBA8E11E21AFE001AA895 /* Tests */ = {

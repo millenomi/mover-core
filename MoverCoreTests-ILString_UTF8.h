@@ -23,6 +23,8 @@ namespace Mover {
 			ILTestWith(testOverlongSequence);
 			ILTestWith(testErroneouslyContinuedSequence);
 			
+			ILTestWith(testIncreasingBufferSizeDuringEncoding);
+			
 #if ILPlatformCoreSupportEntireUnicodeRange
 			ILTestWith(testInvalidCodePointEncoding);
 #endif
@@ -33,6 +35,7 @@ namespace Mover {
 		void testTruncatedString();
 		void testOverlongSequence();
 		void testErroneouslyContinuedSequence();
+		void testIncreasingBufferSizeDuringEncoding();
 		
 #if ILPlatformCoreSupportEntireUnicodeRange
 		void testInvalidCodePointEncoding();

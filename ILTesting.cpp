@@ -106,7 +106,7 @@ namespace ILTesting {
 	
 	void XcodeResultsStdoutDisplay::passed(TestCase* c, const char* description, const char* file, unsigned long line) {
 		if (_showPassing)
-			fprintf(stderr, "note: passed: %s\n", description);
+			fprintf(stderr, "%s:%lu: note: passed: %s\n", file, line, description);
 	}
 	
 	void XcodeResultsStdoutDisplay::failed(TestCase* c, const char* description, const char* file, unsigned long line) {

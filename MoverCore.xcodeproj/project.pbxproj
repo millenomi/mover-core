@@ -82,6 +82,16 @@
 		15BDBAFB11E21E4A001AA895 /* MoverCoreTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15BDBAEA11E21CDF001AA895 /* MoverCoreTests.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		15130DD311EB291C00FD208D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 159D8D6B11C27A2E00191F11 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 15BDBA8911E21AF7001AA895 /* MoverCore-Tests */;
+			remoteInfo = "MoverCore-Tests";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILString_UTF8.h; sourceTree = "<group>"; };
 		1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILString_UTF8.cpp; sourceTree = "<group>"; };
@@ -299,10 +309,12 @@
 				159D8D7111C27A2E00191F11 /* Sources */,
 				159D8D7211C27A2E00191F11 /* Frameworks */,
 				159D8D7311C27A2E00191F11 /* Headers */,
+				15130DD611EB292300FD208D /* Run Unit Tests */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				15130DD411EB291C00FD208D /* PBXTargetDependency */,
 			);
 			name = MoverCore;
 			productName = MoverCore;
@@ -343,6 +355,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		15130DD611EB292300FD208D /* Run Unit Tests */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Unit Tests";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$BUILT_PRODUCTS_DIR\"/MoverCore-Tests || exit 1\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		159D8D7111C27A2E00191F11 /* Sources */ = {
@@ -409,6 +438,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		15130DD411EB291C00FD208D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 15BDBA8911E21AF7001AA895 /* MoverCore-Tests */;
+			targetProxy = 15130DD311EB291C00FD208D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		159D8D7711C27A2E00191F11 /* Debug */ = {

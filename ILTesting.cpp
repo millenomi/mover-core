@@ -47,7 +47,7 @@ namespace ILTesting {
 		ILRelease(_r);
 	}
 	
-	void TestCase::assertTrue(bool c, const char* description, ...) {
+	void TestCase::assertTrue(bool c, const char* file, unsigned long line, const char* description, ...) {
 		va_list l;
 		va_start(l, description);
 		
@@ -56,9 +56,9 @@ namespace ILTesting {
 		va_end(l);
 
 		if (c)
-			_r->passed(this, newString);
+			_r->passed(this, newString, file, line);
 		else
-			_r->failed(this, newString);
+			_r->failed(this, newString, file, line);
 		
 		free(newString);
 	}
@@ -70,24 +70,69 @@ namespace ILTesting {
 	void TestCase::setUp() {}
 	void TestCase::tearDown() {}
 	
+// ------------ RESULTS
 	
 	void Results::didBeginTestCase(TestCase* c, const char* what) {}
-	void Results::passed(TestCase* c, const char* description) {}
-	void Results::failed(TestCase* c, const char* description) {}	
+	void Results::passed(TestCase* c, const char* description, const char* file, unsigned long line) {}
+	void Results::failed(TestCase* c, const char* description, const char* file, unsigned long line) {}
+	
+	Results::Results() {}
+	Results::~Results() {}
+	
+// ------------ ResultsStdoutDisplay
 	
 	void ResultsStdoutDisplay::didBeginTestCase(TestCase* c, const char* what) {
 		printf(" == == = STARTING TEST: %s (from %s)\n", what, c->name());
 	}
 	
-	void ResultsStdoutDisplay::passed(TestCase* c, const char* description) {
-		printf(" ok: %s\n", description);
+	void ResultsStdoutDisplay::passed(TestCase* c, const char* description, const char* file, unsigned long line) {
+		printf(" ok: %s (at %s:%lu)\n", description, file, line);
 	}
 	
-	void ResultsStdoutDisplay::failed(TestCase* c, const char* description) {
-		fprintf(stderr, "!! failed: %s\n", description);
+	void ResultsStdoutDisplay::failed(TestCase* c, const char* description, const char* file, unsigned long line) {
+		fprintf(stderr, " !! FAILED: %s (at %s:%lu)\n", description, file, line);
 	}
 	
-	Results::Results() {}
-	Results::~Results() {}
+// ------------ XcodeResultsStdoutDisplay
+	
+	XcodeResultsStdoutDisplay::XcodeResultsStdoutDisplay() {
+		_mode = kILTestingXcodeFailuresAsErrors;
+		_showPassing = false;
+	}
+	
+	void XcodeResultsStdoutDisplay::didBeginTestCase(TestCase* c, const char* what) {
+		fprintf(stderr, "note: - Starting test %s (from %s)\n", what, c->name());
+	}
+	
+	void XcodeResultsStdoutDisplay::passed(TestCase* c, const char* description, const char* file, unsigned long line) {
+		if (_showPassing)
+			fprintf(stderr, "note: passed: %s\n", description);
+	}
+	
+	void XcodeResultsStdoutDisplay::failed(TestCase* c, const char* description, const char* file, unsigned long line) {
+		const char* prefix;
+		switch (_mode) {
+			case kILTestingXcodeFailuresAsErrors:
+				prefix = "error";
+				break;
+			case kILTestingXcodeFailuresAsWarnings:
+				prefix = "warning";
+				break;
+			default:
+				ILAbort("Unknown Xcode results mode set!");
+				return;
+		}
+		
+		fprintf(stderr, "%s:%lu: %s: Failed test %s.\n", file, line, prefix, description);
+	}
+	
+	void XcodeResultsStdoutDisplay::setFailureDisplayMode(ILTestingXcodeResultsFailureDisplayMode m) {
+		_mode = m;
+	}
+	
+	void XcodeResultsStdoutDisplay::setShowPassingTests(bool show) {
+		_showPassing = show;
+	}
+	
 }
 

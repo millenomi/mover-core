@@ -14,17 +14,17 @@
 #include "MoverCoreTests.h"
 using namespace Mover;
 
-class MoverTestingResults : public ILTesting::ResultsStdoutDisplay {
+class MoverTestingResults : public ILTesting::XcodeResultsStdoutDisplay {
 public:
 	bool anyTestFailed;
 	
-	MoverTestingResults() : ResultsStdoutDisplay() {
+	MoverTestingResults() : XcodeResultsStdoutDisplay() {
 		anyTestFailed = false;
 	}
 	
-	virtual void failed(ILTesting::TestCase* c, const char* description) {
+	virtual void failed(ILTesting::TestCase* c, const char* description, const char* file, unsigned long line) {
 		anyTestFailed = true;
-		ResultsStdoutDisplay::failed(c, description);
+		XcodeResultsStdoutDisplay::failed(c, description, file, line);
 	}
 };
 

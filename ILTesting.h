@@ -13,16 +13,36 @@ namespace ILTesting {
 		virtual ~Results();
 		
 		virtual void didBeginTestCase(TestCase* c, const char* what);
-		virtual void passed(TestCase* c, const char* description);
-		virtual void failed(TestCase* c, const char* description);
+		virtual void passed(TestCase* c, const char* description, const char* file, unsigned long line);
+		virtual void failed(TestCase* c, const char* description, const char* file, unsigned long line);
 	};
 	
 	class ResultsStdoutDisplay : public Results {
 	public:
 		virtual void didBeginTestCase(TestCase* c, const char* what);
-		virtual void passed(TestCase* c, const char* description);
-		virtual void failed(TestCase* c, const char* description);		
+		virtual void passed(TestCase* c, const char* description, const char* file, unsigned long line);
+		virtual void failed(TestCase* c, const char* description, const char* file, unsigned long line);
 	};	
+	
+	typedef enum {
+		kILTestingXcodeFailuresAsWarnings = 0,
+		kILTestingXcodeFailuresAsErrors = 1,
+	} ILTestingXcodeResultsFailureDisplayMode;
+	
+	class XcodeResultsStdoutDisplay : public Results {
+	public:
+		XcodeResultsStdoutDisplay();
+		virtual void didBeginTestCase(TestCase* c, const char* what);
+		virtual void passed(TestCase* c, const char* description, const char* file, unsigned long line);
+		virtual void failed(TestCase* c, const char* description, const char* file, unsigned long line);
+		
+		void setFailureDisplayMode(ILTestingXcodeResultsFailureDisplayMode m);
+		void setShowPassingTests(bool showPassing);
+		
+	private:
+		ILTestingXcodeResultsFailureDisplayMode _mode;
+		bool _showPassing;
+	};
 	
 	class TestCase : public ILObject {		
 		Results* _r;
@@ -47,8 +67,9 @@ namespace ILTesting {
 		static void runAllOf(TestCase* t, ...);
 		
 	protected:
-		void assertTrue(bool c, const char* description, ...);
+		void assertTrue(bool c, const char* file, unsigned long line, const char* description, ...);
 	};
+}
 		
 #define ILTestWith(methodName) ILTestInvoke(methodName, #methodName)
 	
@@ -61,21 +82,29 @@ namespace ILTesting {
 		this->tearDown(); \
 	}
 	
-#define ILTestTrue(condition) this->assertTrue(condition, "%s at %s:%d", #condition, __FILE__, __LINE__)
-#define ILTestFalse(condition) this->assertTrue(!(condition), "!(%s) at %s:%d", #condition, __FILE__, __LINE__)
+#define ILTestTrue(condition) this->assertTrue(\
+	condition, \
+	__FILE__, __LINE__, \
+	"%s", #condition)
 
-#define ILTestNULL(x) this->assertTrue(x == NULL, "is NULL: %s at %s:%d", #x, __FILE__, __LINE__)
-#define ILTestNotNULL(x) this->assertTrue(x != NULL, "is not NULL: %s at %s:%d", #x, __FILE__, __LINE__)
+#define ILTestFalse(condition) this->assertTrue(\
+	!(condition), \
+	__FILE__, __LINE__, \
+	"!(%s)", #condition)
 	
-#define ILTestIdenticalValues(a, b) this->assertTrue(sizeof(a) == sizeof(b) && a == b, "%s == %s at %s:%d", #a, #b, __FILE__, __LINE__)
-#define ILTestNotIdenticalValues(a, b) this->assertTrue(sizeof(a) != sizeof(b) || a != b, "%s != %s at %s:%d", #a, #b, __FILE__, __LINE__)
+#define ILTestNULL(x) ILTestTrue(x == NULL)
+#define ILTestNotNULL(x) ILTestTrue(x != NULL)
+	
+// TODO add unexpected value in the description for these
 
-#define ILTestEqualValues(a, b) this->assertTrue(a == b, "%s == %s at %s:%d", #a, #b, __FILE__, __LINE__)
-#define ILTestNotEqualValues(a, b) this->assertTrue(a != b, "%s != %s at %s:%d", #a, #b, __FILE__, __LINE__)
+#define ILTestIdenticalValues(a, b) ILTestTrue(sizeof(a) == sizeof(b) && a == b)
+#define ILTestNotIdenticalValues(a, b) ILTestFalse(sizeof(a) == sizeof(b) && a == b)
 
-#define ILTestEqualObjects(a, b) this->assertTrue((a)->equals(b), "%s equal()s %s at %s:%d", #a, #b, __FILE__, __LINE__)
-#define ILTestNotEqualObjects(a, b) this->assertTrue(!((a)->equals(b)), "%s not equal()s %s at %s:%d", #a, #b, __FILE__, __LINE__)
-}
+#define ILTestEqualValues(a, b) ILTestTrue(a == b)
+#define ILTestNotEqualValues(a, b) ILTestTrue(a != b)
+
+#define ILTestEqualObjects(a, b) ILTestTrue((a)->equals((b)))
+#define ILTestNotEqualObjects(a, b) ILTestFalse((a)->equals((b)))
 
 #define ILTestNull(a) ILTestEqualValues(a, NULL)
 #define ILTestNotNull(a) ILTestNotEqualValues(a, NULL)

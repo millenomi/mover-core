@@ -31,6 +31,8 @@ namespace Mover {
 		_queue = ILRetain(new ConsumptionQueue());
 		_lastItemKey = NULL;
 		_receivedKeys = ILRetain(new ILSet());
+		_receivedPayloadKeys = NULL;
+		_receivedPayloadStops = NULL;
 		
 		this->setDelegate(delegate);		
 	}
@@ -39,6 +41,8 @@ namespace Mover {
 		ILRelease(_queue);
 		ILRelease(_receivedKeys);
 		ILRelease(_lastItemKey);
+		ILRelease(_receivedPayloadKeys);
+		ILRelease(_receivedPayloadStops);
 	}
 	
 	
@@ -61,6 +65,8 @@ namespace Mover {
 		_queue->clear();
 		_receivedKeys->removeAllObjects();
 		_state = kMvrStreamDecoderExpectingStart;
+		ILRelease(_receivedPayloadKeys); _receivedPayloadKeys = NULL;
+		ILRelease(_receivedPayloadStops); _receivedPayloadStops = NULL;
 	}
 	
 	bool StreamDecoder::isExpectingNewStream() {
@@ -95,7 +101,9 @@ namespace Mover {
 					canContinueDecoding = this->consumeMetadataItemValue();
 					break;
 					
-#warning TODO
+				case kMvrStreamDecoderExpectingBody:
+					canContinueDecoding = this->consumeBody();
+					break;
                     
 				default:
 					ILAbort("Stream decoder entered an unknown state");
@@ -181,8 +189,49 @@ namespace Mover {
 			return false;
 		}
 		
-		if (_lastItemKey->equals(ILStr("Payload-Keys")) || _lastItemKey->equals(ILStr("Payload-Stops"))) {
-#warning TODO parse Payload-Keys and Payload-Stops
+		if (_lastItemKey->equals(ILStr("Payload-Keys"))) {
+			
+			ILSet* s = new ILSet();
+			ILList* keys = itemValue->componentsSeparatedByCharacter(' ');
+			
+			ILListIterator* i = keys->iterate();
+			ILObject* o;
+			while ((o = i->next())) {
+				ILString* payloadKey = ILAs(ILString, o);
+				
+				if (s->containsObject(payloadKey)) {
+					this->resetWithCause(kMvrStreamDecoderDidFindError, kMvrStreamDecoderErrorDidFindDuplicatePayloadKey);
+					return false;
+				}
+			}
+			
+			_receivedPayloadKeys = ILRetain(keys->copy());
+			
+		} else if (_lastItemKey->equals(ILStr("Payload-Stops"))) {
+			
+			ILList* stops = itemValue->componentsSeparatedByCharacter(' ');
+			ILList* numericStops = new ILList();
+			
+			int64_t lastStop = INT64_MIN;
+			
+			ILListIterator* i = stops->iterate();
+			ILObject* o;
+			while ((o = i->next())) {
+				ILString* payloadStopStr = ILAs(ILString, o);
+				int64_t payloadStop = payloadStopStr->integerValue();
+				
+				if (payloadStop < 0 || payloadStop < lastStop) {
+					this->resetWithCause(kMvrStreamDecoderDidFindError, kMvrStreamDecoderErrorPayloadStopsInvalid);
+					return false;
+				}
+				
+				numericStops->addObject(new ILNumber(payloadStop));
+				
+				lastStop = payloadStop;
+			}
+			
+			_receivedPayloadStops = ILRetain(numericStops);
+			
 		}
 		
 		if (this->delegate())
@@ -193,6 +242,14 @@ namespace Mover {
 	}
 	
 	bool StreamDecoder::canProceedToBodyFromMetadata() {
+		
+		return _receivedPayloadKeys && _receivedPayloadStops &&
+			(_receivedPayloadKeys->count() == _receivedPayloadStops->count());
+		
+	}
+	
+// --- Handler for body.
+	bool StreamDecoder::consumeBody() {
 #warning TODO
 		return false;
 	}

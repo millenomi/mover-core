@@ -30,8 +30,9 @@ namespace Mover {
         kMvrStreamDecoderErrorDidNotFindValidValue,
         kMvrStreamDecoderErrorKeyOrValueNotValidUTF8,
         kMvrStreamDecoderErrorDidFindDuplicateKey,
+        kMvrStreamDecoderErrorDidFindDuplicatePayloadKey,
         kMvrStreamDecoderErrorPayloadKeysMismatch,
-        kMvrStreamDecoderErrorPayloadStopsNotAscending,
+        kMvrStreamDecoderErrorPayloadStopsInvalid,
 		kMvrStreamDecoderErrorPayloadMetadataIncompleteOrMissing,
     } StreamDecoderError;
 
@@ -68,8 +69,13 @@ namespace Mover {
 		bool consumeMetadataItemValue();
 		bool canProceedToBodyFromMetadata();
 		
+		bool consumeBody();
+		
 		ILString* _lastItemKey;
 		ILSet* _receivedKeys;
+		
+		ILList* _receivedPayloadKeys;
+		ILList* _receivedPayloadStops;
 	};
 	
 

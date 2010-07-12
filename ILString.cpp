@@ -27,7 +27,11 @@ static uint8_t ILStringValueForDigit(ILCodePoint digit) {
 		return digit - (ILCodePoint)'0';
 }
 
-long long ILString::integerValueAtIndex(size_t index) {
+int64_t ILString::integerValue() {
+	return this->integerValueAtIndex(0);
+}
+
+int64_t ILString::integerValueAtIndex(size_t index) {
 	int8_t sign = 1;
 	long long value = 0;
 	
@@ -51,6 +55,9 @@ long long ILString::integerValueAtIndex(size_t index) {
 		else
 			value = value * 10 + digit;
 	}
+	
+	if (isFirst)
+		return INT64_MIN;
 	
 	return value * sign;
 }

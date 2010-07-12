@@ -57,9 +57,7 @@ public:
 	
 	const char* nullTerminatedStringUsingEncoding(ILStringEncoding encoding); // guaranteed valid until release pool is drained.
     const char* UTF8String(); // shortcut for nullTerminatedStringUsingEncoding(kILStringEncodingUTF8).
-	
-	long long integerValueAtIndex(size_t index);
-	
+		
 	virtual bool canCopy();
 	virtual ILString* copy();
 	
@@ -75,6 +73,10 @@ public:
 	// search
 	ILIndex indexOfCharacter(ILCodePoint c, ILIndex startingIndex = 0);
 	ILList* componentsSeparatedByCharacter(ILCodePoint c);
+	
+	// integer
+	int64_t integerValueAtIndex(size_t index);
+	int64_t integerValue();
 	
 private:
 	ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);

@@ -146,7 +146,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 159D8D6B11C27A2E00191F11 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 15BDBA8911E21AF7001AA895 /* MoverCore-Tests */;
+			remoteGlobalIDString = 15BDBA8911E21AF7001AA895;
 			remoteInfo = "MoverCore-Tests";
 		};
 /* End PBXContainerItemProxy section */
@@ -244,9 +244,9 @@
 		1582F97D11DE857E006BCD57 /* Mover Core */ = {
 			isa = PBXGroup;
 			children = (
+				1582F9B911DE89D6006BCD57 /* Protocol.h */,
 				1582F98511DE85BA006BCD57 /* StreamDecoder.h */,
 				1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */,
-				1582F9B911DE89D6006BCD57 /* Protocol.h */,
 				1582F9D011DE8ACC006BCD57 /* ConsumptionQueue.h */,
 				1582F9D111DE8ACC006BCD57 /* ConsumptionQueue.cpp */,
 			);

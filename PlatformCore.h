@@ -36,7 +36,7 @@
 
 
 #define ILAs(class, value) \
-    ( value? static_cast<class*>(value) : NULL )
+    static_cast<class*>(value)
 
 static inline void ILAbortWithLocationInformation(const char* whereInfo, const char* reason) {
     fprintf(stderr, "<Aborting in %s>: %s", whereInfo, reason);
@@ -48,6 +48,17 @@ static inline void ILAbortWithLocationInformation(const char* whereInfo, const c
 
 #define ILAssertAtCompileTime(x) \
 	switch (0) { case 0: case (x): ; }
+
+template <typename T>
+static inline T ILMin(T a, T b) {
+	return a < b? a : b;
+}
+
+template <typename T>
+static inline T ILMax(T a, T b) {
+	return a > b? a : b;
+}
+
 
 #include "ILStructures.h"
 

@@ -78,11 +78,6 @@ namespace Mover {
 	}
 	
 	
-	float StreamDecoder::progress() {
-#warning TODO
-		return kMvrIndeterminateProgress;
-	}
-
 // ----------- THE CORE OF IT
 	void StreamDecoder::processAppendedData() {
 		bool canContinueDecoding = true;
@@ -143,7 +138,7 @@ namespace Mover {
 		if (index == 0) {
 			if (this->canProceedToBodyFromMetadata()) {
 				_queue->dequeueDataOfLength(1); // eat the \0
-				_state = kMvrStreamDecoderExpectingBody;
+				this->moveToExpectingBodyState();
 				return true;
 			} else {
 				this->resetWithCause(kMvrStreamDecoderDidFindError, kMvrStreamDecoderErrorPayloadMetadataIncompleteOrMissing);
@@ -247,12 +242,66 @@ namespace Mover {
 			(_receivedPayloadKeys->count() == _receivedPayloadStops->count());
 		
 	}
+
+	void StreamDecoder::moveToExpectingBodyState() {
+		_currentPayloadIndex = 0;
+		ILNumber* n = ILAs(ILNumber, _receivedPayloadStops->objectAtIndex(0));
+		_remainingPayloadLength = n->integerValue();
+		_hasAnnouncedCurrentPayload = false;
+		
+		_state = kMvrStreamDecoderExpectingBody;
+		
+		if (this->delegate())
+			this->delegate()->streamDecoderWillBeginReceivingPayloads(_receivedPayloadKeys, _receivedPayloadStops);
+	}
 	
 // --- Handler for body.
 	bool StreamDecoder::consumeBody() {
-#warning TODO
-		return false;
+		ILString* payloadKey = ILAs(ILString, _receivedPayloadKeys->objectAtIndex(_currentPayloadIndex));
+		
+		if (this->delegate() && _hasAnnouncedCurrentPayload) {
+			this->delegate()->streamDecoderWillBeginReceivingPayload(this, payloadKey, _remainingPayloadLength);
+			_hasAnnouncedCurrentPayload = true;
+		}
+
+		ILData* d = _queue->availableDataWithMaximumLength(_remainingPayloadLength);
+		
+		if (!d)
+			return false;
+		
+		_remainingPayloadLength -= d->length();
+		_queue->dequeueDataOfLength(d->length());
+		
+		if (this->delegate())
+			this->delegate()->streamDecoderDidReceivePayloadPart(this, payloadKey, d);
+		
+		if (_remainingPayloadLength == 0) {
+			
+			_currentPayloadIndex++;
+			if (_currentPayloadIndex < _receivedPayloadKeys->count()) {
+				
+				ILNumber* prevStop = 
+					ILAs(ILNumber, _receivedPayloadStops->objectAtIndex(_currentPayloadIndex - 1)),
+					* currentStop = ILAs(ILNumber, _receivedPayloadStops->objectAtIndex(_currentPayloadIndex));
+
+				
+				_remainingPayloadLength = currentStop->integerValue() - prevStop->integerValue();
+				_hasAnnouncedCurrentPayload = false;
+				
+				return true;
+				
+			} else {
+				
+				// whoa! we've finished!
+				this->resetWithCause(kMvrStreamDecoderDidFinishDecoding);
+				return false;
+				
+			}
+		}
+		
+		return true;
 	}
 
 }
+
 

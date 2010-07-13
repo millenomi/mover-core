@@ -56,8 +56,6 @@ namespace Mover {
 		void appendData(ILData* data);
 		void processAppendedData();
 		
-		float progress(); // 0.0..1.0
-		
 	private:
 		StreamDecoderDelegate* _delegate;
 		ConsumptionQueue* _queue;
@@ -69,6 +67,7 @@ namespace Mover {
 		bool consumeMetadataItemValue();
 		bool canProceedToBodyFromMetadata();
 		
+		void moveToExpectingBodyState();
 		bool consumeBody();
 		
 		ILString* _lastItemKey;
@@ -76,6 +75,10 @@ namespace Mover {
 		
 		ILList* _receivedPayloadKeys;
 		ILList* _receivedPayloadStops;
+		
+		uint64_t _currentPayloadIndex;
+		int64_t _remainingPayloadLength;
+		bool _hasAnnouncedCurrentPayload;
 	};
 	
 
@@ -85,6 +88,8 @@ namespace Mover {
 		virtual void streamDecoderDidStartReceiving(StreamDecoder* decoder) = 0;
 
 		virtual void streamDecoderDidReceiveMetadataPair(StreamDecoder* decoder, ILString* key, ILString* value) = 0;
+		
+		virtual void streamDecoderWillBeginReceivingPayloads(ILList* orderedKeys, ILList* orderedStops) = 0;
 		
 		virtual void streamDecoderWillBeginReceivingPayload(StreamDecoder* decoder, ILString* payloadKey, unsigned long long payloadSize) = 0;
 		virtual void streamDecoderDidReceivePayloadPart(StreamDecoder* decoder, ILString* payloadKey, ILData* part) = 0;

@@ -114,7 +114,7 @@ namespace Mover {
 		
 		ILData* top = _queue->dataWithLength(kMvrStreamStartingBytesLength);
 		if (memcmp(top->bytes(), kMvrStreamStartingBytes, kMvrStreamStartingBytesLength) == 0) {
-			
+			_queue->dequeueDataOfLength(kMvrStreamStartingBytesLength);
 			_state = kMvrStreamDecoderExpectingMetadataItemKey;
 			
 			if (this->delegate())
@@ -158,12 +158,16 @@ namespace Mover {
 		if (_receivedKeys->containsObject(itemKey)) {
 			this->resetWithCause(kMvrStreamDecoderDidFindError, kMvrStreamDecoderErrorDidFindDuplicateKey);
 			return false;
-		}
+		} 
+		
+		_receivedKeys->addObject(itemKey);
 		
 		ILRelease(_lastItemKey);
 		_lastItemKey = ILRetain(itemKey);
 		
 		_queue->dequeueDataOfLength(index + 1); // consume title and \0
+
+		_state = kMvrStreamDecoderExpectingMetadataItemValue;
 		
 		return true;
 	}
@@ -259,10 +263,10 @@ namespace Mover {
 	bool StreamDecoder::consumeBody() {
 		ILString* payloadKey = ILAs(ILString, _receivedPayloadKeys->objectAtIndex(_currentPayloadIndex));
 		
-		if (this->delegate() && _hasAnnouncedCurrentPayload) {
+		if (this->delegate() && !_hasAnnouncedCurrentPayload)
 			this->delegate()->streamDecoderWillBeginReceivingPayload(this, payloadKey, _remainingPayloadLength);
-			_hasAnnouncedCurrentPayload = true;
-		}
+		
+		_hasAnnouncedCurrentPayload = true;
 
 		ILData* d = _queue->availableDataWithMaximumLength(_remainingPayloadLength);
 		

@@ -78,12 +78,7 @@ namespace Mover {
             return NULL;
         
         size_t remainingLength = top->length() - _topOffset;
-        
-        if (length >= remainingLength)
-            return top;
-        else
-            return new ILData(top->bytes() + _topOffset, length, false);
-        
+        return new ILData(top->bytes() + _topOffset, ILMin(length, remainingLength), false);        
     }
     
     size_t ConsumptionQueue::availableDataLength() {        

@@ -38,7 +38,7 @@ static uint64_t ILMapHashForKey(ILObject* key) {
 	return key->hash();
 }
 
-ILMap::ILMap() {
+ILMap::ILMap() : ILObject() {
 	this->initialize();
 }
 

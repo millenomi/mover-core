@@ -80,7 +80,7 @@ public:
 	
 private:
 	ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);
-	void initialize(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);
+	void initializeByUsingCodePointsArray(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);
 	
 	ILCodePoint* codePoints();
 	size_t length();

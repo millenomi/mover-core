@@ -3,6 +3,9 @@
 #include "ILSource.h"
 #include "ILRunLoop.h"
 
+ILSource::ILSource() : ILObject() {}
+ILSource::~ILSource() {}
+
 void ILSource::setRunLoop(ILRunLoop* rl) {
 	_runLoop = rl;
 }

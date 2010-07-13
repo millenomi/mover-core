@@ -26,7 +26,7 @@ namespace Mover {
 	};	
 	
 // ----------- ADMINISTRIVIA
-	StreamDecoder::StreamDecoder(StreamDecoderDelegate* delegate) {
+	StreamDecoder::StreamDecoder(StreamDecoderDelegate* delegate) : ILObject() {
 		_state = kMvrStreamDecoderStartingState;
 		_queue = ILRetain(new ConsumptionQueue());
 		_lastItemKey = NULL;
@@ -229,7 +229,7 @@ namespace Mover {
 				lastStop = payloadStop;
 			}
 			
-			_receivedPayloadStops = ILRetain(numericStops);
+			_receivedPayloadStops = ILRetain(numericStops->copy());
 			
 		}
 		
@@ -261,7 +261,10 @@ namespace Mover {
 	
 // --- Handler for body.
 	bool StreamDecoder::consumeBody() {
-		ILString* payloadKey = ILAs(ILString, _receivedPayloadKeys->objectAtIndex(_currentPayloadIndex));
+		ILObject* payloadKeyObject = _receivedPayloadKeys->objectAtIndex(_currentPayloadIndex);
+		ILString* payloadKey = ILAs(ILString, payloadKeyObject);
+		
+		ILReleaseLater(ILRetain(payloadKey));
 		
 		if (this->delegate() && !_hasAnnouncedCurrentPayload)
 			this->delegate()->streamDecoderWillBeginReceivingPayload(this, payloadKey, _remainingPayloadLength);
@@ -274,10 +277,11 @@ namespace Mover {
 			return false;
 		
 		_remainingPayloadLength -= d->length();
-		_queue->dequeueDataOfLength(d->length());
 		
 		if (this->delegate())
 			this->delegate()->streamDecoderDidReceivePayloadPart(this, payloadKey, d);
+		
+		_queue->dequeueDataOfLength(d->length());
 		
 		if (_remainingPayloadLength == 0) {
 			

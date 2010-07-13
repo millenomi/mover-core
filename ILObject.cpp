@@ -31,14 +31,30 @@ void ILRetainReleaseMutexInit() {
 
 ILObject::ILObject() {
 	_retainCount = 1;
+	_isObservingRetainRelease = false;
+	_isPotentiallyUninitialized = false;
 	ILReleaseLater(this);
 }
 ILObject::~ILObject() {}
 
 void ILObject::retain() {
 	pthread_mutex_lock(&ILRetainReleaseMutex);
+	
+	if (this->_isPotentiallyUninitialized) {
+		fprintf(stderr, " !! Object %p is potentially uninitialized. Make sure its constructor calls ILObject()'s.\n", this);
+		abort();
+	}
+	
 	_retainCount++;
+
+	if (this->_isObservingRetainRelease)
+		fprintf(stderr, " <> Retain for %p.\n", this);
+
 	pthread_mutex_unlock(&ILRetainReleaseMutex);
+}
+
+void _ILObservedObjectWillDestroy(ILObject* o) {
+	fprintf(stderr, " <> Observed object %p is about to be destroyed. Break on %s to debug.\n", o, __func__);
 }
 
 bool ILObject::release() {
@@ -46,6 +62,11 @@ bool ILObject::release() {
 	
 	pthread_mutex_lock(&ILRetainReleaseMutex);
 
+	if (this->_isPotentiallyUninitialized) {
+		fprintf(stderr, " !! Object %p is potentially uninitialized. Make sure its constructor calls ILObject()'s.\n", this);
+		abort();
+	}
+	
 	if (_retainCount > 1) {
 		_retainCount--;
 		result = false;
@@ -53,8 +74,14 @@ bool ILObject::release() {
 		_retainCount = 0;
 		result = true;
 	} else {
-		fprintf(stderr, "Overreleased object!\n");
+		fprintf(stderr, " !! Invalid release count for object %p.\n", this);
 		abort();
+	}
+	
+	if (this->_isObservingRetainRelease) {
+		fprintf(stderr, " <> Release for %p.\n", this);
+		if (result)
+			_ILObservedObjectWillDestroy(this);
 	}
 
 	pthread_mutex_unlock(&ILRetainReleaseMutex);
@@ -68,6 +95,10 @@ uint64_t ILObject::retainCount() {
 	pthread_mutex_unlock(&ILRetainReleaseMutex);
 	
 	return rc;
+}
+
+void ILObject::observeRetainRelease() {
+	this->_isObservingRetainRelease = true;
 }
 
 

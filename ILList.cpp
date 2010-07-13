@@ -73,6 +73,7 @@ ILList::ILList(ILObject* firstObject, ...) : ILObject() {
 }
 
 ILList::ILList(ILObject** objects, ILIndex count) : ILObject() {
+	this->initialize();
 	ILIndex i; for (i = 0; i < count; i++)
 		this->addObject(objects[i]);
 }

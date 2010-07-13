@@ -12,13 +12,13 @@
 
 class ILThreadTargetSource : public ILSource {
 public:
-	ILThreadTargetSource(ILThreadTarget* t) { _threadTarget = t; }
+	ILThreadTargetSource(ILThreadTarget* t) : ILSource() { _threadTarget = t; }
 	
 	ILThreadTarget* _threadTarget;
 	virtual void spin();
 };
 
-ILThreadTarget::ILThreadTarget(ILTarget* t) {
+ILThreadTarget::ILThreadTarget(ILTarget* t) : ILTarget() {
 	_deliveryTarget = ILRetain(t);
 	_messages = (ILList*) ILRetain(new ILList());
 	

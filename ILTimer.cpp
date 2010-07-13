@@ -9,7 +9,7 @@
 
 #include "ILTimer.h"
 
-ILTimer::ILTimer(ILTimeInterval i, bool repeats) {
+ILTimer::ILTimer(ILTimeInterval i, bool repeats) : ILSource() {
 	_interval = i;
 	_nextFireTime = ILGetAbsoluteTime() + i;
 	_repeats = repeats;

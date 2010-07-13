@@ -9,6 +9,9 @@ class ILRunLoop;
 
 class ILSource : public ILObject {
 public:
+	ILSource();
+	virtual ~ILSource();
+	
 	virtual void spin() = 0;
 	virtual void setRunLoop(ILRunLoop* rl);
 	virtual ILRunLoop* runLoop();

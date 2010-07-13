@@ -36,9 +36,16 @@ public:
 	
 	// ILObject's implementation returns false. If you implement the ILCopiable interface below, return true.
 	virtual bool canCopy();
+
+	// DEBUGGING AID ONLY
+	// Logs at every retain or release of the object from this moment on.
+	// Also calls _ILObservedObjectWillDestroy(o) when object is about to be destroyed.
+	void observeRetainRelease();
 	
 private:
 	uint64_t _retainCount;
+	bool _isObservingRetainRelease;
+	bool _isPotentiallyUninitialized;
 };
 
 class ILCopiable {
@@ -52,6 +59,8 @@ public:
 
 extern ILObject* ILPerformRetain(ILObject* o);
 extern void ILRelease(ILObject* o);
+
+
 
 template <class T>
 T* ILRetain(T* x) {

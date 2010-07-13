@@ -46,27 +46,27 @@ uint64_t ILNumber::hash() {
 
 // ~~~
 
-ILNumber::ILNumber(int i) {
+ILNumber::ILNumber(int i) : ILObject() {
 	_type = kILNumberInt64Type;
 	_value.integerValue = (int64_t) i;
 }
 
-ILNumber::ILNumber(int64_t i) {
+ILNumber::ILNumber(int64_t i) : ILObject() {
 	_type = kILNumberInt64Type;
 	_value.integerValue = i;
 }
 
-ILNumber::ILNumber(double i) {
+ILNumber::ILNumber(double i) : ILObject() {
 	_type = kILNumberDoubleType;
 	_value.doubleValue = i;
 }
 
-ILNumber::ILNumber(bool b) {
+ILNumber::ILNumber(bool b) : ILObject() {
 	_type = kILNumberBoolType;
 	_value.booleanValue = b;
 }
 
-ILNumber::ILNumber(void* p) {
+ILNumber::ILNumber(void* p) : ILObject() {
 	_type = kILNumberNonretainedPointerType;
 	_value.nonretainedPointerValue = p;
 }

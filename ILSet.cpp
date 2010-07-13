@@ -17,7 +17,7 @@ static uint64_t ILSetHash(ILObject* o) {
 	return o->hash();
 }
 
-ILSet::ILSet() {
+ILSet::ILSet() : ILObject() {
 	_content.setEquals((ILEqualsFunction) &ILSetEquals);
 	_content.setRetain((ILRetainFunction) &ILPerformRetain);
 	_content.setHashForValue((ILHashFunction) &ILSetHash);

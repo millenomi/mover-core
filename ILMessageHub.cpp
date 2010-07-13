@@ -25,7 +25,7 @@ public:
 	ILTarget* _target;
 };
 
-ILMessageHub::ILMessageHub() {
+ILMessageHub::ILMessageHub() : ILTarget() {
 	_targets = (ILMap*) ILRetain(new ILMap());
 }
 

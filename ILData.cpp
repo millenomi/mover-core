@@ -40,7 +40,7 @@ uint64_t ILData::hash() {
 
 // ~~~
 
-ILData::ILData() {
+ILData::ILData() : ILObject() {
 	this->initialize(NULL, 0, true);
 }
 

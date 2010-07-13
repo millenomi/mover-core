@@ -66,8 +66,8 @@ ILString* ILStr(const char* stringLiteral) {
 	return new ILString(stringLiteral);
 }
 
-ILString::ILString(const char* stringLiteral) {
-	_utf8data = ILRetain(new ILData((uint8_t*) stringLiteral, strlen(stringLiteral), false));
+ILString::ILString(const char* stringLiteral) : ILObject() {
+	_utf8data = ILRetain(new ILData((uint8_t*) stringLiteral, strlen(stringLiteral)));
 	_codePoints = NULL;
 }
 
@@ -134,15 +134,15 @@ uint64_t ILString::hash() {
 
 ILUniqueConstant(ILStringClassIdentity);
 
-ILString::ILString(ILCodePoint* codePoints, size_t length) {
-	this->initialize(codePoints, length, false);
+ILString::ILString(ILCodePoint* codePoints, size_t length) : ILObject() {
+	this->initializeByUsingCodePointsArray(codePoints, length, false);
 }
 
-ILString::ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer) {
-	this->initialize(codePoints, length, weOwnThisBuffer);
+ILString::ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer) : ILObject() {
+	this->initializeByUsingCodePointsArray(codePoints, length, weOwnThisBuffer);
 }
 
-void ILString::initialize(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer) {
+void ILString::initializeByUsingCodePointsArray(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer) {
 	if (!weOwnThisBuffer) {
 		_codePoints = (ILCodePoint*) malloc(length * sizeof(ILCodePoint));
 		memcpy(_codePoints, codePoints, length * sizeof(ILCodePoint));
@@ -175,6 +175,9 @@ void ILString::fillCodePointsIfNeeded() {
 		
 		if (!ILStringCodePointsFromUTF8(_utf8data->bytes(), _utf8data->length(), &_codePoints, &_length))
 			ILAbort("String literal not valid UTF-8! Aborting.");
+		
+		ILRelease(_utf8data);
+		_utf8data = NULL;
 	}
 }
 
@@ -284,8 +287,8 @@ ILString* ILString::stringWithFormat(ILString* format, ...) {
 	
 	const char* utf8Format = format->UTF8String();
 	
-	char dummy;
-	int size = vsnprintf(&dummy, 1, utf8Format, l);
+	char dummy[2];
+	int size = vsnprintf(dummy, sizeof(dummy), utf8Format, l);
 	
 	va_end(l);
 	

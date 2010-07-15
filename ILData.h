@@ -13,7 +13,6 @@
 #include "PlatformCore.h"
 #include "ILStructures.h"
 #include <sys/types.h>
-#include <stdint.h>
 
 typedef enum {
 	// The default. Copies the given buffer in a new one. The new buffer is mutable.

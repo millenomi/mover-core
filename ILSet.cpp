@@ -9,6 +9,8 @@
 
 #include "ILSet.h"
 
+#include "ILStructures.h"
+
 static bool ILSetEquals(ILObject* a, ILObject* b) {
 	return a == b || (a && b && a->equals(b));
 }

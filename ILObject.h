@@ -7,10 +7,10 @@
  *
  */
 
-#include <stdint.h>
-
 #ifndef ILObject_H
 #define ILObject_H 1
+
+#include "ILStructures.h"
 
 class ILObject {
 public:

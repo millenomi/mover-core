@@ -9,6 +9,8 @@
 
 #include "ILMap.h"
 
+#include "ILStructures.h"
+
 // These are the values for the hash.
 // The (copiable) ILObject therein is used as the key.
 struct ILMapEntry {

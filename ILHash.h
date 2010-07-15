@@ -11,8 +11,7 @@
 #define ILHash_H 1
 
 #include "ILLinkedList.h"
-#include <stdint.h>
-#include <stdlib.h>
+#include "ILStructures.h"
 
 /**
  A hash function returns a hash (a 64-bit long integer) for the given value. The hash function must return the same values for certain -- possibly differing -- arguments; see ILEqualsFunction and ILValueCorrespondsToKeyFunction for more information. */

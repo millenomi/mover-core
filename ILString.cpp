@@ -17,6 +17,7 @@
 
 #include <cstdarg>
 
+
 // Used by ILString::integerAtIndex()
 static const uint8_t ILStringNoDigitFound = -1;
 

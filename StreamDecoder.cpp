@@ -211,7 +211,7 @@ namespace Mover {
 			ILList* stops = itemValue->componentsSeparatedByCharacter(' ');
 			ILList* numericStops = new ILList();
 			
-			int64_t lastStop = INT64_MIN;
+			int64_t lastStop = 0;
 			
 			ILListIterator* i = stops->iterate();
 			ILObject* o;

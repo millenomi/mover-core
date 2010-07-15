@@ -22,6 +22,7 @@
 #include "ILSet.h"
 #include "ILString.h"
 
+#include "ILThreading.h"
 
 #define ILConcatenateAfterExpanding(a, b) \
 	a ## b

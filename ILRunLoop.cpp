@@ -96,11 +96,15 @@ void ILRunLoop::signalReady() {
 
 void ILRunLoop::spin() {
 	ILSetIterator* eachSource = _sources->copy()->iterate();
+	ILObject* sObject;
 	ILSource* s;
 	
-	while ((s = (ILSource*) eachSource->next())) {
+	while ((sObject = eachSource->next())) {
 		ILReleasePool pool;
-		if (_sources->containsObject((ILObject*) s))
+		
+		s = ILAs(ILSource, sObject);
+		
+		if (_sources->containsObject(sObject))
 			s->spin();
 	}
 }

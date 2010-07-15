@@ -11,8 +11,23 @@
 #define ILData_H 1
 
 #include "PlatformCore.h"
+#include "ILStructures.h"
 #include <sys/types.h>
 #include <stdint.h>
+
+typedef enum {
+	// The default. Copies the given buffer in a new one. The new buffer is mutable.
+	kILDataMakeCopyOfBuffer = 0,
+	
+	// If unset, the buffer's content will be copied.
+	// Otherwise, not. If so, it's the creator's responsibility to make sure the buffer remains alive as long as this object exists.
+	// ILData objects produced with this option are immutable. (Copies are mutable.)
+	kILDataNoCopy = 1,
+	
+	// If set, the buffer has been allocated by malloc() and the ILData object must take ownership of it. The object will call free() on it when it's destroyed.
+	// ILData objects produced with this option are mutable.
+	kILDataTakeOwnershipOfMallocBuffer = 2,
+} ILDataCreationOptions;
 
 // A wrapper for a byte buffer.
 class ILData : public ILObject, public ILCopiable {
@@ -20,14 +35,10 @@ public:
 	// Makes an empty ILData object.
 	ILData();
 	
-	// If makeCopy, the buffer's content will be copied.
-	// Otherwise, not. If so, it's the creator's responsibility to make sure the buffer remains alive as long as this object exists.
-	ILData(uint8_t* bytes, size_t length, bool makeCopy);
-
-	// Same as above with makeCopy == true.
-	ILData(uint8_t* bytes, size_t length);
+	// Makes an object from the given buffer. By default, data will be copie
+	ILData(uint8_t* bytes, ILSize length, ILDataCreationOptions options = kILDataMakeCopyOfBuffer);
 	
-	~ILData();
+	virtual ~ILData();
 
 	uint8_t* bytes();
 	size_t length();
@@ -44,7 +55,8 @@ public:
 	virtual uint64_t hash();
 	
 private:
-	void initialize(uint8_t* bytes, size_t length, bool makeCopy);
+	void initializeFromMallocBuffer(uint8_t* bytes, size_t length, bool makeCopy);
+	void initializeFromUnownedBuffer(uint8_t* bytes, size_t length);
 	
 	bool _owns;
 	uint8_t* _bytes;

@@ -78,7 +78,7 @@ namespace Mover {
             return NULL;
         
         size_t remainingLength = top->length() - _topOffset;
-        return new ILData(top->bytes() + _topOffset, ILMin(length, remainingLength), false);        
+        return new ILData(top->bytes() + _topOffset, ILMin(length, remainingLength), kILDataNoCopy);        
     }
     
     size_t ConsumptionQueue::availableDataLength() {        
@@ -132,7 +132,7 @@ namespace Mover {
 			ILData* part = ILAs(ILData, partObject);
 			
 			if (isFirst && _topOffset != 0)
-				part = new ILData(part->bytes() + _topOffset, part->length() - _topOffset, false);
+				part = new ILData(part->bytes() + _topOffset, part->length() - _topOffset, kILDataNoCopy);
 			
 			isFirst = false;
 			

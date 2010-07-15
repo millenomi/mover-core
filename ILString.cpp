@@ -155,7 +155,7 @@ void ILString::initializeByUsingCodePointsArray(ILCodePoint* codePoints, size_t 
 }
 
 ILString* ILString::stringWithCString(uint8_t* aString, ILStringEncoding encoding) {
-	return ILString::stringWithData(new ILData(aString, strlen((const char*) aString), false), encoding);
+	return ILString::stringWithData(new ILData(aString, strlen((const char*) aString), kILDataNoCopy), encoding);
 }
 
 ILCodePoint* ILString::codePoints() {

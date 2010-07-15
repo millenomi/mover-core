@@ -41,19 +41,27 @@ uint64_t ILData::hash() {
 // ~~~
 
 ILData::ILData() : ILObject() {
-	this->initialize(NULL, 0, true);
+	this->initializeFromMallocBuffer(NULL, 0, true);
 }
 
-ILData::ILData(uint8_t* bytes, size_t length) : ILObject() {
-	this->initialize(bytes, length, true);
+ILData::ILData(uint8_t* bytes, ILSize length, ILDataCreationOptions options) : ILObject() {
+	switch (options) {
+		case kILDataMakeCopyOfBuffer:
+			initializeFromMallocBuffer(bytes, length, true);
+			break;
+		case kILDataTakeOwnershipOfMallocBuffer:
+			initializeFromMallocBuffer(bytes, length, false);
+			break;
+		case kILDataNoCopy:
+			initializeFromUnownedBuffer(bytes, length);
+			break;			
+		default:
+			break;
+	}
 }
 
-ILData::ILData(uint8_t* bytes, size_t length, bool makeCopy) : ILObject() {
-	this->initialize(bytes, length, makeCopy);
-}
-
-void ILData::initialize(uint8_t* bytes, size_t length, bool makeCopy) {
-	_owns = makeCopy;
+void ILData::initializeFromMallocBuffer(uint8_t* bytes, size_t length, bool makeCopy) {
+	_owns = true;
 	_length = length;
 	
 	if (makeCopy) {
@@ -62,6 +70,12 @@ void ILData::initialize(uint8_t* bytes, size_t length, bool makeCopy) {
 			memcpy(_bytes, bytes, length);
 	} else
 		_bytes = bytes;
+}
+
+void ILData::initializeFromUnownedBuffer(uint8_t* bytes, size_t length) {
+	_bytes = bytes;
+	_length = length;
+	_owns = false;
 }
 
 ILData::~ILData() {

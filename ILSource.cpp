@@ -3,7 +3,10 @@
 #include "ILSource.h"
 #include "ILRunLoop.h"
 
-ILSource::ILSource() : ILObject() {}
+ILSource::ILSource() : ILObject() {
+	_runLoop = NULL;
+}
+
 ILSource::~ILSource() {}
 
 void ILSource::setRunLoop(ILRunLoop* rl) {

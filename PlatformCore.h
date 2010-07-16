@@ -39,7 +39,7 @@
     static_cast<class*>(value)
 
 static inline void ILAbortWithLocationInformation(const char* whereInfo, const char* reason) {
-    fprintf(stderr, "<Aborting in %s>: %s", whereInfo, reason);
+    fprintf(stderr, "<Aborting in %s>: %s\n", whereInfo, reason);
     abort();
 }
 

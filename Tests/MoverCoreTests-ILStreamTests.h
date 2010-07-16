@@ -1,0 +1,37 @@
+/*
+ *  MoverCoreTests-ILStreamTests.h
+ *  MoverCore
+ *
+ *  Created by ∞ on 16/07/10.
+ *  Copyright 2010 __MyCompanyName__. All rights reserved.
+ *
+ */
+
+#ifndef MOVER_CORE_TESTS_ILSTREAM
+#define MOVER_CORE_TESTS_ILSTREAM 1
+
+#include "PlatformCore.h"
+#include "ILTesting.h"
+
+class ILMessage;
+
+namespace Mover {
+	class ILStreamTests : public ILTesting::TestCase {
+		ILTestCase(ILStreamTests) {
+			ILTestWith(testReadingUsingPipe);
+			ILTestWith(testWritingUsingPipe);
+			ILTestWith(testReadMessages);
+		}
+		
+		void testReadingUsingPipe();
+		void testWritingUsingPipe();
+		void testReadMessages();
+		
+		void readyForReading(ILMessage* m);
+		
+	private:
+		bool _didReceiveReadyForReading;
+	};
+}
+
+#endif // #ifndef MOVER_CORE_TESTS_ILSTREAM

@@ -13,6 +13,7 @@
 #include "MoverCoreTests-ConsumptionQueue.h"
 #include "MoverCoreTests-ILString_UTF8.h"
 #include "MoverCoreTests-ILStringParsing.h"
+#include "MoverCoreTests-ILStreamTests.h"
 
 using namespace ILTesting;
 
@@ -21,6 +22,7 @@ namespace Mover {
 		TestCase::runAllOf(new ConsumptionQueueTests(results),
 						   new ILString_UTF8Tests(results),
 						   new ILStringParsingTests(results),
+						   new ILStreamTests(results),
 						   NULL);
 	}
 }

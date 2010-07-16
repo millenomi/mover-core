@@ -35,22 +35,33 @@ public:
 	
 	virtual bool isValid();
 	
+	virtual void setRunLoop(ILRunLoop* loop);
+	
 // implementation details. do not call.
 	virtual void spin();
 	friend void ILStreamMonitor(ILObject* o);
 	
+	
+// debug only
+	void observeSignificantChanges();
+	
 private:
 	int _fileDescriptor;
 	
-	bool _canWrite, _canRead;
+	bool _canWrite, _canRead, _didAnnounceClose;
 	bool _hadError;
+	
+	bool _isMonitoring;
 	
 	pthread_mutex_t _mutex;
 	
 	void signalReadyForReadingAndWriting(bool reading, bool writing);
 	
+	bool _debug_showLogs;
+	
 protected:
 	int fileDescriptor();
+	void log(ILString* s);
 };
 
 extern void* kILStreamDidCloseWithErrorMessage;

@@ -10,11 +10,10 @@
 		1508FC8F11E6684500E7DD9E /* ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */; };
 		1508FC9011E6684500E7DD9E /* ILString_UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = 1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */; };
 		1508FC9111E6684500E7DD9E /* ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */; };
+		1517C69C11F0EF7900058177 /* MoverCoreTests-ILStreamTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1517C69B11F0EF7900058177 /* MoverCoreTests-ILStreamTests.cpp */; };
 		15363F1711EE470300F229B1 /* ILStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363F1611EE470300F229B1 /* ILStream.cpp */; };
 		15363F1811EE470300F229B1 /* ILStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 15363F1511EE470300F229B1 /* ILStream.h */; };
 		15363F1911EE470300F229B1 /* ILStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15363F1611EE470300F229B1 /* ILStream.cpp */; };
-		1566F8BF11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1566F8BC11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp */; };
-		1566F8C411E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1566F8C111E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp */; };
 		1576B97111EBB5280032047B /* ILStructures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1576B97011EBB5280032047B /* ILStructures.cpp */; };
 		1576B97211EBB5280032047B /* ILStructures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1576B97011EBB5280032047B /* ILStructures.cpp */; };
 		157C386511DF8A0C0051D707 /* ILHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 157C386611DF8A0C0051D707 /* ILHash.h */; };
@@ -164,12 +163,10 @@
 /* Begin PBXFileReference section */
 		1508FC8D11E6684500E7DD9E /* ILString_UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILString_UTF8.h; sourceTree = "<group>"; };
 		1508FC8E11E6684500E7DD9E /* ILString_UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILString_UTF8.cpp; sourceTree = "<group>"; };
+		1517C69A11F0EF7900058177 /* MoverCoreTests-ILStreamTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MoverCoreTests-ILStreamTests.h"; sourceTree = "<group>"; };
+		1517C69B11F0EF7900058177 /* MoverCoreTests-ILStreamTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "MoverCoreTests-ILStreamTests.cpp"; sourceTree = "<group>"; };
 		15363F1511EE470300F229B1 /* ILStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILStream.h; sourceTree = "<group>"; };
 		15363F1611EE470300F229B1 /* ILStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILStream.cpp; sourceTree = "<group>"; };
-		1566F8BB11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MoverCoreTests-ILString_UTF8.h"; sourceTree = "<group>"; };
-		1566F8BC11E9C5A0006E368D /* MoverCoreTests-ILString_UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "MoverCoreTests-ILString_UTF8.cpp"; sourceTree = "<group>"; };
-		1566F8C011E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MoverCoreTests-ConsumptionQueue.h"; sourceTree = "<group>"; };
-		1566F8C111E9C5AB006E368D /* MoverCoreTests-ConsumptionQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "MoverCoreTests-ConsumptionQueue.cpp"; sourceTree = "<group>"; };
 		1576B97011EBB5280032047B /* ILStructures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILStructures.cpp; sourceTree = "<group>"; };
 		157C386611DF8A0C0051D707 /* ILHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ILHash.h; sourceTree = "<group>"; };
 		1582F98511DE85BA006BCD57 /* StreamDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamDecoder.h; sourceTree = "<group>"; };
@@ -357,6 +354,8 @@
 				15EC94F411EFACA500B0CF5D /* MoverCoreTests-ILString_UTF8.h */,
 				15EC94F511EFACA500B0CF5D /* MoverCoreTests-ILStringParsing.cpp */,
 				15EC94F611EFACA500B0CF5D /* MoverCoreTests-ILStringParsing.h */,
+				1517C69B11F0EF7900058177 /* MoverCoreTests-ILStreamTests.cpp */,
+				1517C69A11F0EF7900058177 /* MoverCoreTests-ILStreamTests.h */,
 				15EC94F711EFACA500B0CF5D /* MoverCoreTests.cpp */,
 				15EC94F811EFACA500B0CF5D /* MoverCoreTests.h */,
 			);
@@ -608,6 +607,7 @@
 				15EC94FE11EFACA500B0CF5D /* MoverCoreTests.cpp in Sources */,
 				15363F1711EE470300F229B1 /* ILStream.cpp in Sources */,
 				159D0D9011EF7A8D0055ED60 /* ILThreading.cpp in Sources */,
+				1517C69C11F0EF7900058177 /* MoverCoreTests-ILStreamTests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

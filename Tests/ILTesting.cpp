@@ -105,7 +105,7 @@ namespace ILTesting {
 // ------------ XcodeResultsStdoutDisplay
 	
 	XcodeResultsStdoutDisplay::XcodeResultsStdoutDisplay() {
-		_mode = kILTestingXcodeFailuresAsErrors;
+		_mode = kILTestingXcodeShowFailuresAsErrors;
 		_showPassing = false;
 	}
 	
@@ -121,10 +121,10 @@ namespace ILTesting {
 	void XcodeResultsStdoutDisplay::failed(TestCase* c, const char* description, const char* file, unsigned long line) {
 		const char* prefix;
 		switch (_mode) {
-			case kILTestingXcodeFailuresAsErrors:
+			case kILTestingXcodeShowFailuresAsErrors:
 				prefix = "error";
 				break;
-			case kILTestingXcodeFailuresAsWarnings:
+			case kILTestingXcodeShowFailuresAsWarnings:
 				prefix = "warning";
 				break;
 			default:

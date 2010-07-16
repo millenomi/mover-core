@@ -25,8 +25,8 @@ namespace ILTesting {
 	};	
 	
 	typedef enum {
-		kILTestingXcodeFailuresAsWarnings = 0,
-		kILTestingXcodeFailuresAsErrors = 1,
+		kILTestingXcodeShowFailuresAsWarnings = 0,
+		kILTestingXcodeShowFailuresAsErrors = 1,
 	} ILTestingXcodeResultsFailureDisplayMode;
 	
 	class XcodeResultsStdoutDisplay : public Results {

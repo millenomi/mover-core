@@ -43,6 +43,7 @@ public:
 	size_t length();
 	
 	void appendBytes(uint8_t* bytes, size_t length);
+	void appendData(ILData* d);
 	
 	// ILCopiable overrides.
 	virtual bool canCopy();

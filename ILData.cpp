@@ -116,3 +116,7 @@ void ILData::appendBytes(uint8_t* newBytes, size_t newBytesLength) {
 		_length = newLength;
 	}
 }
+
+void ILData::appendData(ILData* d) {
+	this->appendBytes(d->bytes(), d->length());
+}

@@ -38,6 +38,9 @@ private:
 /** A target is an object that is able to receive ILMessage objects (messages). */
 class ILTarget : public ILObject {
 public:
+	ILTarget();
+	virtual ~ILTarget();
+	
 	/** Delivers the message to this target. The message may be processed synchronously or asynchronously. */
 	virtual void deliverMessage(ILMessage* m) = 0;
 };
@@ -63,10 +66,13 @@ private:
 	void* _context;
 };
 
-/** A target that delivers a message by calling a method on an object. This class is virtual; you create implementations for particular methods by using the @link ILTargetForMethod ILTargetForMethod macro. */
+/** A target that delivers a message by calling a method on an object. This class is virtual; you create implementations for particular methods by using the @link ILTargetForMethod ILTargetForMethod macro.
+ 
+	Note that the object passed to this class is NOT retained to avoid retain loops!
+ */
 class ILObjectTarget : public ILTarget {
 public:
-	ILObjectTarget(ILObject* o);
+	ILObjectTarget(ILObject* o); // o is NOT RETAINED
 	~ILObjectTarget();
 	
 	virtual ILObject* target();

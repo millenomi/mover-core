@@ -34,8 +34,13 @@ ILObject* ILMessage::payload() {
 
 // ~~~
 
-ILObjectTarget::ILObjectTarget(ILObject* o) {
-	_target = ILRetain(o);
+ILTarget::ILTarget() {}
+ILTarget::~ILTarget() {}
+
+// ~~~
+
+ILObjectTarget::ILObjectTarget(ILObject* o) : ILTarget() {
+	_target = o;
 }
 
 ILObjectTarget::~ILObjectTarget() {

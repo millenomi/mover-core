@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <math.h>
+#include <errno.h>
 
 #ifdef __cplusplus
 

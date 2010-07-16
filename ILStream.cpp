@@ -7,22 +7,38 @@
  *
  */
 
-#error Redo invalidate(), close(), make sure locking is sane.
 
 #include "ILStream.h"
 
+#include <cstdlib>
+#include <cerrno>
 #include <cstdio>
 #include <sys/select.h>
 #include <ctime>
 
+ILUniqueConstant(kILStreamDidCloseWithErrorMessage);
+ILUniqueConstant(kILStreamNowReadyForReadingMessage);
+ILUniqueConstant(kILStreamNowReadyForWritingMessage);
+
+class ILMutexAcquisition {
+public:
+	pthread_mutex_t* _mutex;
+	
+	ILMutexAcquisition(pthread_mutex_t* mutex) {
+		pthread_mutex_lock(mutex);
+		_mutex = mutex;
+	}
+	
+	~ILMutexAcquisition() {
+		pthread_mutex_unlock(_mutex);
+	}
+};
+
 void ILStreamMonitor(ILObject* o) {
 	ILStream* s = ILAs(ILStream, o);
 	
-	int fd = s->fileDescriptor();
-	if (fd == 0)
-		return;
-	
-	while (s->isValid()) {
+	int fd;
+	while ((fd = s->fileDescriptor()) >= 0) {
 		struct timeval tv;
 		tv.tv_sec = 1;
 		tv.tv_usec = 0;
@@ -34,8 +50,8 @@ void ILStreamMonitor(ILObject* o) {
 		int result = select(fd + 1, &readSet, &writeSet, &errorSet, &tv);
 		
 		if (result >= 0) {
-			if (FD_ISSET(fd, errorSet)) {
-				s->invalidate();
+			if (FD_ISSET(fd, &errorSet)) {
+				s->close();
 				break;
 			} else {
 				s->signalReadyForReadingAndWriting(FD_ISSET(fd, &readSet), FD_ISSET(fd, &writeSet));
@@ -50,10 +66,8 @@ void ILStreamMonitor(ILObject* o) {
 	}
 }
 
-ILStream::ILStream(int fileDescriptor, bool closeFileDescriptionOnClose) : ILSource() {
-	_closeFileDescriptorOnClose = closeFileDescriptionOnClose;
+ILStream::ILStream(int fileDescriptor) : ILSource() {
 	_fileDescriptor = fileDescriptor;
-	_valid = true;
 	
 	_canRead = _canWrite = false;
 	
@@ -61,7 +75,7 @@ ILStream::ILStream(int fileDescriptor, bool closeFileDescriptionOnClose) : ILSou
 	pthread_mutexattr_init(&attrs);
 	
 	pthread_mutexattr_settype(&attrs, PTHREAD_MUTEX_RECURSIVE);
-	int result = pthread_mutex_init(&_mutex, &attrs);
+	int result = pthread_mutex_init(&this->_mutex, &attrs);
 	if (result != 0)
 		ILAbort("Couldn't make the mutex for the ILStream monitoring thread.");
 	
@@ -69,34 +83,25 @@ ILStream::ILStream(int fileDescriptor, bool closeFileDescriptionOnClose) : ILSou
 }
 
 ILStream::~ILStream() {
-
+	this->close();
 }
 
 bool ILStream::isReadyForWriting() { 
-	bool b;
-	
-	pthread_mutex_lock(&_mutex);
-	b = _canWrite && _valid;
-	pthread_mutex_unlock(&_mutex);
-	
-	return b;
+	ILMutexAcquisition(&this->_mutex);
+	return _canWrite && _fileDescriptor >= 0;
 }
 
 bool ILStream::isReadyForReading() { 
-	bool b;
-	
-	pthread_mutex_lock(&_mutex);
-	b = _canRead && _valid;
-	pthread_mutex_unlock(&_mutex);
-	
-	return b;
+	ILMutexAcquisition(&this->_mutex);
+	return _canRead && _fileDescriptor >= 0;
 }
 
 bool ILStream::write(ILData* data, ILSize* writtenSize) {
-	if (!this->isValid())
-		return 0;
+	int fd = this->fileDescriptor();
+	if (fd >= 0)
+		return false;
 	
-	ssize_t s = ::write(_fileDescriptor, data->bytes(), data->length());
+	ssize_t s = ::write(fd, data->bytes(), data->length());
 	if (s >= 0 && writtenSize)
 		*writtenSize = s;
 	
@@ -104,11 +109,12 @@ bool ILStream::write(ILData* data, ILSize* writtenSize) {
 }
 
 ILData* ILStream::readDataOfMaximumLength(ILSize s) {
-	if (!this->isValid())
-		return NULL;
+	int fd = this->fileDescriptor();
+	if (fd >= 0)
+		return false;
 	
 	uint8_t* buffer = (uint8_t*) malloc(s);
-	ssize_t read = ::read(_fileDescriptor, buffer, s);
+	ssize_t read = ::read(fd, buffer, s);
 	
 	if (read < 0) {
 		free(buffer);
@@ -119,66 +125,45 @@ ILData* ILStream::readDataOfMaximumLength(ILSize s) {
 	}
 }
 
-void ILStream::close() {
-	if (!_valid)
-		return;
-	
-	if (_closeFileDescriptorOnClose && this->isValid()) {
-		int fd = this->fileDescriptor();
-		this->invalidate();
-		::close(fd);
-	}
-}
-
 int ILStream::fileDescriptor() {
-	int i;
-	
-	pthread_mutex_lock(&_mutex);
-	i = _fileDescriptor;
-	pthread_mutex_unlock(&_mutex);
-	
-	return i;
+	ILMutexAcquisition(&this->_mutex);
+	return _fileDescriptor;
 }
 
 bool ILStream::isValid() {
-	bool b;
-	
-	pthread_mutex_lock(&_mutex);
-	b = _valid;
-	pthread_mutex_unlock(&_mutex);
-	
-	return b;
+	ILMutexAcquisition(&this->_mutex);
+	return _fileDescriptor >= 0;
 }
 
-void ILStream::invalidate() {
-	pthread_mutex_lock(&_mutex);
-	_valid = false;
-	_fileDescriptor = 0;
+void ILStream::close() {
+	ILMutexAcquisition(&this->_mutex);
+
+	if (_fileDescriptor >= 0) {
+		::close(_fileDescriptor);
+		_fileDescriptor = -1;
+	}
 	
 	if (this->runLoop())
-		this->runLoop()->signalReady();
-	
-	pthread_mutex_unlock(&_mutex);
+		this->runLoop()->signalReady();	
 }
 
 void ILStream::signalReadyForReadingAndWriting(bool reading, bool writing) {
-	pthread_mutex_lock(&_mutex);
+	ILMutexAcquisition(&this->_mutex);
+	
 	_canRead = reading;
 	_canWrite = writing;
 	
 	if (this->runLoop())
-		this->runLoop()->signalReady();
-	
-	pthread_mutex_unlock(&_mutex);
+		this->runLoop()->signalReady();	
 }
 
 void ILStream::spin() {
+	ILMutexAcquisition(&this->_mutex);
+
 	if (!this->runLoop())
 		return;
-	
-	pthread_mutex_lock(&_mutex);
-	
-	if (!_valid)
+		
+	if (!_fileDescriptor >= 0)
 		this->runLoop()->currentMessageHub()->deliverMessage(new ILMessage(kILStreamDidCloseWithErrorMessage, this, NULL));
 	else {
 		if (_canRead)
@@ -187,6 +172,4 @@ void ILStream::spin() {
 		if (_canWrite)
 			this->runLoop()->currentMessageHub()->deliverMessage(new ILMessage(kILStreamNowReadyForWritingMessage, this, NULL));
 	}
-	
-	pthread_mutex_unlock(&_mutex);
 }

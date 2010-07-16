@@ -19,7 +19,7 @@
 
 class ILStream : public ILSource {
 public:
-	ILStream(int fileDescriptor, bool closeFileDescriptionOnClose = false);
+	ILStream(int fileDescriptor);
 	virtual ~ILStream();
 	
 	virtual bool write(ILData* data, ILSize* writtenSize);
@@ -40,19 +40,17 @@ public:
 	friend void ILStreamMonitor(ILObject* o);
 	
 private:
-	bool _closeFileDescriptorOnClose;
 	int _fileDescriptor;
-	
-	bool _valid;
 	
 	bool _canWrite, _canRead;
 	bool _hadError;
 	
 	pthread_mutex_t _mutex;
 	
+	void signalReadyForReadingAndWriting(bool reading, bool writing);
+	
 protected:
 	int fileDescriptor();
-	void invalidate();
 };
 
 extern void* kILStreamDidCloseWithErrorMessage;

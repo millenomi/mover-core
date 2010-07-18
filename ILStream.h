@@ -68,4 +68,8 @@ extern void* kILStreamDidCloseWithErrorMessage;
 extern void* kILStreamNowReadyForReadingMessage;
 extern void* kILStreamNowReadyForWritingMessage;
 
+class ILStreamSource : public ILObject {
+	virtual ILStream* open() = 0;
+};
+
 #endif // #ifndef ILStream_H

@@ -14,6 +14,7 @@
 
 enum {
 	kILNumberInt64Type = 0,
+	kILNumberUInt64Type,
 	kILNumberDoubleType,
 	kILNumberBoolType,
 	kILNumberNonretainedPointerType,
@@ -26,12 +27,14 @@ public:
 	
 	ILNumber(bool booleanValue);
 	ILNumber(int64_t integerValue);
+	ILNumber(uint64_t integerValue);
 	ILNumber(double doubleValue);
 	
 	ILNumber(void* nonretainedPointerValue);
 	
 	ILNumberType type();
 	
+	uint64_t unsignedIntegerValue();
 	int64_t integerValue();
 	double doubleValue();
 	bool booleanValue();
@@ -50,6 +53,7 @@ private:
 	ILNumberType _type;
 	union {
 		int64_t integerValue;
+		uint64_t unsignedIntegerValue;
 		double doubleValue;
 		bool booleanValue;
 		void* nonretainedPointerValue;

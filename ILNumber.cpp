@@ -71,6 +71,11 @@ ILNumber::ILNumber(void* p) : ILObject() {
 	_value.nonretainedPointerValue = p;
 }
 
+ILNumber::ILNumber(uint64_t ui) : ILObject() {
+	_type = kILNumberUInt64Type;
+	_value.unsignedIntegerValue = ui;
+}
+
 ILNumberType ILNumber::type() { return _type; }
 
 // ~~~
@@ -79,8 +84,27 @@ int64_t ILNumber::integerValue() {
 	switch (_type) {
 		case kILNumberInt64Type:
 			return _value.integerValue;
+		case kILNumberUInt64Type:
+			return (int64_t) _value.unsignedIntegerValue;
 		case kILNumberDoubleType:
 			return (int64_t) _value.doubleValue;
+		case kILNumberBoolType:
+			return _value.booleanValue? 1 : 0;
+		case kILNumberNonretainedPointerType:
+			return (intptr_t) _value.nonretainedPointerValue;
+		default:
+			return 0;
+	}
+}
+
+uint64_t ILNumber::unsignedIntegerValue() {
+	switch (_type) {
+		case kILNumberInt64Type:
+			return (uint64_t) _value.integerValue;
+		case kILNumberUInt64Type:
+			return _value.unsignedIntegerValue;
+		case kILNumberDoubleType:
+			return (uint64_t) _value.doubleValue;
 		case kILNumberBoolType:
 			return _value.booleanValue? 1 : 0;
 		case kILNumberNonretainedPointerType:
@@ -94,6 +118,8 @@ double ILNumber::doubleValue() {
 	switch (_type) {
 		case kILNumberInt64Type:
 			return (double) _value.integerValue;
+		case kILNumberUInt64Type:
+			return (double) _value.unsignedIntegerValue;
 		case kILNumberDoubleType:
 			return _value.doubleValue;
 		case kILNumberBoolType:
@@ -109,6 +135,8 @@ bool ILNumber::booleanValue() {
 	switch (_type) {
 		case kILNumberInt64Type:
 			return _value.integerValue? true : false;
+		case kILNumberUInt64Type:
+			return _value.unsignedIntegerValue? true : false;
 		case kILNumberDoubleType:
 			return _value.doubleValue? true : false;
 		case kILNumberBoolType:

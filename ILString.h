@@ -36,7 +36,7 @@ typedef uint32_t ILCodePoint;
 #endif
 
 
-class ILString : public ILObject {
+class ILString : public ILObject, public ILCopiable {
 public:
 	~ILString();
 	
@@ -52,6 +52,9 @@ public:
 	
 	// Use this if you have Unicode code points and you want to make a string out of 'em.
 	ILString(ILCodePoint* codePoints, size_t length);
+	
+	// Makes an empty string.
+	ILString();
 	
 	ILData* dataUsingEncoding(ILStringEncoding encoding);
 	
@@ -77,6 +80,9 @@ public:
 	// integer
 	int64_t integerValueAtIndex(size_t index);
 	int64_t integerValue();
+	
+	// appending stuff
+	void appendString(ILString* s);
 	
 private:
 	ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer);

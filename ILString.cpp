@@ -139,6 +139,10 @@ ILString::ILString(ILCodePoint* codePoints, size_t length) : ILObject() {
 	this->initializeByUsingCodePointsArray(codePoints, length, false);
 }
 
+ILString::ILString() : ILObject() {
+	this->initializeByUsingCodePointsArray(NULL, 0, false);
+}
+
 ILString::ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer) : ILObject() {
 	this->initializeByUsingCodePointsArray(codePoints, length, weOwnThisBuffer);
 }
@@ -146,7 +150,8 @@ ILString::ILString(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer)
 void ILString::initializeByUsingCodePointsArray(ILCodePoint* codePoints, size_t length, bool weOwnThisBuffer) {
 	if (!weOwnThisBuffer) {
 		_codePoints = (ILCodePoint*) malloc(length * sizeof(ILCodePoint));
-		memcpy(_codePoints, codePoints, length * sizeof(ILCodePoint));
+		if (length > 0)
+			memcpy(_codePoints, codePoints, length * sizeof(ILCodePoint));
 	} else
 		_codePoints = codePoints;
 	
@@ -301,4 +306,18 @@ ILString* ILString::stringWithFormat(ILString* format, ...) {
 	va_end(l);
 	
 	return ILString::stringWithCString((uint8_t*) newString, kILStringEncodingUTF8);
+}
+
+void ILString::appendString(ILString* s) {
+	ILCodePoint* p = this->codePoints();
+	ILCodePoint* toCopy = s->codePoints();
+	ILSize length = s->length();
+	
+	if (length == 0)
+		return;
+	
+	p = (ILCodePoint*) realloc(p, (_length + length) * sizeof(ILCodePoint));
+	memcpy(p + _length, toCopy, length * sizeof(ILCodePoint));
+	_codePoints = p;
+	_length = _length + length;
 }

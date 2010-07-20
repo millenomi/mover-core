@@ -13,53 +13,73 @@
 #define MOVER_STREAM_ENCODER_H 1
 
 #include "ILStream.h"
+#include "ILRunLoop.h"
+#include "ILMessage.h"
+#include "ILMessageHub.h"
 
 namespace Mover {
+	class StreamEncoder_ReadyTarget;
 	class StreamEncoderDelegate;
 	
 	typedef enum {
-		kMvrStreamEncoderDidEndCorrectly = 0,
-		kMvrStreamEncoderNotEnoughDataInStreamError,
-	} StreamEncoderEndCause;
+		kMvrStreamEncoderEditable,
+		kMvrStreamEncoderReadyToProduceStreamPart,
+		kMvrStreamEncoderProducingStreamPart,
+		kMvrStreamEncoderDidEndCorrectly,
+		kMvrStreamEncoderStreamIsOfIncorrectSizeError,
+		kMvrStreamEncoderStreamDidCloseWithError,
+	} StreamEncoderState;
 	
 	class StreamEncoder : public ILObject {
 	public:
 		StreamEncoder();
 		~StreamEncoder();
 		
+		StreamEncoderDelegate* delegate();
+		void setDelegate(StreamEncoderDelegate* d);
+		
 		void setValueForMetadataKey(ILString* key, ILString* value);
 		void addPayloadWithData(ILString* key, ILData* data);
 		void addPayloadWithContentsOfStream(ILString* key, ILStreamSource* source, uint64_t fileSize);
 		
-		StreamEncoderDelegate* delegate();
-		void setDelegate(StreamEncoderDelegate* delegate);
+		void requestStreamPart();
+		StreamEncoderState state();
 		
-		void produceStreamPart();
-		bool hasStartedProducingStream();
-		
+	friend class StreamEncoder_ReadyTarget;
 	private:
+		void streamReady(ILMessage* m);
+		
 		StreamEncoderDelegate* _delegate;
 		
 		ILMap* _metadata;
 		ILList* _payloadKeys, * _payloadContents, * _payloadLenghts;
 		
 		bool _sealed;
+		StreamEncoderState _state;
 		
-		void setupPayloadMetadata();
+		void _setupPayloadMetadata();
+		void _readDataFromStreamAndInformDelegate();
+		void _endWithState(StreamEncoderState e);
+		void _closeStream();
 		
+		bool _didProvidePrologue;
+		bool _didProvideMetadata;
+
 		ILIndex _currentPayloadIndex;
 		ILStream* _currentStream;
-		void producePayloadPart();
+		uint64_t _readFromCurrentStream;
+				
+		StreamEncoder_ReadyTarget* _readyTarget;
+		
+		bool _didAnnounceEnd;
 	};
 	
 	class StreamEncoderDelegate {
 	public:
-		virtual void streamEncoderWillProduceStream(StreamEncoder* encoder) = 0;
-		virtual void streamEncoderDidProduceData(StreamEncoder* encoder, ILData* data) = 0;
-		virtual void streamEncoderDidEndProducingStream(StreamEncoderEndCause cause) = 0;
+		virtual void streamEncoderWillBeginProducingStream(StreamEncoder* e) = 0;
+		virtual void streamEncoderDidProduceStreamPart(StreamEncoder* e, ILData* part) = 0;
+		virtual void streamEncoderDidEndProducingStream(StreamEncoder* e) = 0;
 	};
-	
-	extern void* kILStreamEncoderCanProceedMessage;
 }
 
 #endif // #ifndef MOVER_STREAM_ENCODER_H

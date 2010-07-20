@@ -69,6 +69,7 @@ extern void* kILStreamNowReadyForReadingMessage;
 extern void* kILStreamNowReadyForWritingMessage;
 
 class ILStreamSource : public ILObject {
+public:
 	virtual ILStream* open() = 0;
 };
 

@@ -30,6 +30,8 @@ public:
 	// ASYNCHRONOUS STUFF.
 	
 	// Only meaningful if the target is non-NULL.
+	virtual void beginMonitoring();
+	virtual void endMonitoring();
 	virtual bool isReadyForWriting();
 	virtual bool isReadyForReading();
 	

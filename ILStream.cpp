@@ -144,7 +144,7 @@ ILData* ILStream::readDataOfMaximumLength(ILSize s) {
 	uint8_t* buffer = (uint8_t*) malloc(s);
 	ssize_t read = ::read(fd, buffer, s);
 	
-	if (read < 0) {
+	if (read <= 0) {
 		free(buffer);
 		return NULL;
 	} else {
@@ -206,6 +206,7 @@ void ILStream::spin() {
 		_didAnnounceClose = true;
 		this->log(ILStr("ILStream: Sending did-close-with-error message to message hub."));
 		this->runLoop()->currentMessageHub()->deliverMessage(new ILMessage(kILStreamDidCloseWithErrorMessage, this, NULL));
+		this->endMonitoring();
 	} else if (!_didAnnounceClose) {
 		if (_canRead) {
 			this->log(ILStr("ILStream: Sending ready-for-reading message to message hub."));
@@ -220,3 +221,13 @@ void ILStream::spin() {
 		}
 	}
 }
+
+void ILStream::beginMonitoring() {
+	ILRunLoop::current()->addSource(this);
+}
+
+void ILStream::endMonitoring() {
+	if (this->runLoop())
+		this->runLoop()->removeSource(this);
+}
+

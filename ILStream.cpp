@@ -206,7 +206,10 @@ void ILStream::spin() {
 		_didAnnounceClose = true;
 		this->log(ILStr("ILStream: Sending did-close-with-error message to message hub."));
 		this->runLoop()->currentMessageHub()->deliverMessage(new ILMessage(kILStreamDidCloseWithErrorMessage, this, NULL));
+<<<<<<< HEAD
 		this->endMonitoring();
+=======
+>>>>>>> 80ed64f5008f391e8380cef3c03e2a05600d5d7d
 	} else if (!_didAnnounceClose) {
 		if (_canRead) {
 			this->log(ILStr("ILStream: Sending ready-for-reading message to message hub."));
@@ -221,6 +224,7 @@ void ILStream::spin() {
 		}
 	}
 }
+<<<<<<< HEAD
 
 void ILStream::beginMonitoring() {
 	ILRunLoop::current()->addSource(this);
@@ -231,3 +235,5 @@ void ILStream::endMonitoring() {
 		this->runLoop()->removeSource(this);
 }
 
+=======
+>>>>>>> 80ed64f5008f391e8380cef3c03e2a05600d5d7d

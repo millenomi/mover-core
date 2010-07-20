@@ -27,6 +27,8 @@ public:
 	
 	virtual void deliverMessage(ILMessage* m);
 	
+	static ILMessageHub* current();
+	
 private:
 	ILMap* _targets;
 };

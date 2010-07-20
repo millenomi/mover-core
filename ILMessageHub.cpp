@@ -8,6 +8,7 @@
  */
 
 #include "ILMessageHub.h"
+#include "ILRunLoop.h"
 
 class ILMessageHubTarget : public ILObject {
 public:
@@ -104,3 +105,6 @@ void ILMessageHub::deliverMessage(ILMessage* m) {
 	}
 }
 
+ILMessageHub* ILMessageHub::current() {
+	return ILRunLoop::current()->currentMessageHub();
+}

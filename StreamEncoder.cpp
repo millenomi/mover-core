@@ -85,8 +85,6 @@ namespace Mover {
 	// CONTRACT: The user calls requestStreamPart(). SOMETIME IN THE FUTURE (possibly during the rSP() call itself!), the delegate receives appropriate messages but NO MORE THAN ONE streamEncoderDidProduceStreamPart(). The delegate can request more streamEncoderDidProduceStreamPart() calls by calling again requestStreamPart().
 	// So here's how the implementation works:
 	
-#error TODO advance to next payload on stream read end.
-	
 	// rSP() ->
 	//	if the user wasn't given the prologue or the metadata, provide the appropriate block of data and return. State on return is kMvrStreamEncoderReadyToProduceStreamPart.
 	//	otherwise:
@@ -173,6 +171,8 @@ namespace Mover {
 			
 			if (this->delegate())
 				this->delegate()->streamEncoderDidProduceStreamPart(this, d);
+			
+			_currentPayloadIndex++;
 			return;
 		}
 		
@@ -217,6 +217,8 @@ namespace Mover {
 
 		_currentStream->close();
 		ILRelease(_currentStream); _currentStream = NULL;
+		
+		_currentPayloadIndex++;
 	}
 	
 	void StreamEncoder::_readDataFromStreamAndInformDelegate() {

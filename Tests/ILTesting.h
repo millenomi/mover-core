@@ -54,10 +54,14 @@ namespace ILTesting {
 	public:
 		TestCase(Results* r = NULL, const char* name = NULL);
 		virtual ~TestCase();
-		virtual void run() = 0;
+		virtual void run();
+		virtual void runTests() = 0;
 		
 		virtual void setUp();
 		virtual void tearDown();
+		
+		virtual void setUpClass();
+		virtual void tearDownClass();
 		
 		const char* name();
 		
@@ -112,7 +116,7 @@ namespace ILTesting {
 #define ILTestCase(className) \
 	public: \
 	className(::ILTesting::Results* r = NULL) : ::ILTesting::TestCase(r, #className) {} \
-	virtual void run()
+	virtual void runTests()
 // Use ILTestCase(MyClass) { ILTestWith(testXyz); }
 
 #endif // ILTesting_H

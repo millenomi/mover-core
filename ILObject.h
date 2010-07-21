@@ -42,20 +42,15 @@ public:
 	// Also calls _ILObservedObjectWillDestroy(o) when object is about to be destroyed.
 	void observeRetainRelease();
 	
+	virtual ILObject* copy();
+	
 private:
 	uint64_t _retainCount;
 	bool _isObservingRetainRelease;
 	bool _isPotentiallyUninitialized;
 };
 
-class ILCopiable {
-public:
-	// Default impl returns true.
-	virtual bool canCopy();
-	
-	// Returns a copy of this object.
-	virtual ILObject* copy() = 0;
-};
+class ILCopiable {};
 
 extern ILObject* ILPerformRetain(ILObject* o);
 extern void ILRelease(ILObject* o);

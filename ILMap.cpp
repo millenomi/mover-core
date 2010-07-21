@@ -9,7 +9,8 @@
 
 #include "ILMap.h"
 
-#include "ILStructures.h"
+#include "PlatformCore.h"
+#include <cstdarg>
 
 // These are the values for the hash.
 // The (copiable) ILObject therein is used as the key.
@@ -44,6 +45,32 @@ ILMap::ILMap() : ILObject() {
 	this->initialize();
 }
 
+ILMap::ILMap(ILObject* key, ...) : ILObject() {
+	this->initialize();
+	
+	if (!key)
+		return;
+	
+	va_list l;
+	va_start(l, key);
+	
+	ILObject* value = va_arg(l, ILObject*);
+	if (!value)
+		ILAbort("No NULL values in a ILMap!");
+	this->setValueForKey(key, value);
+	
+	key = va_arg(l, ILObject*);
+	while (key) {
+		value = va_arg(l, ILObject*);
+		if (!value)
+			ILAbort("No NULL values in a ILMap!");
+		this->setValueForKey(key, value);
+		key = va_arg(l, ILObject*);
+	}
+	
+	va_end(l);
+}
+
 void ILMap::initialize() {
 	_h.setRelease((ILReleaseFunction) &ILMapEntryRelease);
 	
@@ -53,7 +80,10 @@ void ILMap::initialize() {
 	_h.setValueCorrespondsToKey((ILValueCorrespondsToKeyFunction) &ILMapEntryHasKey);
 }
 
-void ILMap::setValueForKey(ILCopiable* key, ILObject* value) {
+void ILMap::setValueForKey(ILObject* key, ILObject* value) {
+	if (!key->canCopy())
+		ILAbort("Only copiable keys are allowed in a ILMap.");
+	
 	ILRetain(value); // in case remove... below releases the value.
 	
 	ILObject* keyCopy = key->copy();
@@ -156,7 +186,44 @@ ILMap* ILMap::copy() {
 	
 	ILObject* key, * value;
 	while (i->getNext(&key, &value))
-		m->setValueForKey(reinterpret_cast<ILCopiable*>(key), value);
+		m->setValueForKey(key, value);
 
 	return m;
+}
+
+ILUniqueConstant(ILMapClassIdentity);
+
+uint64_t ILMap::hash() {
+	ILMapIterator* i = iterate();
+	uint64_t hash = (intptr_t) ILMapClassIdentity;
+	
+	ILObject* key, * value;
+	while (i->getNext(&key, &value)) {
+		hash ^= key->hash();
+		hash ^= value->hash();
+	}
+	
+	return hash;
+}
+
+bool ILMap::equals(ILObject* o) {
+	if (!o || o->classIdentity() != ILMapClassIdentity)
+		return false;
+	
+	ILMap* m = ILAs(ILMap, o);
+	if (m->count() != count())
+		return false;
+	
+	ILMapIterator* mi = iterate();
+	ILObject* key, * value;
+	while (mi->getNext(&key, &value)) {
+		if (!this->valueForKey(key)->equals(value))
+			return false;
+	}
+	
+	return true;
+}
+
+void* ILMap::classIdentity() {
+	return ILMapClassIdentity;
 }

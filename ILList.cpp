@@ -28,7 +28,7 @@ bool ILList::equals(ILObject* o) {
 		return false;
 	
 	ILList* l = (ILList*) o;
-	ILIndex count = this->count();
+	ILSize count = this->count();
 	if (count != l->count())
 		return false;
 	
@@ -39,7 +39,12 @@ bool ILList::equals(ILObject* o) {
 	this->getAllObjects(objectsOne);
 	l->getAllObjects(objectsTwo);
 	
-	return memcmp(objectsOne, objectsTwo, count * sizeof(void*)) == 0;
+	ILIndex i; for (i = 0; i < count; i++) {
+		if (!objectsOne[i]->equals(objectsTwo[i]))
+			return false;
+	}
+	
+	return true;
 }
 
 uint64_t ILList::hash() {

@@ -14,6 +14,7 @@
 #include "MoverCoreTests-ILString_UTF8.h"
 #include "MoverCoreTests-ILStringParsing.h"
 #include "MoverCoreTests-ILStreamTests.h"
+#include "MoverCoreTests-StreamEncodeDecode.h"
 
 using namespace ILTesting;
 
@@ -23,6 +24,7 @@ namespace Mover {
 						   new ILString_UTF8Tests(results),
 						   new ILStringParsingTests(results),
 						   new ILStreamTests(results),
+						   new StreamEncodeDecodeTests(results),
 						   NULL);
 	}
 }

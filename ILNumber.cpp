@@ -29,6 +29,8 @@ bool ILNumber::equals(ILObject* o) {
 	switch (this->type()) {
 		case kILNumberInt64Type:
 			return this->integerValue() == n->integerValue();
+		case kILNumberUInt64Type:
+			return this->unsignedIntegerValue() == n->unsignedIntegerValue();
 		case kILNumberDoubleType:
 			return this->doubleValue() == n->doubleValue();
 		case kILNumberBoolType:

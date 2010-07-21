@@ -18,7 +18,7 @@
 class ILMessage : public ILObject {
 public:
 	/** Creates a new message with specified kind, source and payload. The payload will be copied.  */
-	ILMessage(void* kind, ILObject* source, ILCopiable* payload);
+	ILMessage(void* kind, ILObject* source, ILObject* payload);
 	~ILMessage();
 	
 	/** Returns the kind of this message. */

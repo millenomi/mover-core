@@ -29,16 +29,25 @@ public:
 	/** Constructs an empty map. */
 	ILMap();
 	
+	/** Constructs a map with the given key, object, key, object... pairs */
+	ILAttributeRequiresNULLSentinel ILMap(ILObject* key, ...);
+	
 	/** Adds an entry to the map with the given key and value. The key will be copied, and the value will be retained.
 	 If there is already one entry for an equal key in this table (as determined by ILObject::equals()), this method will replace the value already in the map with the new one (releasing the old one in the process). TODO TEST
 	 
 	 @param key The key. Cannot be NULL.
 	 @param value The value. Cannot be NULL.
 	 */
-	void setValueForKey(ILCopiable* key, ILObject* value);
+	void setValueForKey(ILObject* key, ILObject* value);
 	
 	/** Returns the object for the given key, or NULL if the key isn't associated to any value in this map. */
 	ILObject* valueForKey(ILObject* key);
+	
+	template <class T>
+	T* at(ILObject* key) {
+		ILObject* o = valueForKey(key);
+		return static_cast<T*>(o);
+	}
 	
 	/** Removes the entry for the given key, releasing the associated value in the process. */
 	void removeValueForKey(ILObject* key);
@@ -58,9 +67,16 @@ public:
 	virtual bool canCopy();
 	virtual ILMap* copy();
 	
+	virtual uint64_t hash();
+	virtual bool equals(ILObject* o);
+	
+	virtual void* classIdentity();
+	
 private:
 	ILHash _h;
 	void initialize();
 };
+
+extern void* ILMapClassIdentity;
 
 #endif // #ifndef ILMap_H

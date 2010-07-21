@@ -78,6 +78,14 @@ namespace ILTesting {
 	
 	void TestCase::setUp() {}
 	void TestCase::tearDown() {}
+	void TestCase::setUpClass() {}
+	void TestCase::tearDownClass() {}
+	
+	void TestCase::run() {
+		this->setUpClass();
+		this->runTests();
+		this->tearDown();
+	}
 	
 // ------------ RESULTS
 	

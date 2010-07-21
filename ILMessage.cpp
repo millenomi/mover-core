@@ -9,7 +9,7 @@
 
 #include "ILMessage.h"
 
-ILMessage::ILMessage(void* k, ILObject* s, ILCopiable* p) : ILObject() {
+ILMessage::ILMessage(void* k, ILObject* s, ILObject* p) : ILObject() {
 	_kind = k;
 	_source = ILRetain(s);
 	_payload = p? ILRetain(p->copy()) : NULL;

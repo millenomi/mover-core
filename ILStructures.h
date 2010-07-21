@@ -50,4 +50,10 @@ static inline ILRange ILMakeRange(ILIndex start, ILSize length) {
 	return r;
 }
 
+#if __GNUC__ >= 4
+#define ILAttributeRequiresNULLSentinel __attribute__((sentinel))
+#else
+#define ILAttributeRequiresNULLSentinel
+#endif
+
 #endif // #ifndef ILStructures_H

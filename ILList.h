@@ -40,7 +40,7 @@ public:
 	ILList();
 	
 	/** Creates a list containing the passed-in objects. Terminate the list with a NULL argument. */
-	ILList(ILObject* firstObject, ...) __attribute__((sentinel));
+	ILAttributeRequiresNULLSentinel ILList(ILObject* firstObject, ...);
 	
 	/** Creates a list containing the objects in the passed-in C array from index 0 to the index at position count - 1. The list does not require the C array to remain valid past the execution of this constructor. */
 	ILList(ILObject** objects, ILIndex count);

@@ -78,10 +78,8 @@ void ILStreamMonitor(ILObject* o) {
 		} else if (errno == EAGAIN) {
 			sleep(1);
 			continue;
-		} else if (errno == EBADF) {
-			break;
 		} else
-			ILAbort("Stream monitoring got an error in select().");
+			break;
 	}
 }
 

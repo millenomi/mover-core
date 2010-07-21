@@ -51,14 +51,25 @@ static inline void ILAbortWithLocationInformation(const char* whereInfo, const c
 #define ILAssertAtCompileTime(x) \
 	switch (0) { case 0: case (x): ; }
 
+#if DEBUG
+#define ILInline
+#else
+#define ILInline inline
+#endif
+
 template <typename T>
-static inline T ILMin(T a, T b) {
+static ILInline T ILMin(T a, T b) {
 	return a < b? a : b;
 }
 
 template <typename T>
-static inline T ILMax(T a, T b) {
+static ILInline T ILMax(T a, T b) {
 	return a > b? a : b;
+}
+
+template <typename T>
+static ILInline void ILClear(T*& x) {
+	ILRelease(static_cast<ILObject*>(x)); x = NULL;
 }
 
 

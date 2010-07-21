@@ -117,6 +117,10 @@ uint64_t ILObject::hash() {
 	return (uint64_t) this;
 }
 
+ILObject* ILObject::copy() {
+	abort();
+	return NULL;
+}
 
 ILObject* ILPerformRetain(ILObject* o) {
 	if (!o)
@@ -138,6 +142,3 @@ bool ILObject::canCopy() {
 	return false;
 }
 
-bool ILCopiable::canCopy() {
-	return true;
-}

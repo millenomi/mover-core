@@ -32,9 +32,16 @@
 #define ILUniqueConstant(name) \
 	ILUniqueConstantWithTargetName(name, ILConcatenate(ILUniqueConstantTargetUnused__, __LINE__))
 
+#define ILUniqueStaticConstant(name) \
+	ILUniqueStaticConstantWithTargetName(name, ILConcatenate(ILUniqueConstantTargetUnused__, __LINE__))
+
 #define ILUniqueConstantWithTargetName(name, targetName) \
 	static char targetName = 0; \
 	void* name = &targetName
+
+#define ILUniqueStaticConstantWithTargetName(name, targetName) \
+	static char targetName = 0; \
+	static void* name = &targetName
 
 
 #define ILAs(class, value) \

@@ -30,6 +30,8 @@ ILThreadTarget::ILThreadTarget(ILTarget* t) : ILTarget() {
 	int result = pthread_mutex_init(&_mutex, &attrs);
 	if (result != 0)
 		abort();
+    
+    pthread_mutexattr_destroy(&attrs);
 	
 	_source = new ILThreadTargetSource(this);
 }
@@ -40,7 +42,7 @@ ILSource* ILThreadTarget::source() {
 
 ILThreadTarget::~ILThreadTarget() {
 	pthread_mutex_destroy(&_mutex);
-	ILRelease((ILObject*) _deliveryTarget);
+	ILRelease(_deliveryTarget);
 	ILRelease(_messages);
 	_source->_threadTarget = NULL;
 	ILRelease(_source);
@@ -56,22 +58,22 @@ void ILThreadTarget::deliverMessage(ILMessage* m) {
 }
 
 void ILThreadTarget::deliverPendingMessagesOnThisThread() {
+    ILList* messagesCopy;
+    
 	pthread_mutex_lock(&_mutex);
-
+    messagesCopy = _messages->copy();
+    _messages->removeAllObjects();
+	pthread_mutex_unlock(&_mutex);
+    
 	{
 		ILReleasePool pool;
-		ILListIterator* i = _messages->iterate();
-		
+		ILListIterator* i = messagesCopy->iterate();
+    	
 		ILMessage* m;
-		while ((m = (ILMessage*) i->next())) {
+		while ((m = i->nextAs<ILMessage>())) {
 			_deliveryTarget->deliverMessage(m);
-		}
-		
-		while (_messages->count() > 0)
-			_messages->removeObjectAtIndex(0);
+		}		
 	}
-	
-	pthread_mutex_unlock(&_mutex);
 }
 
 void ILThreadTargetSource::spin() {

@@ -19,4 +19,28 @@ typedef void (*ILThreadMainFunction)(ILObject* object);
 
 extern void ILThreadStart(ILThreadMainFunction function, ILObject* object);
 
+struct ILMutexImpl;
+
+class ILMutex : public ILObject {
+public:
+	ILMutex(); ~ILMutex();
+	
+	void lock();
+	void unlock();
+	bool tryLock();
+	
+private:
+	ILMutexImpl* _me;
+};
+
+// Not a ILObject class! Construct on the stack only.
+class ILAcquiredMutex {
+public:
+	ILAcquiredMutex(ILMutex* o);
+	~ILAcquiredMutex();
+	
+private:
+	ILMutex* _mutex;
+};
+
 #endif // #ifndef ILThreading_H

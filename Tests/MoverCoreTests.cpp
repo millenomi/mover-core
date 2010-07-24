@@ -24,7 +24,7 @@ namespace Mover {
 						   new ILString_UTF8Tests(results),
 						   new ILStringParsingTests(results),
 						   new ILStreamTests(results),
-						   new StreamEncodeDecodeTests(results),
+//						   new StreamEncodeDecodeTests(results),
 						   NULL);
 	}
 }

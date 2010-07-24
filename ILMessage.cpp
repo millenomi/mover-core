@@ -44,10 +44,13 @@ ILObjectTarget::ILObjectTarget(ILObject* o) : ILTarget() {
 }
 
 ILObjectTarget::~ILObjectTarget() {
-	ILRelease(_target);
 }
 
 ILObject* ILObjectTarget::target() { return _target; }
+
+void ILObjectTarget::disableTarget() {
+    _target = NULL;
+}
 
 // ~~~
 

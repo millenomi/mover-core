@@ -1,231 +1,258 @@
-/*
- *  ILStream.cpp
- *  MoverCore
- *
- *  Created by ∞ on 14/07/10.
- *  Copyright 2010 __MyCompanyName__. All rights reserved.
- *
- */
-
+//
+//  ILStream.cpp
+//  MoverCore
+//
+//  Created by ∞ on 23/07/10.
+//  Copyright (c) 2010 __MyCompanyName__. All rights reserved.
+//
 
 #include "ILStream.h"
 
-#include <cstdlib>
-#include <cerrno>
-#include <cstdio>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <unistd.h>
+#include <errno.h>
+
+#include <fcntl.h>
+
 #include <sys/select.h>
-#include <ctime>
 
-ILUniqueConstant(kILStreamDidCloseWithErrorMessage);
-ILUniqueConstant(kILStreamNowReadyForReadingMessage);
-ILUniqueConstant(kILStreamNowReadyForWritingMessage);
-
-class ILMutexAcquisition {
-public:
-	pthread_mutex_t* _mutex;
-	
-	ILMutexAcquisition(pthread_mutex_t* mutex) {
-		pthread_mutex_lock(mutex);
-		_mutex = mutex;
-	}
-	
-	~ILMutexAcquisition() {
-		pthread_mutex_unlock(_mutex);
-	}
-};
-
-void ILStreamMonitor(ILObject* o) {
-	ILStream* s = ILAs(ILStream, o);
-	
-	int fd;
-	while ((fd = s->fileDescriptor()) >= 0) {
-		struct timeval tv;
-		tv.tv_sec = 5;
-		tv.tv_usec = 0;
-		
-		ILTimeInterval t = ILGetAbsoluteTime();
-		s->log(ILStr("ILStream <Monitor>: About to select()."));
-		
-		fd_set readSet, writeSet, errorSet;
-		FD_ZERO(&readSet); FD_ZERO(&writeSet); FD_ZERO(&errorSet);
-		FD_SET(fd, &readSet); FD_SET(fd, &writeSet);  FD_SET(fd, &errorSet);
-
-		int result = select(fd + 1, &readSet, &writeSet, &errorSet, &tv);
-		
-		usleep(50000);
-		
-		s->log(ILStr("ILStream <Monitor>: Did return from select()."));
-		s->log(ILString::stringWithFormat(ILStr("ILStream <Monitor>: Returned %d, lasted %f seconds."), result, (double) ILGetAbsoluteTime() - t));
-			   
-		if (result >= 0) {
-			if (FD_ISSET(fd, &errorSet)) {
-				s->log(ILStr("ILStream <Monitor>: Error reported by select() on stream. Closing it."));
-				s->close();
-				
-				break;
-				
-			} else {
-				bool canRead = FD_ISSET(fd, &readSet), canWrite = FD_ISSET(fd, &writeSet);
-
-				if (canRead)
-					s->log(ILStr("ILStream <Monitor>: Can read."));
-
-				if (canWrite)
-					s->log(ILStr("ILStream <Monitor>: Can write."));
-
-				s->signalReadyForReadingAndWriting(canRead, canWrite);
-			}
-		} else if (errno == EAGAIN) {
-			sleep(1);
-			continue;
-		} else
-			break;
-	}
-}
-
-ILStream::ILStream(int fileDescriptor) : ILSource() {
-	_fileDescriptor = fileDescriptor;
-	_isMonitoring = false;
-	_didAnnounceClose = false;
-	_debug_showLogs = false;
-	
-	_canRead = _canWrite = false;
-	
-	pthread_mutexattr_t attrs;
-	pthread_mutexattr_init(&attrs);
-	
-	pthread_mutexattr_settype(&attrs, PTHREAD_MUTEX_RECURSIVE);
-	int result = pthread_mutex_init(&this->_mutex, &attrs);
-	if (result != 0)
-		ILAbort("Couldn't make the mutex for the ILStream monitoring thread.");
-}
-
-void ILStream::setRunLoop(ILRunLoop* loop) {
-	ILSource::setRunLoop(loop);
-	if (!_isMonitoring && loop) {
-		_isMonitoring = true;
-		ILThreadStart(&ILStreamMonitor, this);
-	}
+ILStream::ILStream(int fd) : ILObject() {
+	_fd = fd;
+	_mutex = ILRetain(new ILMutex());
 }
 
 ILStream::~ILStream() {
-	this->close();
+	close();
+	ILRelease(_mutex);
 }
 
-bool ILStream::isReadyForWriting() { 
-	ILMutexAcquisition(&this->_mutex);
-	return _canWrite && _fileDescriptor >= 0;
-}
-
-bool ILStream::isReadyForReading() { 
-	ILMutexAcquisition(&this->_mutex);
-	return _canRead && _fileDescriptor >= 0;
-}
-
-bool ILStream::write(ILData* data, ILSize* writtenSize) {
-	int fd = this->fileDescriptor();
-	if (fd < 0)
-		return false;
-	
-	ssize_t s = ::write(fd, data->bytes(), data->length());
-	if (s >= 0 && writtenSize)
-		*writtenSize = s;
-	
-	return (s >= 0);
-}
-
-ILData* ILStream::readDataOfMaximumLength(ILSize s) {
-	int fd = this->fileDescriptor();
-	if (fd < 0)
-		return false;
-	
-	uint8_t* buffer = (uint8_t*) malloc(s);
-	ssize_t read = ::read(fd, buffer, s);
-	
-	if (read <= 0) {
-		free(buffer);
+ILData* ILStream::read(ILSize maximumBytes, ILStreamError* e) {
+	int fd = fileDescriptor();
+	if (fd < 0) {
+		if (e) *e = kILStreamErrorIsClosed;
 		return NULL;
-	} else {
-		realloc(buffer, s);
-		return new ILData(buffer, read, kILDataTakeOwnershipOfMallocBuffer);
 	}
+	
+	uint8_t* bytes = (uint8_t*) malloc(maximumBytes);
+	int result = ::read(fd, bytes, maximumBytes);
+	
+	if (result > 0) {
+		realloc(bytes, result);
+		return new ILData(bytes, (ILSize) result, kILDataTakeOwnershipOfMallocBuffer);
+	} else if (result == 0) {
+		if (e) *e = kILStreamErrorEndOfFile;
+	} else {
+		if ((errno == EAGAIN || errno == EWOULDBLOCK) && e)
+			*e = kILStreamErrorWouldHaveBlocked;
+		else if (e)
+			*e = kILStreamErrorPOSIX;
+	}
+
+	return NULL;
 }
 
-int ILStream::fileDescriptor() {
-	ILMutexAcquisition(&this->_mutex);
-	return _fileDescriptor;
+bool ILStream::write(ILData* data, ILSize* writtenBytes, ILStreamError* e) {
+	int fd = fileDescriptor();
+	if (fd < 0) {
+		if (e) *e = kILStreamErrorIsClosed;
+		return false;
+	}	
+	
+	int result = ::write(_fd, data->bytes(), data->length());
+	
+	if (result >= 0) {
+		if (writtenBytes) *writtenBytes = result;
+		return true;
+	} else {
+		if ((errno == EAGAIN || errno == EWOULDBLOCK) && e)
+			*e = kILStreamErrorWouldHaveBlocked;
+		else if (e)
+			*e = kILStreamErrorPOSIX;
+	}
+	
+	return false;
 }
 
-bool ILStream::isValid() {
-	ILMutexAcquisition(&this->_mutex);
-	return _fileDescriptor >= 0;
+bool ILStream::writeAllOf(ILData* data, ILStreamError* e) {
+	ILSize written = 0;
+	ILStreamError innerError;
+	
+	do {
+		ILReleasePool p;
+		
+		ILSize newlyWritten;
+		bool result = write(new ILData(data->bytes() + written, data->length() - written), &newlyWritten, &innerError);
+		
+		if (!result && innerError != kILStreamErrorWouldHaveBlocked) {
+			if (e) *e = innerError;
+			return false;
+		}
+		
+		if (result)
+			written += newlyWritten;
+	} while (written < data->length());
+	
+	return true;
+}
+
+ILData* ILStream::readBytesUpTo(ILSize toRead, bool endOfFileIsError, ILStreamError* e) {
+	ILData* d = new ILData();
+	
+	do {
+		ILReleasePool p;
+		
+		ILStreamError innerError;
+		ILData* part = read(toRead, &innerError);
+		
+		if (part) {
+			d->appendData(part);
+			toRead -= part->length();
+		} else {
+			if (innerError == kILStreamErrorEndOfFile && !endOfFileIsError)
+				break;
+			
+			if (e) *e = innerError;
+			return NULL;
+		}
+	} while (toRead > 0);
+	
+	return d;
+}
+
+ILData* ILStream::readUntilEnd(ILStreamError* e) {
+	ILData* d = new ILData();
+	
+	ILStreamError innerError;
+	do {
+		ILReleasePool p;
+		
+		ILData* part = read(1024 * 512, &innerError);
+		
+		if (part) {
+			innerError = kILStreamErrorNone;
+			d->appendData(part);
+		} else if (innerError != kILStreamErrorEndOfFile) {
+			if (e) *e = innerError;
+			return NULL;
+		}
+	} while (innerError == kILStreamErrorNone);
+	
+	return d;
 }
 
 void ILStream::close() {
-	ILMutexAcquisition(&this->_mutex);
-
-	if (_fileDescriptor >= 0) {
-		::close(_fileDescriptor);
-		_fileDescriptor = -1;
-	}
-	
-	if (this->runLoop())
-		this->runLoop()->signalReady();	
+	ILAcquiredMutex m(_mutex);
+	::close(_fd);
+	_fd = -1;
 }
 
-void ILStream::signalReadyForReadingAndWriting(bool reading, bool writing) {
-	ILMutexAcquisition(&this->_mutex);
+
+// Non-blocking I/O
+// NOTE: For now, we REQUIRE the platform to support it. This may be relaxed in a future version of this code.
+
+bool ILStream::allowsBlocking() {
+	int fd = fileDescriptor();
+	if (fd < 0)
+		return false;
 	
-	_canRead = reading;
-	_canWrite = writing;
+	int flags = fcntl(fd, F_GETFD);
+	if (flags < 0)
+		return false;
 	
-	if (this->runLoop())
-		this->runLoop()->signalReady();	
+	return (flags & O_NONBLOCK) != 0;
 }
 
-void ILStream::log(ILString* s) {
-	if (_debug_showLogs)
-		ILLog(s);
-}
-
-void ILStream::observeSignificantChanges() {
-	_debug_showLogs = true;
-}
-
-void ILStream::spin() {
-	ILMutexAcquisition(&this->_mutex);
-
-	this->log(ILStr("ILStream: doing a spin()..."));
+bool ILStream::setAllowsBlocking(bool x) {
+	int fd = fileDescriptor();
+	if (fd < 0)
+		return false;
 	
-	if (!this->runLoop())
+	int flags = fcntl(fd, F_GETFD);
+	if (flags < 0)
+		return false;
+	
+	if (x)
+		flags |= O_NONBLOCK;
+	else
+		flags &= ~O_NONBLOCK;
+	
+	return fcntl(fd, F_SETFD, flags) >= 0;
+}
+
+bool ILStream::canDisableBlocking() {
+	return true;
+}
+
+
+bool ILStream::canDetermineReadyState() {
+	return true;
+}
+
+bool ILStream::isReadyForWriting() {
+	bool canWrite;
+	_determineReadyState(NULL, &canWrite);
+	return canWrite;
+}
+
+bool ILStream::isReadyForReading() {
+	bool canRead;
+	_determineReadyState(&canRead, NULL);	
+	return canRead;
+}
+
+void ILStream::_determineReadyState(bool* reading, bool* writing) {
+	int fd = fileDescriptor();
+	if (fd < 0) {
+		if (reading) *reading = false;
+		if (writing) *writing = false;
 		return;
-		
-	if (_fileDescriptor < 0 && !_didAnnounceClose) {
-		_didAnnounceClose = true;
-		this->log(ILStr("ILStream: Sending did-close-with-error message to message hub."));
-		this->runLoop()->currentMessageHub()->deliverMessage(new ILMessage(kILStreamDidCloseWithErrorMessage, this, NULL));
-		this->endMonitoring();
-	} else if (!_didAnnounceClose) {
-		if (_canRead) {
-			this->log(ILStr("ILStream: Sending ready-for-reading message to message hub."));
-			this->runLoop()->currentMessageHub()->deliverMessage(new ILMessage(kILStreamNowReadyForReadingMessage, this, NULL));
-			_canRead = false;
-		}
-
-		if (_canWrite) {
-			this->log(ILStr("ILStream: Sending ready-for-reading message to message hub."));
-			this->runLoop()->currentMessageHub()->deliverMessage(new ILMessage(kILStreamNowReadyForWritingMessage, this, NULL));
-			_canWrite = false;
-		}
 	}
+	
+	fd_set* readingSetPointer = NULL;
+	fd_set readingSet;
+	if (reading) {
+		FD_ZERO(&readingSet);
+		FD_SET(fd, &readingSet);
+		readingSetPointer = &readingSet;
+	}
+	
+	fd_set* writingSetPointer = NULL;
+	fd_set writingSet;
+	if (writing) {
+		FD_ZERO(&writingSet);
+		FD_SET(fd, &writingSet);
+		writingSetPointer = &writingSet;
+	}
+	
+	// TODO error conds?
+	struct timeval tv;
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+	int result = select(fd + 1, readingSetPointer, writingSetPointer, NULL, &tv);
+	
+	if (result < 0) {
+		if (reading) *reading = false;
+		if (writing) *writing = false;
+		return;
+	}
+	
+	if (reading)
+		*reading = FD_ISSET(fd, readingSetPointer);
+	
+	if (writing)
+		*writing = FD_ISSET(fd, writingSetPointer);
 }
 
-void ILStream::beginMonitoring() {
-	ILRunLoop::current()->addSource(this);
+int ILStream::fileDescriptor() {
+	ILAcquiredMutex m(_mutex);
+	return _fd;
 }
 
-void ILStream::endMonitoring() {
-	if (this->runLoop())
-		this->runLoop()->removeSource(this);
-}
+// ~ ILStreamSource ~
 
+ILStreamSource::ILStreamSource() : ILObject() {}
+ILStreamSource::~ILStreamSource() {}
+
+bool ILStreamSource::canOpen() { return true; }

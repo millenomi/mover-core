@@ -34,7 +34,7 @@ ILMessageHub::~ILMessageHub() {
 	ILRelease(_targets);
 }
 
-void ILMessageHub::addTargetForMessagesOfKind(ILTarget* target, void* type, ILObject* source) {
+void ILMessageHub::addTarget(ILTarget* target, void* type, ILObject* source) {
 	ILMessageHubTarget* t = new ILMessageHubTarget(target, source);
 	ILNumber* key = new ILNumber(type);
 	
@@ -47,7 +47,7 @@ void ILMessageHub::addTargetForMessagesOfKind(ILTarget* target, void* type, ILOb
 	l->addObject(t);
 }
 
-void ILMessageHub::removeTargetForMessagesOfKind(ILTarget* t, void* kind) {
+void ILMessageHub::removeTarget(ILTarget* t, void* kind) {
 	ILNumber* key = new ILNumber(kind);
 	ILList* l = (ILList*) _targets->valueForKey(key);
 	if (l) {
@@ -97,7 +97,7 @@ void ILMessageHub::deliverMessage(ILMessage* m) {
 		ILListIterator* targetsIterator = list->iterate();
 		ILMessageHubTarget* t;
 		
-		while ((t = (ILMessageHubTarget*) targetsIterator->next())) {
+		while ((t = targetsIterator->nextAs<ILMessageHubTarget>())) {
 			if (!t->_desiredSource || (m->source() && t->_desiredSource->equals(m->source())))
 				t->_target->deliverMessage(m);
 		}
@@ -105,6 +105,6 @@ void ILMessageHub::deliverMessage(ILMessage* m) {
 	}
 }
 
-ILMessageHub* ILMessageHub::current() {
+ILMessageHub* ILMessageHub::currentHub() {
 	return ILRunLoop::current()->currentMessageHub();
 }

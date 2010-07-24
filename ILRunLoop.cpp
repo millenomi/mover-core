@@ -51,7 +51,7 @@ void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
 		
 		ILSetIterator* i = _sources->iterate();
 		ILSource* s;
-		while ((s = (ILSource*) i->next())) {
+		while ((s = i->nextAs<ILSource>())) {
 			ILTimeInterval desiredInterval = s->nextDesiredExecutionTime() - now;
 			if (desiredInterval < sleepInterval)
 				sleepInterval = desiredInterval;
@@ -119,10 +119,16 @@ ILRunLoop::ILRunLoop() : ILTarget() {
 		abort();
 	}
 
-	if (pthread_mutex_init(&_mutex, NULL) != 0) {
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    
+	if (pthread_mutex_init(&_mutex, &attr) != 0) {
 		fprintf(stderr, "Error: Cannot allocate mutex for signaling.");
 		abort();
 	}
+    
+    pthread_mutexattr_destroy(&attr);
 }
 
 ILRunLoop::~ILRunLoop() {

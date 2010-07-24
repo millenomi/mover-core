@@ -16,6 +16,12 @@
 class ILSetIterator : public ILObject {
 public:
 	virtual ILObject* next() = 0;
+    
+    template <class T>
+    T* nextAs() {
+        ILObject* o = next();
+        return static_cast<T*>(o);
+    }
 };
 
 class ILSet : public ILObject, public ILCopiable {

@@ -20,6 +20,12 @@ class ILListIterator : public ILObject {
 public:
 	/** The first time this object is called, it will return the first object of the list. Subsequent times, it will return the object at index n of the list (where n is the number of time this method was previously called). Any call done after the last object in the list was returned will return NULL. */
 	virtual ILObject* next() = 0;
+    
+    template <class T>
+    T* nextAs() {
+        ILObject* o = next();
+        return static_cast<T*>(o);
+    }
 };
 
 /** This function is called repeatedly with the objects contained in the list by the ILList::each() function.

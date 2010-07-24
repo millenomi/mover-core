@@ -7,14 +7,20 @@
  *
  */
 
+// Disabled, pending a better ILStream impl.
+#if 0
+
 #include "StreamEncoder.h"
 #include "Protocol.h"
+#include "ILMessage.h"
 
 namespace Mover {
 	
-	ILUniqueConstant(kILStreamEncoderCanProceedMessage);
+	ILUniqueConstant(kMvrStreamEncoderCanProceedMessage);
+    ILUniqueConstant(kMvrStreamEncoderActuallyProvideStreamPartMessage);
 	
 	ILTargetForMethod(StreamEncoder_ReadyTarget, StreamEncoder, streamReady);
+    ILTargetForMethod(StreamEncoder_ActuallyProvideStreamPartTarget, StreamEncoder, actuallyProvideStreamPart);
 	
 	StreamEncoder::StreamEncoder() {
 		_sealed = false;
@@ -35,17 +41,27 @@ namespace Mover {
 		_didAnnounceEnd = false;
 		
 		_readyTarget = ILRetain(new StreamEncoder_ReadyTarget(this));
+        _provideStreamTarget = ILRetain(new StreamEncoder_ActuallyProvideStreamPartTarget(this));
+        
+        ILMessageHub::current()->addTargetForMessagesOfKind(_provideStreamTarget, kMvrStreamEncoderActuallyProvideStreamPartMessage, this);
 	}
 	
 	StreamEncoder::~StreamEncoder() {
+        ILMessageHub::current()->removeTargetForMessagesOfKind(_provideStreamTarget, kMvrStreamEncoderActuallyProvideStreamPartMessage);
+                
+        _closeStream();
+        
+        _readyTarget->disableTarget();
+        _provideStreamTarget->disableTarget();
+        
 		ILRelease(_metadata);
 
 		ILRelease(_payloadKeys);
 		ILRelease(_payloadContents);
 		ILRelease(_payloadLenghts);
 		
-		ILRelease(_currentStream);
 		ILRelease(_readyTarget);
+        ILRelease(_provideStreamTarget);
 	}
 	
 	StreamEncoderState StreamEncoder::state() {
@@ -102,8 +118,12 @@ namespace Mover {
 	//						if can read (and not one of the cases below), provide data, return to kMvrStreamEncoderReadyToProduceStreamPart, wait for next call to rSP().
 	//						if EOF and we're fine with the size as provided by the user, then we're STILL waiting for a piece of data, so we advance to the next payload and call rSP ourselves.
 	//						if EOF and not enough data, or if too much data, end with error.
-	
+    
 	void StreamEncoder::requestStreamPart() {
+        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kMvrStreamEncoderActuallyProvideStreamPartMessage, this, NULL));
+    }
+    
+    void StreamEncoder::actuallyProvideStreamPart(ILMessage* m) {    
 		if (_state == kMvrStreamEncoderProducingStreamPart)
 			return; // already producing one
 		
@@ -150,9 +170,7 @@ namespace Mover {
 		}
 		
 		if (_currentPayloadIndex >= _payloadContents->count()) {
-			_didAnnounceEnd = true;
-			if (this->delegate())
-				this->delegate()->streamEncoderDidEndProducingStream(this);
+			_endWithState(kMvrStreamEncoderDidEndCorrectly);
 			return;
 		}
 		
@@ -181,6 +199,7 @@ namespace Mover {
 		ILStreamSource* source = ILAs(ILStreamSource, o);
 		
 		_currentStream = ILRetain(source->open());
+        
 		_readFromCurrentStream = 0;
 		
 		ILMessageHub::current()->addTargetForMessagesOfKind(_readyTarget, kILStreamNowReadyForReadingMessage, _currentStream);
@@ -215,38 +234,45 @@ namespace Mover {
 		ILMessageHub::current()->removeTargetForMessagesOfKind(_readyTarget, kILStreamNowReadyForReadingMessage);
 		ILMessageHub::current()->removeTargetForMessagesOfKind(_readyTarget, kILStreamDidCloseWithErrorMessage);
 
-		_currentStream->close();
-		ILRelease(_currentStream); _currentStream = NULL;
+        if (_currentStream) {
+            _currentStream->close();
+            ILRelease(_currentStream); _currentStream = NULL;            
+        }
 		
 		_currentPayloadIndex++;
 	}
 	
 	void StreamEncoder::_readDataFromStreamAndInformDelegate() {
-		ILData* d = _currentStream->readDataOfMaximumLength(524288 /* 0.5 MB */);
+        if (!_currentStream)
+            return;
+        
+        ILStreamError e;
+		ILData* d = _currentStream->readDataOfMaximumLength(2048, &e);
 		uint64_t len = _payloadLenghts->at<ILNumber>(_currentPayloadIndex)->unsignedIntegerValue();
 		
 		if (!d) {
-			if (len == _readFromCurrentStream) {
-				_closeStream();
-				this->requestStreamPart();
-			} else {
+            if (e == kILStreamErrorWouldHaveBlocked)
+                this->requestStreamPart();
+            else
 				_endWithState(kMvrStreamEncoderStreamIsOfIncorrectSizeError);
-			}
 			
 			return;
 		}
 		
-		if (_readFromCurrentStream + d->length() > len) {
+        _readFromCurrentStream += d->length();
+
+        if (_readFromCurrentStream > len) {
 			_endWithState(kMvrStreamEncoderStreamIsOfIncorrectSizeError);
 			return;
-		}
-		
-		_readFromCurrentStream += d->length();
-		
+		} else if (len == _readFromCurrentStream) {
+            _closeStream();
+            this->requestStreamPart();
+        }
+        
+        // _currentStream->endMonitoring();
+
 		if (this->delegate())
-			this->delegate()->streamEncoderDidProduceStreamPart(this, d);
-		
-		_currentStream->endMonitoring();
+			this->delegate()->streamEncoderDidProduceStreamPart(this, d);		
 	}
 	
 	
@@ -254,16 +280,19 @@ namespace Mover {
 		ILString* keys = new ILString(), * stops = new ILString();
 		
 		ILSize count = _payloadKeys->count();
+        uint64_t lastStop = 0;
 		uint8_t i; for (i = 0; i < count; i++) {
 			ILString* key = ILAs(ILString, (_payloadKeys->objectAtIndex(i)));
 			ILNumber* length = ILAs(ILNumber, (_payloadLenghts->objectAtIndex(i)));
 			
+            lastStop += length->unsignedIntegerValue();
+            
 			if (i == 0) {
 				keys->appendString(key);
-				stops->appendString(ILString::stringWithFormat(ILStr("%llu"), (unsigned long long) length->unsignedIntegerValue()));
+				stops->appendString(ILString::stringWithFormat(ILStr("%llu"), lastStop));
 			} else {
 				keys->appendString(ILString::stringWithFormat(ILStr(" %s"), key->UTF8String()));
-				stops->appendString(ILString::stringWithFormat(ILStr(" %llu"), (unsigned long long) length->unsignedIntegerValue()));
+				stops->appendString(ILString::stringWithFormat(ILStr(" %llu"), lastStop));
 			}
 		}
 		
@@ -280,3 +309,5 @@ namespace Mover {
 		_delegate = d;
 	}
 }
+
+#endif

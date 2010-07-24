@@ -7,6 +7,9 @@
  *
  */
 
+// Disabled, pending a better ILStream impl.
+#if 0
+
 #include "PlatformCore.h"
 
 #ifndef MOVER_STREAM_ENCODER_H
@@ -19,6 +22,7 @@
 
 namespace Mover {
 	class StreamEncoder_ReadyTarget;
+    class StreamEncoder_ActuallyProvideStreamPartTarget;
 	class StreamEncoderDelegate;
 	
 	typedef enum {
@@ -46,7 +50,9 @@ namespace Mover {
 		StreamEncoderState state();
 		
 	friend class StreamEncoder_ReadyTarget;
+    friend class StreamEncoder_ActuallyProvideStreamPartTarget;
 	private:
+        void actuallyProvideStreamPart(ILMessage* m);
 		void streamReady(ILMessage* m);
 		
 		StreamEncoderDelegate* _delegate;
@@ -70,6 +76,7 @@ namespace Mover {
 		uint64_t _readFromCurrentStream;
 				
 		StreamEncoder_ReadyTarget* _readyTarget;
+        StreamEncoder_ActuallyProvideStreamPartTarget* _provideStreamTarget;
 		
 		bool _didAnnounceEnd;
 	};
@@ -83,3 +90,5 @@ namespace Mover {
 }
 
 #endif // #ifndef MOVER_STREAM_ENCODER_H
+
+#endif

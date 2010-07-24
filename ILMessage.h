@@ -77,6 +77,9 @@ public:
 	
 	virtual ILObject* target();
 	virtual void deliverMessage(ILMessage* m) = 0;
+    
+    // Makes the target stop working. Called by the backed object on destruction. Not thread-safe.
+    virtual void disableTarget();
 	
 private:
 	ILObject* _target;
@@ -92,7 +95,7 @@ private:
 	class targetClass : public ILObjectTarget { \
 	public: \
 		targetClass(receiverClass* me) : ILObjectTarget(me) {} \
-		virtual void deliverMessage(ILMessage* m) { ((receiverClass*)this->target())->method(m); } \
+		virtual void deliverMessage(ILMessage* m) { receiverClass* t = ((receiverClass*)this->target()); if (t) t->method(m); } \
 	}
 
 #endif // #ifndef ILMessage_H

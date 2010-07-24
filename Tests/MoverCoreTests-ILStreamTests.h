@@ -18,19 +18,10 @@ class ILMessage;
 namespace Mover {
 	class ILStreamTests : public ILTesting::TestCase {
 		ILTestCase(ILStreamTests) {
-			ILTestWith(testReadingUsingPipe);
-			ILTestWith(testWritingUsingPipe);
-			ILTestWith(testReadMessages);
+			ILTestWith(testReadWriteWithPipeAndShortcuts);
 		}
 		
-		void testReadingUsingPipe();
-		void testWritingUsingPipe();
-		void testReadMessages();
-		
-		void readyForReading(ILMessage* m);
-		
-	private:
-		bool _didReceiveReadyForReading;
+		void testReadWriteWithPipeAndShortcuts();
 	};
 }
 

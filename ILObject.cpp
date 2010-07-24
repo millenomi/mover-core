@@ -27,6 +27,8 @@ void ILRetainReleaseMutexInit() {
 	int result = pthread_mutex_init(&ILRetainReleaseMutex, &attrs);
 	if (result != 0)
 		abort();
+    
+    pthread_mutexattr_destroy(&attrs);
 }
 
 ILObject::ILObject() {

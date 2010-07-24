@@ -22,12 +22,12 @@ public:
 	ILMessageHub();
 	~ILMessageHub();
 	
-	void addTargetForMessagesOfKind(ILTarget* target, void* kind, ILObject* source);
-	void removeTargetForMessagesOfKind(ILTarget* t, void* kind);
+	void addTarget(ILTarget* target, void* kind, ILObject* source);
+	void removeTarget(ILTarget* t, void* kind);
 	
 	virtual void deliverMessage(ILMessage* m);
 	
-	static ILMessageHub* current();
+	static ILMessageHub* currentHub();
 	
 private:
 	ILMap* _targets;

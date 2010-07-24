@@ -36,6 +36,8 @@ public:
 	void endObserving();
 	
 	virtual void spin();
+	virtual ILRunLoop* runLoop();
+	virtual void setRunLoop(ILRunLoop* r);
 	
 private:
 	friend void ILStreamMonitoringThread(ILObject* o);

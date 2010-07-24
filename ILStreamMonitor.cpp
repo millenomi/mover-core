@@ -213,3 +213,13 @@ void ILStreamMonitor::spin() {
 		}
 	}
 }
+
+ILRunLoop* ILStreamMonitor::runLoop() {
+	ILAcquiredMutex m(_i->mutex);
+	return ILSource::runLoop();
+}
+
+void ILStreamMonitor::setRunLoop(ILRunLoop* r) {
+	ILAcquiredMutex m(_i->mutex);
+	ILSource::setRunLoop(r);
+}

@@ -17,19 +17,22 @@ ILUniqueConstant(kILStreamErrorOccurredMessage);
 
 
 struct ILStreamMonitorImpl {
+	ILStreamMonitor* self;
+	
 	ILStream* stream;	
 	ILTarget* readTarget, * writeTarget, * errorTarget;
 	ILMutex* mutex;
 	
 	// Protected by the mutex beyond this point.
 	
-	bool shouldTerminate;
-	
 	// each thread we spawn attached to this stream monitor is given a thread ID. If the thread determines the monitor is being served by another thread (because the monitor's ID is not the same as its own), the thread terminates without issuing messages.
 	// thread IDs roll over, which is only a problem in an implementation that can run 2^64-1 threads at the same time (aka: no current one).
 	uint64_t currentThreadID;
 	
-	void init(ILStream* s) {
+	bool hasPendingReadEvent, hasPendingWriteEvent, hasPendingErrorEvent;
+	
+	void init(ILStreamMonitor* me, ILStream* s) {
+		self = me;
 		stream = ILRetain(s);
 		
 		readTarget = NULL;
@@ -37,8 +40,8 @@ struct ILStreamMonitorImpl {
 		errorTarget = NULL;
 		
 		mutex = ILRetain(new ILMutex());
-		
-		shouldTerminate = false;
+				
+		hasPendingReadEvent = hasPendingWriteEvent = hasPendingErrorEvent = false;
 		
 		currentThreadID = 0;
 	}
@@ -50,12 +53,12 @@ struct ILStreamMonitorImpl {
 
 ILStreamMonitor::ILStreamMonitor(ILStream* s) : ILSource() {
 	_i = new ILStreamMonitorImpl;
-	_i->init(s);
+	_i->init(this, s);
 }
 
 ILStreamMonitor::ILStreamMonitor(ILStream* s, ILTarget* readTarget, ILTarget* writeTarget, ILTarget* errorTarget) : ILSource() {
 	_i = new ILStreamMonitorImpl;
-	_i->init(s);
+	_i->init(this, s);
 
 	_i->readTarget = ILRetain(readTarget);
 	_i->writeTarget = ILRetain(writeTarget);
@@ -91,10 +94,12 @@ ILStreamMonitor::~ILStreamMonitor() {
 #define kILStreamMonitorObjectKey ILStr("ILStreamMonitor")
 #define kILStreamMonitorThreadIDKey ILStr("ILThreadID")
 
-static void ILStreamMonitoringThread(ILObject* o);
+void ILStreamMonitoringThread(ILObject* o);
 
 void ILStreamMonitor::beginObserving() {
 	ILAcquiredMutex mutex(_i->mutex);
+	
+	ILRunLoop::current()->addSource(this);
 	
 	if (_i->currentThreadID == UINT64_MAX)
 		_i->currentThreadID = 0;
@@ -117,8 +122,94 @@ void ILStreamMonitor::endObserving() {
 		_i->currentThreadID = 0;
 	else
 		_i->currentThreadID++;
+	
+	ILRunLoop::current()->removeSource(this);
 }
 
-static void ILStreamMonitoringThread(ILObject* o) {
-#warning TODO actually perform select() loop.
+void ILStreamMonitoringThread(ILObject* o) {
+	ILMap* arguments = ILAs(ILMap, o);
+	ILStreamMonitor* self = arguments->at<ILStreamMonitor>(kILStreamMonitorObjectKey);
+	uint64_t threadID = arguments->at<ILNumber>(kILStreamMonitorThreadIDKey)->unsignedIntegerValue();
+	
+	int fd = self->_i->stream->fileDescriptor();
+	if (fd < 0)
+		return;
+	
+	while (true) {
+		fd_set readingSet;
+		FD_ZERO(&readingSet);
+		FD_SET(fd, &readingSet);
+		
+		fd_set writingSet;
+		FD_ZERO(&writingSet);
+		FD_SET(fd, &writingSet);
+		
+		fd_set errorSet;
+		FD_ZERO(&errorSet);
+		FD_SET(fd, &errorSet);
+		
+		struct timeval tv;
+		tv.tv_sec = 1;
+		tv.tv_usec = 0;
+		int result = select(fd + 1, &readingSet, &writingSet, &errorSet, &tv);
+	
+		if (result < 0)
+			return;
+		
+		bool canRead = FD_ISSET(fd, &readingSet),
+			canWrite = FD_ISSET(fd, &writingSet),
+			hasError = FD_ISSET(fd, &errorSet);
+		
+		if (!self->_i->signalEvents(threadID, canRead, canWrite, hasError))
+			return;
+	}	
+}
+
+bool ILStreamMonitorImpl::signalEvents(uint64_t threadID, bool read, bool write, bool error) {
+	ILAcquiredMutex acquisition(mutex);
+	
+	if (threadID != currentThreadID)
+		return false;
+	
+	hasPendingReadEvent = hasPendingReadEvent || read;
+	hasPendingWriteEvent = hasPendingWriteEvent || write;
+	hasPendingErrorEvent = hasPendingErrorEvent ||error;
+	
+	ILRunLoop* r = self->runLoop();
+	if (r)
+		r->signalReady();
+	
+	return true;
+}
+
+void ILStreamMonitor::spin() {
+	ILAcquiredMutex acquisition(_i->mutex);
+	ILRunLoop* r = this->runLoop();
+	
+	if (_i->hasPendingReadEvent) {
+		_i->hasPendingReadEvent = false;
+		
+		if (r) {
+			ILMessage* m = new ILMessage(kILStreamReadyForReadingMessage, this, NULL);
+			r->currentMessageHub()->deliverMessage(m);
+		}
+	}
+
+	if (_i->hasPendingWriteEvent) {
+		_i->hasPendingWriteEvent = false;
+		
+		if (r) {
+			ILMessage* m = new ILMessage(kILStreamReadyForWritingMessage, this, NULL);
+			r->currentMessageHub()->deliverMessage(m);
+		}
+	}
+
+	if (_i->hasPendingErrorEvent) {
+		_i->hasPendingErrorEvent = false;
+		
+		if (r) {
+			ILMessage* m = new ILMessage(kILStreamErrorOccurredMessage, this, NULL);
+			r->currentMessageHub()->deliverMessage(m);
+		}
+	}
 }

@@ -35,7 +35,10 @@ public:
 	void beginObserving();
 	void endObserving();
 	
+	virtual void spin();
+	
 private:
+	friend void ILStreamMonitoringThread(ILObject* o);
 	friend class ILStreamMonitorImpl;
 	ILStreamMonitorImpl* _i;
 };

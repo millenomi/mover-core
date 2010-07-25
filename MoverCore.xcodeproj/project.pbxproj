@@ -30,6 +30,16 @@
 		1576B97111EBB5280032047B /* ILStructures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1576B97011EBB5280032047B /* ILStructures.cpp */; };
 		1576B97211EBB5280032047B /* ILStructures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1576B97011EBB5280032047B /* ILStructures.cpp */; };
 		157C386511DF8A0C0051D707 /* ILHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 157C386611DF8A0C0051D707 /* ILHash.h */; };
+		1581848A11FCB0EC00FE4E5E /* ILTelemetry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1581848911FCB0EC00FE4E5E /* ILTelemetry.cpp */; };
+		1581848B11FCB0EC00FE4E5E /* ILTelemetry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1581848811FCB0EC00FE4E5E /* ILTelemetry.h */; };
+		1581848C11FCB0EC00FE4E5E /* ILTelemetry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1581848911FCB0EC00FE4E5E /* ILTelemetry.cpp */; };
+		1581848D11FCB0EC00FE4E5E /* ILTelemetry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1581848811FCB0EC00FE4E5E /* ILTelemetry.h */; };
+		1581848E11FCB0EC00FE4E5E /* ILTelemetry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1581848911FCB0EC00FE4E5E /* ILTelemetry.cpp */; };
+		158184C811FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 158184C611FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h */; };
+		158184C911FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 158184C711FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp */; };
+		158184CA11FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 158184C611FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h */; };
+		158184CB11FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 158184C711FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp */; };
+		158184CC11FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 158184C711FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp */; };
 		1582F98711DE85BA006BCD57 /* StreamDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1582F98511DE85BA006BCD57 /* StreamDecoder.h */; };
 		1582F98811DE85BA006BCD57 /* StreamDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */; };
 		1582F9BA11DE89D6006BCD57 /* Protocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 1582F9B911DE89D6006BCD57 /* Protocol.h */; };
@@ -209,6 +219,10 @@
 		155527EB11F6D41900359F5D /* MoverCoreTests-StreamEncodeDecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "MoverCoreTests-StreamEncodeDecode.cpp"; sourceTree = "<group>"; };
 		1576B97011EBB5280032047B /* ILStructures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILStructures.cpp; sourceTree = "<group>"; };
 		157C386611DF8A0C0051D707 /* ILHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ILHash.h; sourceTree = "<group>"; };
+		1581848811FCB0EC00FE4E5E /* ILTelemetry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILTelemetry.h; sourceTree = "<group>"; };
+		1581848911FCB0EC00FE4E5E /* ILTelemetry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILTelemetry.cpp; sourceTree = "<group>"; };
+		158184C611FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILTelemetryStdoutLogger.h; sourceTree = "<group>"; };
+		158184C711FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ILTelemetryStdoutLogger.cpp; sourceTree = "<group>"; };
 		1582F98511DE85BA006BCD57 /* StreamDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamDecoder.h; sourceTree = "<group>"; };
 		1582F98611DE85BA006BCD57 /* StreamDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamDecoder.cpp; sourceTree = "<group>"; };
 		1582F9B911DE89D6006BCD57 /* Protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Protocol.h; sourceTree = "<group>"; };
@@ -305,6 +319,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1581848711FCB0DE00FE4E5E /* Telemetry */ = {
+			isa = PBXGroup;
+			children = (
+				158184C611FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h */,
+				158184C711FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp */,
+				1581848811FCB0EC00FE4E5E /* ILTelemetry.h */,
+				1581848911FCB0EC00FE4E5E /* ILTelemetry.cpp */,
+			);
+			name = Telemetry;
+			sourceTree = "<group>";
+		};
 		1582F97D11DE857E006BCD57 /* Mover Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -342,6 +367,7 @@
 			isa = PBXGroup;
 			children = (
 				159D8DED11C27A7500191F11 /* PlatformCore.h */,
+				1581848711FCB0DE00FE4E5E /* Telemetry */,
 				159EC2E711FB737C00B0FC31 /* Streams */,
 				15AD5EC711EB88BF00B7F94A /* ILStructures.h */,
 				1576B97011EBB5280032047B /* ILStructures.cpp */,
@@ -473,6 +499,8 @@
 				15CB77BB11FA3D36007E589E /* ILStream.h in Headers */,
 				159EC26511FB3BD900B0FC31 /* ILPipeSource.h in Headers */,
 				159EC2EC11FB767F00B0FC31 /* ILStreamMonitor.h in Headers */,
+				1581848D11FCB0EC00FE4E5E /* ILTelemetry.h in Headers */,
+				158184C811FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,6 +538,8 @@
 				15CB77BC11FA3D36007E589E /* ILStream.h in Headers */,
 				159EC26311FB3BD900B0FC31 /* ILPipeSource.h in Headers */,
 				159EC2EA11FB767F00B0FC31 /* ILStreamMonitor.h in Headers */,
+				1581848B11FCB0EC00FE4E5E /* ILTelemetry.h in Headers */,
+				158184CA11FCB50A00FE4E5E /* ILTelemetryStdoutLogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,6 +686,8 @@
 				15CB77B811FA3D36007E589E /* ILStream.cpp in Sources */,
 				159EC26611FB3BD900B0FC31 /* ILPipeSource.cpp in Sources */,
 				159EC2ED11FB767F00B0FC31 /* ILStreamMonitor.cpp in Sources */,
+				1581848E11FCB0EC00FE4E5E /* ILTelemetry.cpp in Sources */,
+				158184C911FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,6 +731,8 @@
 				15CB77B911FA3D36007E589E /* ILStream.cpp in Sources */,
 				159EC26711FB3BD900B0FC31 /* ILPipeSource.cpp in Sources */,
 				159EC2EE11FB767F00B0FC31 /* ILStreamMonitor.cpp in Sources */,
+				1581848A11FCB0EC00FE4E5E /* ILTelemetry.cpp in Sources */,
+				158184CC11FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -734,6 +768,8 @@
 				15CB77BA11FA3D36007E589E /* ILStream.cpp in Sources */,
 				159EC26411FB3BD900B0FC31 /* ILPipeSource.cpp in Sources */,
 				159EC2EB11FB767F00B0FC31 /* ILStreamMonitor.cpp in Sources */,
+				1581848C11FCB0EC00FE4E5E /* ILTelemetry.cpp in Sources */,
+				158184CB11FCB50A00FE4E5E /* ILTelemetryStdoutLogger.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

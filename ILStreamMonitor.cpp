@@ -10,6 +10,7 @@
 #include "ILStreamMonitor.h"
 
 #include "ILMessageHub.h"
+#include "ILTelemetry.h"
 
 ILUniqueConstant(kILStreamReadyForReadingMessage);
 ILUniqueConstant(kILStreamReadyForWritingMessage);
@@ -30,6 +31,7 @@ struct ILStreamMonitorImpl {
 	uint64_t currentThreadID;
 	
 	bool hasPendingReadEvent, hasPendingWriteEvent, hasPendingErrorEvent;
+	bool hasActiveReadEvent, hasActiveWriteEvent, hasActiveErrorEvent;
 	
 	void init(ILStreamMonitor* me, ILStream* s) {
 		self = me;
@@ -42,6 +44,7 @@ struct ILStreamMonitorImpl {
 		mutex = ILRetain(new ILMutex());
 				
 		hasPendingReadEvent = hasPendingWriteEvent = hasPendingErrorEvent = false;
+		hasActiveReadEvent = hasActiveWriteEvent = hasActiveErrorEvent = false;
 		
 		currentThreadID = 0;
 	}
@@ -135,6 +138,8 @@ void ILStreamMonitoringThread(ILObject* o) {
 	ILStreamMonitor* self = arguments->at<ILStreamMonitor>(kILStreamMonitorObjectKey);
 	uint64_t threadID = arguments->at<ILNumber>(kILStreamMonitorThreadIDKey)->unsignedIntegerValue();
 	
+	ILCEvent(ILStr("Will start monitoring with stream monitor %p, stream %p (thread ID %llu)"), self, self->stream(), (unsigned long long) threadID);
+	
 	int fd = self->_i->stream->fileDescriptor();
 	if (fd < 0)
 		return;
@@ -157,15 +162,23 @@ void ILStreamMonitoringThread(ILObject* o) {
 		tv.tv_usec = 0;
 		int result = select(fd + 1, &readingSet, &writingSet, &errorSet, &tv);
 	
-		if (result < 0)
+		if (result < 0) {
+			ILCEvent(ILStr("select() had an error, interrupting monitoring."));
+			self->_i->signalEvents(threadID, false, false, true);
 			return;
+		}
 		
-		bool canRead = FD_ISSET(fd, &readingSet),
+		bool canRead = result > 0 && FD_ISSET(fd, &readingSet),
 			canWrite = FD_ISSET(fd, &writingSet),
 			hasError = FD_ISSET(fd, &errorSet);
 		
-		if (!self->_i->signalEvents(threadID, canRead, canWrite, hasError))
+		ILCEvent(ILStr("Has spun once for select() with results read = %d, write = %d, error = %d"), canRead, canWrite, hasError);
+		
+		if (!self->_i->signalEvents(threadID, canRead, canWrite, hasError)) {
+			ILCEvent(ILStr("Check-in reports we have to stop monitoring, returning"));
 			return;
+		} else
+			ILCEvent(ILStr("Checked-in successfully, spinning again."));
 	}	
 }
 
@@ -175,9 +188,9 @@ bool ILStreamMonitorImpl::signalEvents(uint64_t threadID, bool read, bool write,
 	if (threadID != currentThreadID)
 		return false;
 	
-	hasPendingReadEvent = hasPendingReadEvent || read;
-	hasPendingWriteEvent = hasPendingWriteEvent || write;
-	hasPendingErrorEvent = hasPendingErrorEvent ||error;
+	hasPendingReadEvent = read;
+	hasPendingWriteEvent = write;
+	hasPendingErrorEvent = error;
 	
 	ILRunLoop* r = self->runLoop();
 	if (r)
@@ -191,31 +204,34 @@ void ILStreamMonitor::spin() {
 	ILRunLoop* r = this->runLoop();
 	
 	if (_i->hasPendingReadEvent) {
-		_i->hasPendingReadEvent = false;
-		
-		if (r) {
+		if (r && !_i->hasActiveReadEvent) {
+			ILEvent(kILStreamMonitorTelemetrySource, ILStr("Will send ready-for-reading message."));
+			_i->hasActiveReadEvent = true;
 			ILMessage* m = new ILMessage(kILStreamReadyForReadingMessage, this, NULL);
 			r->currentMessageHub()->deliverMessage(m);
 		}
-	}
+	} else
+		_i->hasActiveReadEvent = false;
 
 	if (_i->hasPendingWriteEvent) {
-		_i->hasPendingWriteEvent = false;
-		
-		if (r) {
+		if (r && !_i->hasActiveWriteEvent) {
+			ILEvent(kILStreamMonitorTelemetrySource, ILStr("Will send ready-for-writing message."));
+			_i->hasActiveWriteEvent = true;
 			ILMessage* m = new ILMessage(kILStreamReadyForWritingMessage, this, NULL);
 			r->currentMessageHub()->deliverMessage(m);
 		}
-	}
-
+	} else
+		_i->hasActiveWriteEvent = false;
+	
 	if (_i->hasPendingErrorEvent) {
-		_i->hasPendingErrorEvent = false;
-		
-		if (r) {
+		if (r && !_i->hasActiveErrorEvent) {
+			ILEvent(kILStreamMonitorTelemetrySource, ILStr("Will send error-occurred message."));
+			_i->hasActiveErrorEvent = true;
 			ILMessage* m = new ILMessage(kILStreamErrorOccurredMessage, this, NULL);
 			r->currentMessageHub()->deliverMessage(m);
 		}
-	}
+	} else
+		_i->hasActiveErrorEvent = false;
 }
 
 ILRunLoop* ILStreamMonitor::runLoop() {
@@ -226,4 +242,10 @@ ILRunLoop* ILStreamMonitor::runLoop() {
 void ILStreamMonitor::setRunLoop(ILRunLoop* r) {
 	ILAcquiredMutex m(_i->mutex);
 	ILSource::setRunLoop(r);
+}
+
+ILUniqueConstant(kILStreamMonitorClassIdentity);
+
+void* ILStreamMonitor::classIdentity() {
+	return kILStreamMonitorClassIdentity;
 }

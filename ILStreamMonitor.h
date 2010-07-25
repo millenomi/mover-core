@@ -17,7 +17,7 @@
 
 struct ILStreamMonitorImpl;
 
-
+#define kILStreamMonitorTelemetrySource ILStr("ILStreamMonitor")
 
 // ~ ILStreamMonitor ~
 
@@ -40,13 +40,15 @@ public:
 	virtual ILRunLoop* runLoop();
 	virtual void setRunLoop(ILRunLoop* r);
 	
+	virtual void* classIdentity();
+	
 private:
 	friend void ILStreamMonitoringThread(ILObject* o);
 	friend class ILStreamMonitorImpl;
 	ILStreamMonitorImpl* _i;
 };
 
-
+extern void* kILStreamMonitorClassIdentity;
 
 
 #endif // #ifndef ILStreamMonitor_H

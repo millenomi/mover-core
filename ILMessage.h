@@ -28,6 +28,16 @@ public:
 	/** Returns the payload for this message. */
 	ILObject* payload();
 	
+	template <class T>
+	T* sourceAs() {
+		return static_cast<T*>(source());
+	}
+	
+	template <class T>
+	T* payloadAs() {
+		return static_cast<T*>(payload());
+	}
+	
 private:
 	void* _kind;
 	ILObject* _source;

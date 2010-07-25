@@ -91,6 +91,10 @@ ILStreamMonitor::~ILStreamMonitor() {
 	delete _i;
 }
 
+ILStream* ILStreamMonitor::stream() {
+	return _i->stream;
+}
+
 #define kILStreamMonitorObjectKey ILStr("ILStreamMonitor")
 #define kILStreamMonitorThreadIDKey ILStr("ILThreadID")
 

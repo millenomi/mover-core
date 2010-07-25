@@ -31,6 +31,7 @@ public:
 	ILStreamMonitor(ILStream* s, ILTarget* readTarget, ILTarget* writeTarget, ILTarget* errorTarget);
 	virtual ~ILStreamMonitor();
 	
+	ILStream* stream();
 
 	void beginObserving();
 	void endObserving();

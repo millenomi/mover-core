@@ -19,8 +19,8 @@ namespace Mover {
 	ILUniqueConstant(kMvrStreamEncoderCanProceedMessage);
     ILUniqueConstant(kMvrStreamEncoderActuallyProvideStreamPartMessage);
 	
-	ILTargetForMethod(StreamEncoder_ReadyTarget, StreamEncoder, streamReady);
-    ILTargetForMethod(StreamEncoder_ActuallyProvideStreamPartTarget, StreamEncoder, actuallyProvideStreamPart);
+	ILNamedTargetClassForMethod(StreamEncoder_ReadyTarget, StreamEncoder, streamReady);
+    ILNamedTargetClassForMethod(StreamEncoder_ActuallyProvideStreamPartTarget, StreamEncoder, actuallyProvideStreamPart);
 	
 	StreamEncoder::StreamEncoder() {
 		_sealed = false;

@@ -23,7 +23,7 @@
 #include <cstring>
 
 namespace Mover {
-	ILTargetForMethod(ILStreamTests_isReadyForReading, ILStreamTests, isReadyForReading);
+	ILTargetClassForMethod(ILStreamTests, isReadyForReading);
 	
 	void ILStreamTests::testReadWriteWithPipeAndShortcuts() {
 		ILPipeSource* p = new ILPipeSource();
@@ -94,7 +94,6 @@ namespace Mover {
 			if (e != kILStreamErrorWouldHaveBlocked)
 				_didRead = true;
 		}
-
 	}
 
 }

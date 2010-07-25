@@ -76,7 +76,7 @@ private:
 	void* _context;
 };
 
-/** A target that delivers a message by calling a method on an object. This class is virtual; you create implementations for particular methods by using the @link ILTargetForMethod ILTargetForMethod macro.
+/** A target that delivers a message by calling a method on an object. This class is virtual; you create implementations for particular methods by using the @link ILNamedTargetClassForMethod ILNamedTargetClassForMethod macro.
  
 	Note that the object passed to this class is NOT retained to avoid retain loops!
  */
@@ -101,11 +101,14 @@ private:
  @param receiverClass The name of the class whose instances will receive messages.
  @param method The name of the method that will receive the messages. The method must be public. Use the following signature: <code>void someMethodName(ILMessage* m)</code>.
  */
-#define ILTargetForMethod(targetClass, receiverClass, method) \
+#define ILNamedTargetClassForMethod(targetClass, receiverClass, method) \
 	class targetClass : public ILObjectTarget { \
 	public: \
 		targetClass(receiverClass* me) : ILObjectTarget(me) {} \
 		virtual void deliverMessage(ILMessage* m) { receiverClass* t = ((receiverClass*)this->target()); if (t) t->method(m); } \
 	}
+
+#define ILTargetClassForMethod(receiverClass, method) \
+	ILNamedTargetClassForMethod(receiverClass ## _ ## method, receiverClass, method)
 
 #endif // #ifndef ILMessage_H

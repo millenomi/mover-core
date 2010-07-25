@@ -23,7 +23,7 @@
 #include <cstring>
 
 namespace Mover {
-	ILTargetClassForMethod(ILStreamTests, isReadyForReading);
+	ILTargetClassForMethod(ILStreamTests, isReadyForReadingForTestAsyncRead);
 	
 	void ILStreamTests::testReadWriteWithPipeAndShortcuts() {
 		ILPipeSource* p = new ILPipeSource();
@@ -50,6 +50,8 @@ namespace Mover {
 	void ILStreamTests::setUp() {
 		_didRead = false;
 		_buffer = NULL;
+		
+		_isTestingAsyncRead = false;
 	}
 	
 	void ILStreamTests::testAsyncRead() {
@@ -65,7 +67,9 @@ namespace Mover {
 		
 		ILTestTrue(didWriteTestString);
 		
-		ILTarget* t = new ILStreamTests_isReadyForReading(this);
+		_isTestingAsyncRead = true;
+		
+		ILTarget* t = new ILStreamTests_isReadyForReadingForTestAsyncRead(this);
 		ILStreamMonitor* monitor = new ILStreamMonitor(rd, t, NULL, NULL);
 		_buffer = ILRetain(new ILData());
 		
@@ -74,12 +78,20 @@ namespace Mover {
 		
 		monitor->endObserving();
 		
+		_isTestingAsyncRead = false;
+		
+		// spin one final time to test whether spurious messages are being delivered.
+		int i; for (i = 0; i < 5; i++)
+			ILRunLoop::current()->spinForAboutUpTo(20.0);
+		
 		ILTestEqualObjects(_buffer, toBeWritten);
 		
 		ILRelease(_buffer);
 	}
 	
-	void ILStreamTests::isReadyForReading(ILMessage* m) {
+	void ILStreamTests::isReadyForReadingForTestAsyncRead(ILMessage* m) {
+		ILTestTrue(_isTestingAsyncRead);
+		
 		ILStreamMonitor* monitor = m->sourceAs<ILStreamMonitor>();
 		ILStream* s = monitor->stream();
 		

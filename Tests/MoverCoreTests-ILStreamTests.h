@@ -28,8 +28,9 @@ namespace Mover {
 		virtual void setUp();
 		
 
-		void isReadyForReading(ILMessage* m);
+		void isReadyForReadingForTestAsyncRead(ILMessage* m);
 	private:
+		bool _isTestingAsyncRead;
 		bool _didRead;
 		ILData* _buffer;
 	};

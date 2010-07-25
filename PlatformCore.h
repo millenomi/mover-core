@@ -79,6 +79,43 @@ static ILInline void ILClear(T*& x) {
 	ILRelease(static_cast<ILObject*>(x)); x = NULL;
 }
 
+#define ILRetainGetterSetterImpl(className, type, var, getter, setter) \
+	type className::getter() { \
+		return (var); \
+	} \
+	void className::setter(type newValue) { \
+		if (newValue != (var)) { \
+			ILRelease(var); \
+			var = ILRetain(newValue); \
+		} \
+	}
+
+#define ILCopyGetterSetterImpl(className, type, var, getter, setter) \
+	type className::getter() { \
+		return (var); \
+	} \
+	void className::setter(type newValue) { \
+		if (newValue != (var)) { \
+			ILRelease(var); \
+			var = ILRetain(newValue->copy()); \
+		} \
+	}
+
+#define ILAssignGetterSetterImpl(className, type, var, getter, setter) \
+	type className::getter() { \
+		return (var); \
+	} \
+	void className::setter(type newValue) { \
+		var = newValue; \
+	}
+
+#define ILProperty(propertyType, getter, setter) \
+	propertyType getter(); \
+	void setter(propertyType newValue)
+
+#define ILPropertyWithModifiers(mods, propertyType, getter, setter) \
+	mods propertyType getter(); \
+	mods void setter(propertyType newValue)
 
 #include "ILStructures.h"
 

@@ -330,8 +330,6 @@
 		159D8D6911C27A2E00191F11 = {
 			isa = PBXGroup;
 			children = (
-				159EC26111FB3BD900B0FC31 /* ILPipeSource.h */,
-				159EC26211FB3BD900B0FC31 /* ILPipeSource.cpp */,
 				159046C011F9879E0064ACAF /* Build Aids */,
 				15EC94ED11EFACA500B0CF5D /* Tests */,
 				1582F97D11DE857E006BCD57 /* Mover Core */,
@@ -406,6 +404,8 @@
 		159EC2E711FB737C00B0FC31 /* Streams */ = {
 			isa = PBXGroup;
 			children = (
+				159EC26111FB3BD900B0FC31 /* ILPipeSource.h */,
+				159EC26211FB3BD900B0FC31 /* ILPipeSource.cpp */,
 				15CB77B711FA3D36007E589E /* ILStream.h */,
 				15CB77B611FA3D36007E589E /* ILStream.cpp */,
 				159EC2E811FB767F00B0FC31 /* ILStreamMonitor.h */,
@@ -576,6 +576,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 159D8D6E11C27A2E00191F11 /* Build configuration list for PBXProject "MoverCore" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,

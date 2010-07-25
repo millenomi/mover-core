@@ -19,9 +19,19 @@ namespace Mover {
 	class ILStreamTests : public ILTesting::TestCase {
 		ILTestCase(ILStreamTests) {
 			ILTestWith(testReadWriteWithPipeAndShortcuts);
+			ILTestWith(testAsyncRead);
 		}
 		
 		void testReadWriteWithPipeAndShortcuts();
+		void testAsyncRead();
+		
+		virtual void setUp();
+		
+
+		void isReadyForReading(ILMessage* m);
+	private:
+		bool _didRead;
+		ILData* _buffer;
 	};
 }
 

@@ -116,10 +116,10 @@ private:
 };
 
 /** Kind of messages sent while the stream is monitoring whenever a read operation was requested. */
-extern void* kILStreamDidRead;
+extern void* kILStreamDidReadMessage;
 
 /** Kind of messages sent while the stream is monitoring whenever a write operation was requested. */
-extern void* kILStreamDidWrite;
+extern void* kILStreamDidWriteMessage;
 
 
 /** Stream sources provide new, just-opened streams to callers. A stream source may be reusable, or may be used only once. */

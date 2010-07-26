@@ -130,8 +130,8 @@ void ILStreamMonitor::beginObserving() {
 
 void ILStreamMonitorImpl::beginMonitoringStream() {
 	monitorStreamTarget = ILRetain(new ILStreamMonitor_didMonitorStreamReadOrWrite(self));
-	ILMessageHub::currentHub()->addTarget(monitorStreamTarget, kILStreamDidRead, stream);
-	ILMessageHub::currentHub()->addTarget(monitorStreamTarget, kILStreamDidWrite, stream);
+	ILMessageHub::currentHub()->addTarget(monitorStreamTarget, kILStreamDidReadMessage, stream);
+	ILMessageHub::currentHub()->addTarget(monitorStreamTarget, kILStreamDidWriteMessage, stream);
 	
 	stream->beginObservingStream();
 }
@@ -155,8 +155,8 @@ void ILStreamMonitor::endObserving() {
 void ILStreamMonitorImpl::endMonitoringStream() {
 	stream->endObservingStream();
 
-	ILMessageHub::currentHub()->removeTarget(monitorStreamTarget, kILStreamDidRead);
-	ILMessageHub::currentHub()->removeTarget(monitorStreamTarget, kILStreamDidWrite);
+	ILMessageHub::currentHub()->removeTarget(monitorStreamTarget, kILStreamDidReadMessage);
+	ILMessageHub::currentHub()->removeTarget(monitorStreamTarget, kILStreamDidWriteMessage);
 	
 	ILClear(monitorStreamTarget);
 }
@@ -281,10 +281,10 @@ void* ILStreamMonitor::classIdentity() {
 void ILStreamMonitor::didMonitorStreamReadOrWrite(ILMessage* m) {
 	ILAcquiredMutex mutex(_i->mutex);
 		
-	if (m->kind() == kILStreamDidRead) {
+	if (m->kind() == kILStreamDidReadMessage) {
 		ILEvent(kILStreamMonitorTelemetrySource, ILStr("Stream has been read from, will produce messages for further reading availability."));
 		_i->hasActiveReadEvent = false;
-	} else if (m->kind() == kILStreamDidWrite) {
+	} else if (m->kind() == kILStreamDidWriteMessage) {
 		ILEvent(kILStreamMonitorTelemetrySource, ILStr("Stream has been written to, will produce messages for further writing availability."));
 		_i->hasActiveWriteEvent = false;
 	}

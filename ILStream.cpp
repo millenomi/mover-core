@@ -31,8 +31,8 @@ ILStream::~ILStream() {
 	ILRelease(_mutex);
 }
 
-ILUniqueConstant(kILStreamDidRead);
-ILUniqueConstant(kILStreamDidWrite);
+ILUniqueConstant(kILStreamDidReadMessage);
+ILUniqueConstant(kILStreamDidWriteMessage);
 
 ILData* ILStream::read(ILSize maximumBytes, ILStreamError* e) {
 	int fd = fileDescriptor();
@@ -42,7 +42,7 @@ ILData* ILStream::read(ILSize maximumBytes, ILStreamError* e) {
 	}
 	
     if (_countOfObservingClients > 0)
-        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kILStreamDidRead, this, NULL));
+        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kILStreamDidReadMessage, this, NULL));
     
 	uint8_t* bytes = (uint8_t*) malloc(maximumBytes);
 	int result = ::read(fd, bytes, maximumBytes);
@@ -70,7 +70,7 @@ bool ILStream::write(ILData* data, ILSize* writtenBytes, ILStreamError* e) {
 	}	
 	
     if (_countOfObservingClients > 0)
-        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kILStreamDidWrite, this, NULL));
+        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kILStreamDidWriteMessage, this, NULL));
     
 	int result = ::write(_fd, data->bytes(), data->length());
 	

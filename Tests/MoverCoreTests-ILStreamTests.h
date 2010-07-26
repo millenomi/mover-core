@@ -20,19 +20,26 @@ namespace Mover {
 		ILTestCase(ILStreamTests) {
 			ILTestWith(testReadWriteWithPipeAndShortcuts);
 			ILTestWith(testAsyncRead);
+            ILTestWith(testAsyncWrite);
 		}
 		
 		void testReadWriteWithPipeAndShortcuts();
 		void testAsyncRead();
+        void testAsyncWrite();
 		
 		virtual void setUp();
 		
 
 		void isReadyForReadingForTestAsyncRead(ILMessage* m);
+		void isReadyForWritingForTestAsyncWrite(ILMessage* m);
 	private:
 		bool _isTestingAsyncRead;
 		bool _didRead;
 		ILData* _buffer;
+        
+        bool _isTestingAsyncWrite;
+        bool _didWrite;
+        ILIndex _writtenIndex;
 	};
 }
 

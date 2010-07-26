@@ -24,6 +24,7 @@
 
 namespace Mover {
 	ILTargetClassForMethod(ILStreamTests, isReadyForReadingForTestAsyncRead);
+	ILTargetClassForMethod(ILStreamTests, isReadyForWritingForTestAsyncWrite);
 	
 	void ILStreamTests::testReadWriteWithPipeAndShortcuts() {
 		ILPipeSource* p = new ILPipeSource();
@@ -49,10 +50,14 @@ namespace Mover {
 	
 	void ILStreamTests::setUp() {
 		_didRead = false;
+        _didWrite = false;
 		_buffer = NULL;
 		
 		_isTestingAsyncRead = false;
+        _isTestingAsyncWrite = false;
 	}
+    
+    // -- testAsyncRead()
 	
 	void ILStreamTests::testAsyncRead() {
 		ILPipeSource* p = new ILPipeSource();
@@ -81,8 +86,7 @@ namespace Mover {
 		_isTestingAsyncRead = false;
 		
 		// spin one final time to test whether spurious messages are being delivered.
-		int i; for (i = 0; i < 5; i++)
-			ILRunLoop::current()->spinForAboutUpTo(20.0);
+        ILRunLoop::current()->spinForAboutUpTo(1.0);
 		
 		ILTestEqualObjects(_buffer, toBeWritten);
 		
@@ -108,4 +112,52 @@ namespace Mover {
 		}
 	}
 
+    // -- testAsyncRead()    
+    
+    void ILStreamTests::testAsyncWrite() {
+		ILPipeSource* p = new ILPipeSource();
+		
+		ILStream* wr = p->openWritingStream(),
+            * rd = p->openReadingStream();
+		
+        new ILStreamMonitor(wr, NULL, new ILStreamTests_isReadyForWritingForTestAsyncWrite(this), NULL);
+        
+        _writtenIndex = 0;
+        _isTestingAsyncWrite = true;
+        while (!_didWrite)
+            ILRunLoop::current()->spinForAboutUpTo(0.10);
+        
+        _isTestingAsyncWrite = false;
+        
+        const char* toBeWritten = "This is just a pipe read/write test string!";
+        
+        ILData* received = rd->readUntilEnd();
+        ILTestNotNULL(received);
+        if (received)
+            ILTestEqualObjects(received, new ILData((uint8_t*) toBeWritten, strlen(toBeWritten), kILDataNoCopy));
+        
+        // spin one final time to test whether spurious messages are being delivered.
+        ILRunLoop::current()->spinForAboutUpTo(1.0);
+		
+    }
+    
+    void ILStreamTests::isReadyForWritingForTestAsyncWrite(ILMessage *m) {
+        ILTestTrue(_isTestingAsyncWrite);
+        ILTestFalse(_didWrite);
+        
+        if (!_didWrite) {            
+            ILStreamMonitor* monitor = m->sourceAs<ILStreamMonitor>();
+            ILStream* s = monitor->stream();
+            
+            const char* toBeWritten = "This is just a pipe read/write test string!";
+            s->writeAllOf(new ILData((uint8_t*) &toBeWritten[_writtenIndex], 1, kILDataNoCopy));
+            
+            _writtenIndex++;
+            if (_writtenIndex >= strlen(toBeWritten)) {
+				monitor->endObserving();
+				s->close();
+                _didWrite = true;
+			}
+        }
+    }
 }

@@ -16,14 +16,13 @@ ILUniqueConstant(kILStreamReadyForReadingMessage);
 ILUniqueConstant(kILStreamReadyForWritingMessage);
 ILUniqueConstant(kILStreamErrorOccurredMessage);
 
-
 struct ILStreamMonitorImpl {
 	ILStreamMonitor* self;
 	
 	ILStream* stream;	
-	ILTarget* readTarget, * writeTarget, * errorTarget;
+	ILTarget* readTarget, * writeTarget, * errorTarget, * monitorStreamTarget;
 	ILMutex* mutex;
-	
+		
 	// Protected by the mutex beyond this point.
 	
 	// each thread we spawn attached to this stream monitor is given a thread ID. If the thread determines the monitor is being served by another thread (because the monitor's ID is not the same as its own), the thread terminates without issuing messages.
@@ -40,6 +39,7 @@ struct ILStreamMonitorImpl {
 		readTarget = NULL;
 		writeTarget = NULL;
 		errorTarget = NULL;
+		monitorStreamTarget = NULL;
 		
 		mutex = ILRetain(new ILMutex());
 				
@@ -52,7 +52,13 @@ struct ILStreamMonitorImpl {
 	// called by the thread to issue messages.
 	// if true, events have been delivered. if false, the events were not delivered and the thread should terminate.
 	bool signalEvents(uint64_t threadID, bool read, bool write, bool error);
+	
+	void beginMonitoringStream();
+	void endMonitoringStream();
 };
+
+ILTargetClassForMethod(ILStreamMonitor, didMonitorStreamReadOrWrite);
+
 
 ILStreamMonitor::ILStreamMonitor(ILStream* s) : ILSource() {
 	_i = new ILStreamMonitorImpl;
@@ -73,11 +79,12 @@ ILStreamMonitor::ILStreamMonitor(ILStream* s, ILTarget* readTarget, ILTarget* wr
 		ILMessageHub::currentHub()->addTarget(writeTarget, kILStreamReadyForWritingMessage, this);
 	if (errorTarget)
 		ILMessageHub::currentHub()->addTarget(errorTarget, kILStreamErrorOccurredMessage, this);
-		
+	
 	beginObserving();
 }
 
 ILStreamMonitor::~ILStreamMonitor() {
+    _i->stream->endObservingStream();
 	ILRelease(_i->stream);
 	
 	if (_i->readTarget)
@@ -106,6 +113,8 @@ void ILStreamMonitoringThread(ILObject* o);
 void ILStreamMonitor::beginObserving() {
 	ILAcquiredMutex mutex(_i->mutex);
 	
+	_i->beginMonitoringStream();
+	
 	ILRunLoop::current()->addSource(this);
 	
 	if (_i->currentThreadID == UINT64_MAX)
@@ -117,6 +126,14 @@ void ILStreamMonitor::beginObserving() {
 						 kILStreamMonitorThreadIDKey, new ILNumber(_i->currentThreadID),
 						 NULL);
 	ILThreadStart(&ILStreamMonitoringThread, m);
+}
+
+void ILStreamMonitorImpl::beginMonitoringStream() {
+	monitorStreamTarget = ILRetain(new ILStreamMonitor_didMonitorStreamReadOrWrite(self));
+	ILMessageHub::currentHub()->addTarget(monitorStreamTarget, kILStreamDidRead, stream);
+	ILMessageHub::currentHub()->addTarget(monitorStreamTarget, kILStreamDidWrite, stream);
+	
+	stream->beginObservingStream();
 }
 
 void ILStreamMonitor::endObserving() {
@@ -131,6 +148,17 @@ void ILStreamMonitor::endObserving() {
 		_i->currentThreadID++;
 	
 	ILRunLoop::current()->removeSource(this);
+	
+	_i->endMonitoringStream();
+}
+
+void ILStreamMonitorImpl::endMonitoringStream() {
+	stream->endObservingStream();
+
+	ILMessageHub::currentHub()->removeTarget(monitorStreamTarget, kILStreamDidRead);
+	ILMessageHub::currentHub()->removeTarget(monitorStreamTarget, kILStreamDidWrite);
+	
+	ILClear(monitorStreamTarget);
 }
 
 void ILStreamMonitoringThread(ILObject* o) {
@@ -248,4 +276,16 @@ ILUniqueConstant(kILStreamMonitorClassIdentity);
 
 void* ILStreamMonitor::classIdentity() {
 	return kILStreamMonitorClassIdentity;
+}
+
+void ILStreamMonitor::didMonitorStreamReadOrWrite(ILMessage* m) {
+	ILAcquiredMutex mutex(_i->mutex);
+		
+	if (m->kind() == kILStreamDidRead) {
+		ILEvent(kILStreamMonitorTelemetrySource, ILStr("Stream has been read from, will produce messages for further reading availability."));
+		_i->hasActiveReadEvent = false;
+	} else if (m->kind() == kILStreamDidWrite) {
+		ILEvent(kILStreamMonitorTelemetrySource, ILStr("Stream has been written to, will produce messages for further writing availability."));
+		_i->hasActiveWriteEvent = false;
+	}
 }

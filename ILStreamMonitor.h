@@ -41,7 +41,8 @@ public:
 	virtual void setRunLoop(ILRunLoop* r);
 	
 	virtual void* classIdentity();
-	
+
+	void didMonitorStreamReadOrWrite(ILMessage* m);
 private:
 	friend void ILStreamMonitoringThread(ILObject* o);
 	friend class ILStreamMonitorImpl;

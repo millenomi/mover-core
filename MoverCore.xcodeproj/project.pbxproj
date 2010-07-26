@@ -606,7 +606,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 159D8D6E11C27A2E00191F11 /* Build configuration list for PBXProject "MoverCore" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,

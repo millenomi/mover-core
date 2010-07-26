@@ -18,15 +18,21 @@
 
 #include <sys/select.h>
 
+#include "ILRunLoop.h"
+
 ILStream::ILStream(int fd) : ILObject() {
 	_fd = fd;
 	_mutex = ILRetain(new ILMutex());
+    _countOfObservingClients = 0;
 }
 
 ILStream::~ILStream() {
 	close();
 	ILRelease(_mutex);
 }
+
+ILUniqueConstant(kILStreamDidRead);
+ILUniqueConstant(kILStreamDidWrite);
 
 ILData* ILStream::read(ILSize maximumBytes, ILStreamError* e) {
 	int fd = fileDescriptor();
@@ -35,6 +41,9 @@ ILData* ILStream::read(ILSize maximumBytes, ILStreamError* e) {
 		return NULL;
 	}
 	
+    if (_countOfObservingClients > 0)
+        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kILStreamDidRead, this, NULL));
+    
 	uint8_t* bytes = (uint8_t*) malloc(maximumBytes);
 	int result = ::read(fd, bytes, maximumBytes);
 	
@@ -49,7 +58,7 @@ ILData* ILStream::read(ILSize maximumBytes, ILStreamError* e) {
 		else if (e)
 			*e = kILStreamErrorPOSIX;
 	}
-
+    
 	return NULL;
 }
 
@@ -60,6 +69,9 @@ bool ILStream::write(ILData* data, ILSize* writtenBytes, ILStreamError* e) {
 		return false;
 	}	
 	
+    if (_countOfObservingClients > 0)
+        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kILStreamDidWrite, this, NULL));
+    
 	int result = ::write(_fd, data->bytes(), data->length());
 	
 	if (result >= 0) {
@@ -248,6 +260,17 @@ void ILStream::_determineReadyState(bool* reading, bool* writing) {
 int ILStream::fileDescriptor() {
 	ILAcquiredMutex m(_mutex);
 	return _fd;
+}
+
+void ILStream::beginObservingStream() {
+    _countOfObservingClients++;
+}
+
+void ILStream::endObservingStream() {
+    if (_countOfObservingClients == 0)
+        ILAbort("Mismatched call (end... called without a matching begin...).");
+    
+    _countOfObservingClients--;
 }
 
 // ~ ILStreamSource ~

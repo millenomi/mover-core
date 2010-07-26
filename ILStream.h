@@ -96,14 +96,31 @@ public:
 	 This value is available independently of whether blocking is allowed or not (via ::setAllowsBlocking()). */
 	bool isReadyForReading();
 	
-	/** Returns the file descriptor associated with this stream. This call can be used simultaneously from multiple threads. TODO: may not be appropriate for all streams. */
+	/** Returns the file descriptor associated with this stream. This call can be used simultaneously from multiple threads. TODO: may not be appropriate for all streams. 
+     */
 	int fileDescriptor();
 	
+    /** Begins observing the use of this stream. This will cause messages to be produced whenever the stream is read from or written to.
+     */
+    void beginObservingStream();
+    
+    /** Ends observing the use of this stream, if this method is called a number of times equal to the number of preceding beginObservingStream calls. This stops messages from being produced.
+     */
+    void endObservingStream();
+    
 private:
+    uint64_t _countOfObservingClients;
 	int _fd;
 	ILMutex* _mutex;
 	void _determineReadyState(bool* reading, bool* writing);
 };
+
+/** Kind of messages sent while the stream is monitoring whenever a read operation was requested. */
+extern void* kILStreamDidRead;
+
+/** Kind of messages sent while the stream is monitoring whenever a write operation was requested. */
+extern void* kILStreamDidWrite;
+
 
 /** Stream sources provide new, just-opened streams to callers. A stream source may be reusable, or may be used only once. */
 class ILStreamSource : public ILObject {

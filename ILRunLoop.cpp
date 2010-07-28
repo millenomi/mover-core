@@ -66,6 +66,10 @@ void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
 		long sleepSecs = (long) floor(sleepInterval);
 		long sleepNsecs = (long) ((sleepInterval - floor(sleepInterval)) * 1000000000.0);
 		
+		ILTimeInterval began;
+		if (ILTelemetryIsOn())
+			began = ILGetAbsoluteTime();
+		
 		if (sleepSecs > 0 || (sleepSecs == 0 && sleepNsecs > 0)) {
 			struct timeval td;
 			gettimeofday(&td, NULL);
@@ -81,7 +85,11 @@ void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
 			// if the pipe has something to read, well, ok.			
 		}
 		
-		ILEvent(kILRunLoopTelemetrySource, ILStr("Wait over, spinning"));
+		if (ILTelemetryIsOn()) {
+			ILTimeInterval ended = ILGetAbsoluteTime();
+			ILEvent(kILRunLoopTelemetrySource, ILStr("Wait over, spinning (after a %f seconds wait)"), (double) (ended - began));
+		}
+
 		this->spin();
 		
 		ILTimeInterval newNow = ILGetAbsoluteTime();
@@ -89,6 +97,8 @@ void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
 		now = newNow;
 		
 	} while (budget >= 0);
+	
+	ILEvent(kILRunLoopTelemetrySource, ILStr("Spinning got over budget, handing back control to caller."));
 	
 	if (pthread_mutex_unlock(&_mutex) != 0) {
 		fprintf(stderr, "Error: we couldn't unlock a run loop's private mutex -- this should never have happened.\n");

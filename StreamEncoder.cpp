@@ -2,312 +2,126 @@
  *  StreamEncoder.cpp
  *  MoverCore
  *
- *  Created by ∞ on 18/07/10.
+ *  Created by ∞ on 28/07/10.
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
 
-// Disabled, pending a better ILStream impl.
-#if 0
-
 #include "StreamEncoder.h"
-#include "Protocol.h"
 #include "ILMessage.h"
+#include "ILRunLoop.h"
+#include "ILMessageHub.h"
 
 namespace Mover {
 	
-	ILUniqueConstant(kMvrStreamEncoderCanProceedMessage);
-    ILUniqueConstant(kMvrStreamEncoderActuallyProvideStreamPartMessage);
+	// -------------------------------------
+
+	ILTargetClassForMethod(StreamEncoder, performProducingStreamPart);
+	ILUniqueConstant(kMvrStreamEncoderPerformProducingStreamPartMessage);
+
+	struct StreamEncoderImpl {
+		StreamEncoder* self;
+		
+		ILMap* metadata;
+		ILList* payloadContents;
+		ILList* payloadKeys;
+		ILList* payloadLengths;
+		
+		bool sealed;
+		
+		StreamEncoderDelegate* delegate;
+		
+		void performProducingStreamPart(ILMessage* m);
+	};
 	
-	ILNamedTargetClassForMethod(StreamEncoder_ReadyTarget, StreamEncoder, streamReady);
-    ILNamedTargetClassForMethod(StreamEncoder_ActuallyProvideStreamPartTarget, StreamEncoder, actuallyProvideStreamPart);
-	
-	StreamEncoder::StreamEncoder() {
-		_sealed = false;
-		_state = kMvrStreamEncoderEditable;
+	StreamEncoder::StreamEncoder() : ILObject() {
+		_i = new StreamEncoderImpl;
+		_i->self = this;
 		
-		_delegate = NULL;
+		_i->metadata = ILRetain(new ILMap());
+		_i->payloadContents = ILRetain(new ILList());
+		_i->payloadKeys = ILRetain(new ILList());
+		_i->payloadLengths = ILRetain(new ILList());
 		
-		_metadata = ILRetain(new ILMap());
+		_i->sealed = false;
+		_i->delegate = NULL;
 		
-		_payloadKeys = ILRetain(new ILList());
-		_payloadContents = ILRetain(new ILList());
-		_payloadLenghts = ILRetain(new ILList());
-		
-		_currentStream = NULL;
-		_currentPayloadIndex = 0;
-		_didProvideMetadata = false;
-		_didProvidePrologue = false;
-		_didAnnounceEnd = false;
-		
-		_readyTarget = ILRetain(new StreamEncoder_ReadyTarget(this));
-        _provideStreamTarget = ILRetain(new StreamEncoder_ActuallyProvideStreamPartTarget(this));
-        
-        ILMessageHub::current()->addTargetForMessagesOfKind(_provideStreamTarget, kMvrStreamEncoderActuallyProvideStreamPartMessage, this);
+		ILMessageHub::currentHub()->addTarget(new StreamEncoder_performProducingStreamPart(this), kMvrStreamEncoderPerformProducingStreamPartMessage, this);
 	}
 	
 	StreamEncoder::~StreamEncoder() {
-        ILMessageHub::current()->removeTargetForMessagesOfKind(_provideStreamTarget, kMvrStreamEncoderActuallyProvideStreamPartMessage);
-                
-        _closeStream();
-        
-        _readyTarget->disableTarget();
-        _provideStreamTarget->disableTarget();
-        
-		ILRelease(_metadata);
+		// ~~ Destructor implementation here. ~~
+		
+		ILMessageHub::currentHub()->removeTargetsForObject(this);
 
-		ILRelease(_payloadKeys);
-		ILRelease(_payloadContents);
-		ILRelease(_payloadLenghts);
-		
-		ILRelease(_readyTarget);
-        ILRelease(_provideStreamTarget);
+		ILRelease(_i->metadata);
+		ILRelease(_i->payloadContents);
+		ILRelease(_i->payloadKeys);
+		ILRelease(_i->payloadLengths);
+				
+		delete _i;
 	}
 	
-	StreamEncoderState StreamEncoder::state() {
-		if (!_sealed)
-			return kMvrStreamEncoderEditable;
-		else
-			return _state;
+	ILUniqueConstant(kStreamEncoderClassIdentity);
+	
+	void* StreamEncoder::classIdentity() {
+		return kStreamEncoderClassIdentity;
 	}
 	
-	
-	void StreamEncoder::setValueForMetadataKey(ILString* key, ILString* value) {
-		if (_sealed)
-			ILAbort("Cannot modify a stream encoder after it has started producing a stream.");
-		
-		_metadata->setValueForKey(key, value);
-	}
-	
-	void StreamEncoder::addPayloadWithData(ILString* key, ILData* data) {
-		if (_sealed)
-			ILAbort("Cannot modify a stream encoder after it has started producing a stream.");
-		
-		_payloadKeys->addObject(key);
-		_payloadContents->addObject(data);
-		_payloadLenghts->addObject(new ILNumber((uint64_t) data->length()));
-	}
-	
-	void StreamEncoder::addPayloadWithContentsOfStream(ILString* key, ILStreamSource* source, uint64_t fileSize) {
-		if (_sealed)
-			ILAbort("Cannot modify a stream encoder after it has started producing a stream.");
-		
-		_payloadKeys->addObject(key);
-		_payloadContents->addObject(source);
-		_payloadLenghts->addObject(new ILNumber(fileSize));
-	}
+	ILAssignGetterSetterImpl(StreamEncoder,
+							 StreamEncoderDelegate*, _i->delegate,
+							 delegate, setDelegate)
 
-	// OK, the methods below are a bit of a mess, so here's how they work:
-	// CONTRACT: The user calls requestStreamPart(). SOMETIME IN THE FUTURE (possibly during the rSP() call itself!), the delegate receives appropriate messages but NO MORE THAN ONE streamEncoderDidProduceStreamPart(). The delegate can request more streamEncoderDidProduceStreamPart() calls by calling again requestStreamPart().
-	// So here's how the implementation works:
+	// -------------------------------------
 	
-	// rSP() ->
-	//	if the user wasn't given the prologue or the metadata, provide the appropriate block of data and return. State on return is kMvrStreamEncoderReadyToProduceStreamPart.
-	//	otherwise:
-	//		are we waiting for a stream payload?
-	//		yes: check if there's data to get, or, if none, reenable monitoring on the stream.
-	//		no: get a new payload
-	//			is it a ILData payload? provide it all
-	//			is it a ILStreamSource payload?
-	//				open it
-	//				monitor it
-	//				go to state kMvrStreamEncoderProducingStreamPart
-	//					SOMETIME IN THE FUTURE: the stream is ready to be read or has an error.
-	//					if error: close, end.
-	//					if readable, try to read.
-	//						if can read (and not one of the cases below), provide data, return to kMvrStreamEncoderReadyToProduceStreamPart, wait for next call to rSP().
-	//						if EOF and we're fine with the size as provided by the user, then we're STILL waiting for a piece of data, so we advance to the next payload and call rSP ourselves.
-	//						if EOF and not enough data, or if too much data, end with error.
-    
+	void StreamEncoder::setMetadataValueForKey(ILString* key, ILString* value) {
+		if (_i->sealed)
+			ILAbort("A stream encoder object cannot be modified while after it starts producing the stream.");
+		
+		_i->metadata->setValueForKey(key, value);
+	}
+	
+	void StreamEncoder::addPayloadWithData(ILString* key, ILData* content) {
+		if (_i->sealed)
+			ILAbort("A stream encoder object cannot be modified while after it starts producing the stream.");
+
+		if (_i->payloadKeys->containsObject(key))
+			ILAbort("Attempt to insert duplicate payload key");
+		
+		_i->payloadContents->addObject(content);
+		_i->payloadKeys->addObject(key);
+		_i->payloadLengths->addObject(new ILNumber((uint64_t) content->length()));
+	}
+	
+	void StreamEncoder::addPayloadWithStreamSource(ILString* key, ILStreamSource* source, ILSize size) {
+		if (_i->sealed)
+			ILAbort("A stream encoder object cannot be modified while after it starts producing the stream.");
+
+		if (_i->payloadKeys->containsObject(key))
+			ILAbort("Attempt to insert duplicate payload key");
+
+		_i->payloadContents->addObject(source);
+		_i->payloadKeys->addObject(key);
+		_i->payloadLengths->addObject(new ILNumber((uint64_t) size));
+	}
+	
+	// -------------------------------------
+		
 	void StreamEncoder::requestStreamPart() {
-        ILRunLoop::current()->currentThreadTarget()->deliverMessage(new ILMessage(kMvrStreamEncoderActuallyProvideStreamPartMessage, this, NULL));
-    }
-    
-    void StreamEncoder::actuallyProvideStreamPart(ILMessage* m) {    
-		if (_state == kMvrStreamEncoderProducingStreamPart)
-			return; // already producing one
-		
-		if (_didAnnounceEnd)
-			return; // we finished already
-		
-		if (!_didProvidePrologue && !_didProvideMetadata) {
-			_sealed = true;
-			_state = kMvrStreamEncoderReadyToProduceStreamPart;
-			if (this->delegate())
-				this->delegate()->streamEncoderWillBeginProducingStream(this);
-			_setupPayloadMetadata();
-		}
-		
-		if (!_didProvidePrologue) {
-			_didProvidePrologue = true;
-			if (this->delegate())
-				this->delegate()->streamEncoderDidProduceStreamPart(this, new ILData((uint8_t*) kMvrStreamStartingBytes, kMvrStreamStartingBytesLength));
-			return;
-		}
-		
-		if (!_didProvideMetadata) {
-			_didProvideMetadata = true;
-			ILData* encodedMetadata = new ILData();
-			uint8_t zero = 0;
-			
-			ILMapIterator* i = _metadata->iterate();
-			ILObject* keyObject, * valueObject;
-			while (i->getNext(&keyObject, &valueObject)) {
-				ILString* key = ILAs(ILString, keyObject),
-					* value = ILAs(ILString, valueObject);
-							
-				encodedMetadata->appendData(key->dataUsingEncoding(kILStringEncodingUTF8));
-				encodedMetadata->appendBytes(&zero, 1);
-				encodedMetadata->appendData(value->dataUsingEncoding(kILStringEncodingUTF8));
-				encodedMetadata->appendBytes(&zero, 1);
-			}
-			
-			encodedMetadata->appendBytes(&zero, 1);
-			
-			if (this->delegate())
-				this->delegate()->streamEncoderDidProduceStreamPart(this, encodedMetadata);
-			return;
-		}
-		
-		if (_currentPayloadIndex >= _payloadContents->count()) {
-			_endWithState(kMvrStreamEncoderDidEndCorrectly);
-			return;
-		}
-		
-		if (_currentStream) {
-			if (_currentStream->isReadyForReading())
-				_readDataFromStreamAndInformDelegate();
-			else
-				_currentStream->beginMonitoring();
-			return;
-		}
-		
-		ILObject* o = _payloadContents->objectAtIndex(_currentPayloadIndex);
-		
-		if (o->classIdentity() == ILDataClassIdentity) {
-			ILData* d = ILAs(ILData, o);
-			
-			if (this->delegate())
-				this->delegate()->streamEncoderDidProduceStreamPart(this, d);
-			
-			_currentPayloadIndex++;
-			return;
-		}
-		
-		// If we're here, then we just encountered an unopened stream source! let's get going!
-		_state = kMvrStreamEncoderProducingStreamPart;
-		ILStreamSource* source = ILAs(ILStreamSource, o);
-		
-		_currentStream = ILRetain(source->open());
-        
-		_readFromCurrentStream = 0;
-		
-		ILMessageHub::current()->addTargetForMessagesOfKind(_readyTarget, kILStreamNowReadyForReadingMessage, _currentStream);
-		ILMessageHub::current()->addTargetForMessagesOfKind(_readyTarget, kILStreamDidCloseWithErrorMessage, _currentStream);
-		
-		_currentStream->beginMonitoring();
+		ILRunLoop::current()->deliverMessage(new ILMessage(kMvrStreamEncoderPerformProducingStreamPartMessage, this));
 	}
 	
-	void StreamEncoder::streamReady(ILMessage* m) {
-		if (m->kind() == kILStreamDidCloseWithErrorMessage) {
-			_endWithState(kMvrStreamEncoderStreamDidCloseWithError);
-			return;
+	void StreamEncoder::performProducingStreamPart(ILMessage* m) {
+		_i->performProducingStreamPart(m); // avoids having to use _i's all over the place.
+	}
+	
+	void StreamEncoderImpl::performProducingStreamPart(ILMessage* m) {
+		if (!sealed) {
+			sealed = true;
+			if (delegate)
+				delegate->streamEncoderWillBegin(self);
 		}
 		
-		_readDataFromStreamAndInformDelegate();
-	}
-						  
-	void StreamEncoder::_endWithState(StreamEncoderState s) {
-		
-		_closeStream();
-		
-		if (!_didAnnounceEnd) {
-			_state = s;
-			_didAnnounceEnd = true;
-			if (this->delegate())
-				this->delegate()->streamEncoderDidEndProducingStream(this);
-		}
-		
-	}
-	
-	void StreamEncoder::_closeStream() {
-		ILMessageHub::current()->removeTargetForMessagesOfKind(_readyTarget, kILStreamNowReadyForReadingMessage);
-		ILMessageHub::current()->removeTargetForMessagesOfKind(_readyTarget, kILStreamDidCloseWithErrorMessage);
-
-        if (_currentStream) {
-            _currentStream->close();
-            ILRelease(_currentStream); _currentStream = NULL;            
-        }
-		
-		_currentPayloadIndex++;
-	}
-	
-	void StreamEncoder::_readDataFromStreamAndInformDelegate() {
-        if (!_currentStream)
-            return;
-        
-        ILStreamError e;
-		ILData* d = _currentStream->readDataOfMaximumLength(2048, &e);
-		uint64_t len = _payloadLenghts->at<ILNumber>(_currentPayloadIndex)->unsignedIntegerValue();
-		
-		if (!d) {
-            if (e == kILStreamErrorWouldHaveBlocked)
-                this->requestStreamPart();
-            else
-				_endWithState(kMvrStreamEncoderStreamIsOfIncorrectSizeError);
-			
-			return;
-		}
-		
-        _readFromCurrentStream += d->length();
-
-        if (_readFromCurrentStream > len) {
-			_endWithState(kMvrStreamEncoderStreamIsOfIncorrectSizeError);
-			return;
-		} else if (len == _readFromCurrentStream) {
-            _closeStream();
-            this->requestStreamPart();
-        }
-        
-        // _currentStream->endMonitoring();
-
-		if (this->delegate())
-			this->delegate()->streamEncoderDidProduceStreamPart(this, d);		
-	}
-	
-	
-	void StreamEncoder::_setupPayloadMetadata() {
-		ILString* keys = new ILString(), * stops = new ILString();
-		
-		ILSize count = _payloadKeys->count();
-        uint64_t lastStop = 0;
-		uint8_t i; for (i = 0; i < count; i++) {
-			ILString* key = ILAs(ILString, (_payloadKeys->objectAtIndex(i)));
-			ILNumber* length = ILAs(ILNumber, (_payloadLenghts->objectAtIndex(i)));
-			
-            lastStop += length->unsignedIntegerValue();
-            
-			if (i == 0) {
-				keys->appendString(key);
-				stops->appendString(ILString::stringWithFormat(ILStr("%llu"), lastStop));
-			} else {
-				keys->appendString(ILString::stringWithFormat(ILStr(" %s"), key->UTF8String()));
-				stops->appendString(ILString::stringWithFormat(ILStr(" %llu"), lastStop));
-			}
-		}
-		
-		_metadata->setValueForKey(ILStr("Payload-Keys"), keys);
-		_metadata->setValueForKey(ILStr("Payload-Stops"), stops);
-	}
-	
-	
-	StreamEncoderDelegate* StreamEncoder::delegate() {
-		return _delegate;
-	}
-	
-	void StreamEncoder::setDelegate(StreamEncoderDelegate* d) {
-		_delegate = d;
+#error TODO rest of it
 	}
 }
-
-#endif

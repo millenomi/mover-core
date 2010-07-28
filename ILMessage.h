@@ -18,7 +18,7 @@
 class ILMessage : public ILObject {
 public:
 	/** Creates a new message with specified kind, source and payload. The payload will be copied.  */
-	ILMessage(void* kind, ILObject* source, ILObject* payload);
+	ILMessage(void* kind, ILObject* source, ILObject* payload = NULL);
 	~ILMessage();
 	
 	/** Returns the kind of this message. */
@@ -53,6 +53,12 @@ public:
 	
 	/** Delivers the message to this target. The message may be processed synchronously or asynchronously. */
 	virtual void deliverMessage(ILMessage* m) = 0;
+	
+	/** Returns a peer object; peer objects can be used to identify this target even without keeping a reference to the target object around. See ILMessageHub for one use of peer objects. (Usually, peer objects are not retained by the target, but check with your target subclass.)
+	 
+		The default implementation of this method returns NULL (no peer object).
+	*/
+	virtual ILObject* peer();
 };
 
 
@@ -71,6 +77,9 @@ public:
 	/** Delivers the message by calling the associated function with this message and the context parameter passed at creation time. */
 	virtual void deliverMessage(ILMessage* m);
 	
+	/** The peer pointer for a function target is a ILNumber() containing the pointer to the function. */
+	virtual ILNumber* peer();
+	
 private:
 	ILTargetFunction _function;
 	void* _context;
@@ -87,9 +96,9 @@ public:
 	
 	virtual ILObject* target();
 	virtual void deliverMessage(ILMessage* m) = 0;
-    
-    // Makes the target stop working. Called by the backed object on destruction. Not thread-safe.
-    virtual void disableTarget();
+
+	/** The peer for an object target is the object that was passed at construction. */
+    virtual ILObject* peer();
 	
 private:
 	ILObject* _target;

@@ -37,20 +37,19 @@ ILObject* ILMessage::payload() {
 ILTarget::ILTarget() {}
 ILTarget::~ILTarget() {}
 
+ILObject* ILTarget::peer() { return NULL; }
+
 // ~~~
 
 ILObjectTarget::ILObjectTarget(ILObject* o) : ILTarget() {
 	_target = o;
 }
 
-ILObjectTarget::~ILObjectTarget() {
-}
+ILObjectTarget::~ILObjectTarget() {}
 
 ILObject* ILObjectTarget::target() { return _target; }
 
-void ILObjectTarget::disableTarget() {
-    _target = NULL;
-}
+ILObject* ILObjectTarget::peer() { return target(); }
 
 // ~~~
 
@@ -61,4 +60,8 @@ ILFunctionTarget::ILFunctionTarget(ILTargetFunction f, void* c) {
 
 void ILFunctionTarget::deliverMessage(ILMessage* m) {
 	_function(m, _context);
+}
+
+ILNumber* ILFunctionTarget::peer() {
+	return new ILNumber(_function);
 }

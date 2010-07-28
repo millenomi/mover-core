@@ -48,51 +48,55 @@ void ILMessageHub::addTarget(ILTarget* target, void* type, ILObject* source) {
 }
 
 void ILMessageHub::removeTarget(ILTarget* t, void* kind) {
-	ILNumber* key = new ILNumber(kind);
-	ILList* l = (ILList*) _targets->valueForKey(key);
+	if (kind != NULL)
+		removeTargetForKindKey(t, NULL, new ILNumber(kind));
+	else {
+		ILMapIterator* m = _targets->copy()->iterate();
+		ILNumber* n;
+		while (m->getNextAs<ILNumber, ILObject>(&n, NULL))
+			removeTargetForKindKey(t, NULL, n);
+	}
+}
+
+void ILMessageHub::removeTargetsForObject(ILObject* p, void* kind) {
+	if (kind != NULL)
+		removeTargetForKindKey(NULL, p, new ILNumber(kind));
+	else {
+		ILMapIterator* m = _targets->copy()->iterate();
+		ILNumber* n;
+		while (m->getNextAs<ILNumber, ILObject>(&n, NULL))
+			removeTargetForKindKey(NULL, p, n);
+	}
+}
+
+void ILMessageHub::removeTargetForKindKey(ILTarget* t, ILObject* peer, ILNumber* key) {
+	ILList* l = _targets->at<ILList>(key);
 	if (l) {
 		ILListIterator* i = l->copy()->iterate();
 		ILMessageHubTarget* ht;
 		
 		size_t index = 0;
-		while ((ht = (ILMessageHubTarget*) i->next())) {
-			if (ht->_target == t)
+		while ((ht = i->nextAs<ILMessageHubTarget>())) {
+			if (t != NULL && ht->_target == t)
+				l->removeObjectAtIndex(index);
+			else if (peer != NULL && peer->equals(ht->_target->peer()))
 				l->removeObjectAtIndex(index);
 			else
 				index++;
 		}
+		
+		if (l->count() == 0)
+			_targets->removeValueForKey(key);
 	}
 }
 
 
 void ILMessageHub::deliverMessage(ILMessage* m) {
-//#error TODO
-	//size_t listCount = _targets->count();
-//	ILList** lists = (ILList**)
-//		alloca(ILSizeOfCArrayOfObjects(listCount));
-//	
-//	_targets->getContent(NULL, (ILObject**) &lists);
-//	
-//	size_t i; for (i = 0; i < listCount; i++) {
-//		ILList* l = lists[i];
-//		
-//		size_t targetCount = l->count();
-//		ILMessageHubTarget** targets = (ILMessageHubTarget**)
-//			alloca(ILSizeOfCArrayOfObjects(targetCount));
-//		
-//		size_t j; for(j = 0; j < targetCount; j++) {
-//			if (!targets[j]->_desiredSource || (m->source() && targets[j]->_desiredSource->equals(m->source())))
-//				targets[j]->_target->deliverMessage(m);
-//		}
-//	}
-	
-//	ILDebugTrap(go);
-	
 	ILReleasePool pool;
 	
 	ILMapIterator* bucketsIterator = _targets->iterate();
 	ILList* list;
-	while (bucketsIterator->getNext(NULL, (ILObject**) &list)) {
+	while (bucketsIterator->getNextAs<ILObject, ILList>(NULL, &list)) {
 		
 		ILListIterator* targetsIterator = list->iterate();
 		ILMessageHubTarget* t;

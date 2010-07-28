@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <math.h>
 
+#include "ILTelemetry.h"
+
 static char ILRunLoopUnusedValue = 0;
 void* const ILRunLoopSignalReadyMessage = &ILRunLoopUnusedValue;
 
@@ -35,11 +37,13 @@ void ILRunLoop::removeSource(ILSource* s) {
 }
 
 void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
+	ILEvent(kILRunLoopTelemetrySource, ILStr("Spinning for about %f seconds"), (double) seconds);
+	
 	if (pthread_mutex_lock(&_mutex) != 0) {
 		fprintf(stderr, "Error: we couldn't lock a run loop's private mutex -- this should never have happened.\n");
 		abort();
 	}
-		
+	
 	ILTimeInterval now = ILGetAbsoluteTime();
 	ILTimeInterval budget = seconds;
 	
@@ -57,6 +61,8 @@ void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
 				sleepInterval = desiredInterval;
 		}
 		
+		ILEvent(kILRunLoopTelemetrySource, ILStr("Beginning a spin wait for no more than %f budgeted seconds."), (double) sleepInterval);
+		
 		long sleepSecs = (long) floor(sleepInterval);
 		long sleepNsecs = (long) ((sleepInterval - floor(sleepInterval)) * 1000000000.0);
 		
@@ -72,9 +78,10 @@ void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
 			// we don't check for errors --
 			// if error, then something went wrong with the cond, which it shouldn't.
 			// if timeout, it's fine -- we spin once, then quit when the while sees our time is up.
-			// if the pipe has something to read, well, ok.
+			// if the pipe has something to read, well, ok.			
 		}
 		
+		ILEvent(kILRunLoopTelemetrySource, ILStr("Wait over, spinning"));
 		this->spin();
 		
 		ILTimeInterval newNow = ILGetAbsoluteTime();
@@ -91,6 +98,7 @@ void ILRunLoop::spinForAboutUpTo(ILTimeInterval seconds) {
 }
 
 void ILRunLoop::signalReady() {
+	ILEvent(kILRunLoopTelemetrySource, ILStr("Signaled ready."));
 	pthread_cond_signal(&_signaler);
 }
 
@@ -159,8 +167,7 @@ ILTarget* ILRunLoop::currentThreadTarget() {
 
 
 void ILRunLoop::deliverMessage(ILMessage* m) {
-	if (_target)
-		_target->deliverMessage(m);
+	currentThreadTarget()->deliverMessage(m);
 }
 
 // ~~~

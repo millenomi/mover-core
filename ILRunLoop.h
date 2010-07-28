@@ -19,6 +19,7 @@
 
 #include <pthread.h>
 
+#define kILRunLoopTelemetrySource ILStr("ILRunLoop")
 
 class ILRunLoop : public ILTarget {
 public:

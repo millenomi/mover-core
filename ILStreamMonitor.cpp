@@ -166,7 +166,7 @@ void ILStreamMonitoringThread(ILObject* o) {
 	ILStreamMonitor* self = arguments->at<ILStreamMonitor>(kILStreamMonitorObjectKey);
 	uint64_t threadID = arguments->at<ILNumber>(kILStreamMonitorThreadIDKey)->unsignedIntegerValue();
 	
-	ILCEvent(ILStr("Will start monitoring with stream monitor %p, stream %p (thread ID %llu)"), self, self->stream(), (unsigned long long) threadID);
+	ILEventWithSourceObject(self, kILStreamMonitorThreadTelemetrySource, ILStr("Will start monitoring with stream monitor %p, stream %p (thread ID %llu)"), self, self->stream(), (unsigned long long) threadID);
 	
 	int fd = self->_i->stream->fileDescriptor();
 	if (fd < 0)
@@ -191,7 +191,7 @@ void ILStreamMonitoringThread(ILObject* o) {
 		int result = select(fd + 1, &readingSet, &writingSet, &errorSet, &tv);
 	
 		if (result < 0) {
-			ILCEvent(ILStr("select() had an error, interrupting monitoring."));
+			ILEventWithSourceObject(self, kILStreamMonitorThreadTelemetrySource, ILStr("select() had an error, interrupting monitoring."));
 			self->_i->signalEvents(threadID, false, false, true);
 			return;
 		}
@@ -203,10 +203,10 @@ void ILStreamMonitoringThread(ILObject* o) {
 		ILCEvent(ILStr("Has spun once for select() with results read = %d, write = %d, error = %d"), canRead, canWrite, hasError);
 		
 		if (!self->_i->signalEvents(threadID, canRead, canWrite, hasError)) {
-			ILCEvent(ILStr("Check-in reports we have to stop monitoring, returning"));
+			ILEventWithSourceObject(self, kILStreamMonitorThreadTelemetrySource, ILStr("Check-in reports we have to stop monitoring, returning"));
 			return;
 		} else
-			ILCEvent(ILStr("Checked-in successfully, spinning again."));
+			ILEventWithSourceObject(self, kILStreamMonitorThreadTelemetrySource, ILStr("Checked-in successfully, spinning again."));
 	}	
 }
 

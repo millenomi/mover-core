@@ -18,6 +18,7 @@
 struct ILStreamMonitorImpl;
 
 #define kILStreamMonitorTelemetrySource ILStr("ILStreamMonitor")
+#define kILStreamMonitorThreadTelemetrySource ILStr("ILStreamMonitorThread")
 
 // ~ ILStreamMonitor ~
 

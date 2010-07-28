@@ -14,15 +14,31 @@
 
 struct ILTelemetryImpl;
 
-#define ILEvent(s, x, ...) do { \
-		ILTelemetry::sharedTelemetry()->log(ILString::stringWithFormat(x, ## __VA_ARGS__), s, this); \
+#ifndef ILTelemetryCanBeOn
+#define ILTelemetryCanBeOn 1
+#endif
+
+#if ILTelemetryCanBeOn
+
+#define ILTelemetryIsOn() (ILTelemetry::sharedTelemetry()->on())
+
+#define ILEventWithSourceObject(self, s, x, ...) do { \
+		ILTelemetry::sharedTelemetry()->log(ILString::stringWithFormat(x, ## __VA_ARGS__), s, self); \
 	} while (0)
 
-#define ILCEvent(x, ...) do { \
-		ILTelemetry::sharedTelemetry()->log(ILString::stringWithFormat(x, ## __VA_ARGS__), ILStr(__PRETTY_FUNCTION__), NULL); \
-	} while (0)
 
+#define ILEvent(s, x, ...) ILEventWithSourceObject(this, s, x, ## __VA_ARGS__)
 
+#define ILCEvent(x, ...) ILEventWithSourceObject(NULL, ILStr(__FUNCTION__), x, ## __VA_ARGS__)
+
+#else
+
+#define ILTelemetryIsOn() (0)
+#define ILEventWithSourceObject(self, s, x, ...)
+#define ILEvent(s, x, ...) do {} while (0)
+#define ILCEvent(x, ...) do {} while (0)
+
+#endif
 
 // ~ ILTelemetry ~
 

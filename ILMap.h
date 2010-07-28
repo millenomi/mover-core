@@ -17,6 +17,11 @@ class ILMapIterator : public ILObject {
 public:
 	// either or both can be NULL to ignore.
 	virtual bool getNext(ILObject** key, ILObject** value) = 0;
+	
+	template <class X, class Y>
+	bool getNextAs(X** key, Y** value) {
+		return getNext((ILObject**) key, (ILObject**) value);
+	}
 };
 
 

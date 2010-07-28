@@ -27,6 +27,9 @@ public:
 	
 	virtual void* classIdentity();
 	
+	void addAllowedSource(ILString* source);
+	void removeAllowedSource(ILString* source);
+	
 private:
 	friend class ILTelemetryStdoutLoggerImpl;
 	ILTelemetryStdoutLoggerImpl* _i;

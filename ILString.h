@@ -46,7 +46,7 @@ public:
 	
 	// USE THESE TWO INSTEAD for arbitrary data.
 	static ILString* stringWithData(ILData* data, ILStringEncoding encoding);
-	static ILString* stringWithCString(uint8_t* aString, ILStringEncoding encoding);
+	static ILString* stringWithCString(const char* aString, ILStringEncoding encoding);
 	
 	static ILString* stringWithFormat(ILString* format, ...);
 	

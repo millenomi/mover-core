@@ -160,8 +160,8 @@ void ILString::initializeByUsingCodePointsArray(ILCodePoint* codePoints, size_t 
 	_utf8data = NULL;
 }
 
-ILString* ILString::stringWithCString(uint8_t* aString, ILStringEncoding encoding) {
-	return ILString::stringWithData(new ILData(aString, strlen((const char*) aString), kILDataNoCopy), encoding);
+ILString* ILString::stringWithCString(const char* aString, ILStringEncoding encoding) {
+	return ILString::stringWithData(new ILData((uint8_t*) aString, strlen((const char*) aString), kILDataNoCopy), encoding);
 }
 
 ILCodePoint* ILString::codePoints() {
@@ -305,7 +305,7 @@ ILString* ILString::stringWithFormat(ILString* format, ...) {
 	
 	va_end(l);
 	
-	return ILString::stringWithCString((uint8_t*) newString, kILStringEncodingUTF8);
+	return ILString::stringWithCString(newString, kILStringEncodingUTF8);
 }
 
 void ILString::appendString(ILString* s) {
